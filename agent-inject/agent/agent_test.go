@@ -145,7 +145,7 @@ func TestValidate(t *testing.T) {
 					TokenPath: "foobar",
 				},
 				ImageName: "test",
-				Vault: Vault{
+				Openbao: Openbao{
 					Role:     "test",
 					Address:  "https://foobar.com:8200",
 					AuthPath: "test",
@@ -222,7 +222,7 @@ func TestValidate(t *testing.T) {
 					TokenPath: "foobar",
 				},
 				ImageName: "test",
-				Vault: Vault{
+				Openbao: Openbao{
 					Role:     "",
 					Address:  "https://foobar.com:8200",
 					AuthType: "kubernetes",
@@ -238,7 +238,7 @@ func TestValidate(t *testing.T) {
 					TokenPath: "foobar",
 				},
 				ImageName: "test",
-				Vault: Vault{
+				Openbao: Openbao{
 					Role:     "test",
 					Address:  "",
 					AuthType: "kubernetes",
@@ -254,7 +254,7 @@ func TestValidate(t *testing.T) {
 					TokenPath: "foobar",
 				},
 				ImageName: "test",
-				Vault: Vault{
+				Openbao: Openbao{
 					Role:     "test",
 					Address:  "https://foobar.com:8200",
 					AuthPath: "",
@@ -272,7 +272,7 @@ func TestValidate(t *testing.T) {
 					TokenPath: "",
 				},
 				ImageName: "test",
-				Vault: Vault{
+				Openbao: Openbao{
 					Role:     "test",
 					Address:  "https://foobar.com:8200",
 					AuthPath: "test",
@@ -285,7 +285,7 @@ func TestValidate(t *testing.T) {
 			Agent{
 				Namespace: "test",
 				ImageName: "test",
-				Vault: Vault{
+				Openbao: Openbao{
 					Role:     "test",
 					Address:  "https://foobar.com:8200",
 					AuthPath: "test",
@@ -327,7 +327,7 @@ func Test_serviceaccount(t *testing.T) {
 			pod: &corev1.Pod{
 				ObjectMeta: v1.ObjectMeta{
 					Annotations: map[string]string{
-						"vault.hashicorp.com/agent-service-account-token-volume-name": "projected-token",
+						"openbao.openbao.org/agent-service-account-token-volume-name": "projected-token",
 					},
 				},
 			},
@@ -339,7 +339,7 @@ func Test_serviceaccount(t *testing.T) {
 				ObjectMeta: v1.ObjectMeta{
 					Name: "test-pod",
 					Annotations: map[string]string{
-						"vault.hashicorp.com/agent-service-account-token-volume-name": "missing",
+						"openbao.openbao.org/agent-service-account-token-volume-name": "missing",
 					},
 				},
 				Spec: corev1.PodSpec{
@@ -378,7 +378,7 @@ func Test_serviceaccount(t *testing.T) {
 			pod: &corev1.Pod{
 				ObjectMeta: v1.ObjectMeta{
 					Annotations: map[string]string{
-						"vault.hashicorp.com/agent-service-account-token-volume-name": "projected-token",
+						"openbao.openbao.org/agent-service-account-token-volume-name": "projected-token",
 					},
 				},
 				Spec: corev1.PodSpec{
@@ -406,7 +406,7 @@ func Test_serviceaccount(t *testing.T) {
 			pod: &corev1.Pod{
 				ObjectMeta: v1.ObjectMeta{
 					Annotations: map[string]string{
-						"vault.hashicorp.com/agent-service-account-token-volume-name": "projected-token",
+						"openbao.openbao.org/agent-service-account-token-volume-name": "projected-token",
 					},
 				},
 				Spec: corev1.PodSpec{
@@ -492,13 +492,13 @@ func Test_serviceaccount(t *testing.T) {
 			expected: &ServiceAccountTokenVolume{
 				Name:      "projected-token",
 				MountPath: "/var/run/secrets/special/serviceaccount",
-				TokenPath: "vault-token",
+				TokenPath: "openbao-token",
 			},
 			expectedError: "",
 			pod: &corev1.Pod{
 				ObjectMeta: v1.ObjectMeta{
 					Annotations: map[string]string{
-						"vault.hashicorp.com/agent-service-account-token-volume-name": "projected-token",
+						"openbao.openbao.org/agent-service-account-token-volume-name": "projected-token",
 					},
 				},
 				Spec: corev1.PodSpec{
@@ -520,7 +520,7 @@ func Test_serviceaccount(t *testing.T) {
 									Sources: []corev1.VolumeProjection{
 										{
 											ServiceAccountToken: &corev1.ServiceAccountTokenProjection{
-												Path: "vault-token",
+												Path: "openbao-token",
 											},
 										},
 									},
@@ -534,14 +534,14 @@ func Test_serviceaccount(t *testing.T) {
 		"projected service account with annotation but not mounted": {
 			expected: &ServiceAccountTokenVolume{
 				Name:      "projected-token",
-				MountPath: "/var/run/secrets/vault.hashicorp.com/serviceaccount",
-				TokenPath: "vault-token",
+				MountPath: "/var/run/secrets/openbao.openbao.org/serviceaccount",
+				TokenPath: "openbao-token",
 			},
 			expectedError: "",
 			pod: &corev1.Pod{
 				ObjectMeta: v1.ObjectMeta{
 					Annotations: map[string]string{
-						"vault.hashicorp.com/agent-service-account-token-volume-name": "projected-token",
+						"openbao.openbao.org/agent-service-account-token-volume-name": "projected-token",
 					},
 				},
 				Spec: corev1.PodSpec{
@@ -553,7 +553,7 @@ func Test_serviceaccount(t *testing.T) {
 									Sources: []corev1.VolumeProjection{
 										{
 											ServiceAccountToken: &corev1.ServiceAccountTokenProjection{
-												Path: "vault-token",
+												Path: "openbao-token",
 											},
 										},
 									},

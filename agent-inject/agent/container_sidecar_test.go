@@ -10,8 +10,8 @@ import (
 	"testing"
 
 	jsonpatch "github.com/evanphx/json-patch"
-	"github.com/hashicorp/vault-k8s/agent-inject/internal"
-	"github.com/hashicorp/vault/sdk/helper/pointerutil"
+	"github.com/openbao/openbao-k8s/agent-inject/internal"
+	"github.com/openbao/openbao/sdk/helper/pointerutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
@@ -21,19 +21,19 @@ import (
 
 func TestContainerSidecarVolume(t *testing.T) {
 	annotations := map[string]string{
-		AnnotationVaultRole: "foobar",
+		AnnotationOpenbaoRole: "foobar",
 		// this will have different mount path
 		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret1"):     "secrets/secret1",
-		fmt.Sprintf("%s-%s", AnnotationVaultSecretVolumePath, "secret1"): "/etc/container_environment",
+		fmt.Sprintf("%s-%s", AnnotationOpenbaoSecretVolumePath, "secret1"): "/etc/container_environment",
 
 		// this secret will have same mount path as default mount path
 		// adding this so we can make sure we don't have duplicate
 		// volume mounts
 		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret2"):     "secret/secret2",
-		fmt.Sprintf("%s-%s", AnnotationVaultSecretVolumePath, "secret2"): "/etc/default_path",
+		fmt.Sprintf("%s-%s", AnnotationOpenbaoSecretVolumePath, "secret2"): "/etc/default_path",
 
 		// Default path for all secrets
-		AnnotationVaultSecretVolumePath: "/etc/default_path",
+		AnnotationOpenbaoSecretVolumePath: "/etc/default_path",
 
 		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret3"): "secret/secret3",
 
@@ -48,7 +48,7 @@ func TestContainerSidecarVolume(t *testing.T) {
 	agentConfig := AgentConfig{
 		Image:              "foobar-image",
 		Address:            "http://foobar:1234",
-		AuthType:           DefaultVaultAuthType,
+		AuthType:           DefaultOpenbaoAuthType,
 		AuthPath:           "test",
 		Namespace:          "test",
 		RevokeOnShutdown:   true,
@@ -94,7 +94,7 @@ func TestContainerSidecarVolume(t *testing.T) {
 			},
 			{
 				Name:      secretVolumeName,
-				MountPath: agent.Annotations[AnnotationVaultSecretVolumePath],
+				MountPath: agent.Annotations[AnnotationOpenbaoSecretVolumePath],
 				ReadOnly:  false,
 			},
 			{
@@ -119,19 +119,19 @@ func TestContainerSidecarVolume(t *testing.T) {
 
 func TestContainerSidecarVolumeWithIRSA(t *testing.T) {
 	annotations := map[string]string{
-		AnnotationVaultRole: "foobar",
+		AnnotationOpenbaoRole: "foobar",
 		// this will have different mount path
 		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret1"):     "secrets/secret1",
-		fmt.Sprintf("%s-%s", AnnotationVaultSecretVolumePath, "secret1"): "/etc/container_environment",
+		fmt.Sprintf("%s-%s", AnnotationOpenbaoSecretVolumePath, "secret1"): "/etc/container_environment",
 
 		// this secret will have same mount path as default mount path
 		// adding this so we can make sure we don't have duplicate
 		// volume mounts
 		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret2"):     "secret/secret2",
-		fmt.Sprintf("%s-%s", AnnotationVaultSecretVolumePath, "secret2"): "/etc/default_path",
+		fmt.Sprintf("%s-%s", AnnotationOpenbaoSecretVolumePath, "secret2"): "/etc/default_path",
 
 		// Default path for all secrets
-		AnnotationVaultSecretVolumePath: "/etc/default_path",
+		AnnotationOpenbaoSecretVolumePath: "/etc/default_path",
 
 		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret3"): "secret/secret3",
 	}
@@ -194,7 +194,7 @@ func TestContainerSidecarVolumeWithIRSA(t *testing.T) {
 			},
 			{
 				Name:      secretVolumeName,
-				MountPath: agent.Annotations[AnnotationVaultSecretVolumePath],
+				MountPath: agent.Annotations[AnnotationOpenbaoSecretVolumePath],
 				ReadOnly:  false,
 			},
 			{
@@ -209,7 +209,7 @@ func TestContainerSidecarVolumeWithIRSA(t *testing.T) {
 
 func TestContainerSidecar(t *testing.T) {
 	annotations := map[string]string{
-		AnnotationVaultRole: "foobar",
+		AnnotationOpenbaoRole: "foobar",
 	}
 
 	pod := testPod(annotations)
@@ -217,7 +217,7 @@ func TestContainerSidecar(t *testing.T) {
 	agentConfig := AgentConfig{
 		Image:              "foobar-image",
 		Address:            "http://foobar:1234",
-		AuthType:           DefaultVaultAuthType,
+		AuthType:           DefaultOpenbaoAuthType,
 		AuthPath:           "test",
 		Namespace:          "test",
 		UserID:             "1000",
@@ -253,16 +253,16 @@ func TestContainerSidecar(t *testing.T) {
 		t.Errorf("wrong number of env vars, got %d, should have been %d", len(container.Env), expectedEnvs)
 	}
 
-	if container.Env[3].Name != "VAULT_LOG_LEVEL" {
-		t.Errorf("env name wrong, should have been %s, got %s", "VAULT_LOG_LEVEL", container.Env[0].Name)
+	if container.Env[3].Name != "OPENBAO_LOG_LEVEL" {
+		t.Errorf("env name wrong, should have been %s, got %s", "OPENBAO_LOG_LEVEL", container.Env[0].Name)
 	}
 
 	if container.Env[3].Value == "" {
 		t.Error("env value empty, it shouldn't be")
 	}
 
-	if container.Env[4].Name != "VAULT_LOG_FORMAT" {
-		t.Errorf("env name wrong, should have been %s, got %s", "VAULT_LOG_FORMAT", container.Env[1].Name)
+	if container.Env[4].Name != "OPENBAO_LOG_FORMAT" {
+		t.Errorf("env name wrong, should have been %s, got %s", "OPENBAO_LOG_FORMAT", container.Env[1].Name)
 	}
 
 	if container.Env[5].Name != "HTTPS_PROXY" {
@@ -273,8 +273,8 @@ func TestContainerSidecar(t *testing.T) {
 		t.Error("env value empty, it shouldn't be")
 	}
 
-	if container.Env[6].Name != "VAULT_CONFIG" {
-		t.Errorf("env name wrong, should have been %s, got %s", "VAULT_CONFIG", container.Env[3].Name)
+	if container.Env[6].Name != "OPENBAO_CONFIG" {
+		t.Errorf("env name wrong, should have been %s, got %s", "OPENBAO_CONFIG", container.Env[3].Name)
 	}
 
 	if container.Env[5].Value == "" {
@@ -314,8 +314,8 @@ func TestContainerSidecar(t *testing.T) {
 	}
 
 	for _, volumeMount := range container.VolumeMounts {
-		if volumeMount.Name == secretVolumeName && volumeMount.MountPath != annotations[AnnotationVaultSecretVolumePath] {
-			t.Errorf("secrets volume path is wrong, should have been %s, got %s", volumeMount.MountPath, annotations[AnnotationVaultSecretVolumePath])
+		if volumeMount.Name == secretVolumeName && volumeMount.MountPath != annotations[AnnotationOpenbaoSecretVolumePath] {
+			t.Errorf("secrets volume path is wrong, should have been %s, got %s", volumeMount.MountPath, annotations[AnnotationOpenbaoSecretVolumePath])
 		}
 	}
 }
@@ -342,7 +342,7 @@ func TestContainerSidecarRevokeHook(t *testing.T) {
 			var revokeAnnotation string
 
 			annotations := map[string]string{
-				AnnotationVaultRole: "foobar",
+				AnnotationOpenbaoRole: "foobar",
 			}
 
 			if tt.revokeAnnotation == nil {
@@ -356,7 +356,7 @@ func TestContainerSidecarRevokeHook(t *testing.T) {
 			agentConfig := AgentConfig{
 				Image:              "foobar-image",
 				Address:            "http://foobar:1234",
-				AuthType:           DefaultVaultAuthType,
+				AuthType:           DefaultOpenbaoAuthType,
 				AuthPath:           "test",
 				Namespace:          "test",
 				RevokeOnShutdown:   tt.revokeFlag,
@@ -403,19 +403,19 @@ func TestContainerSidecarConfigMap(t *testing.T) {
 	// we have AnnotationAgentConfigMap set
 	annotations := map[string]string{
 		AnnotationAgentConfigMap:                        "foobarConfigMap",
-		AnnotationVaultRole:                             "foobar",
+		AnnotationOpenbaoRole:                             "foobar",
 		AnnotationAgentPrePopulate:                      "true",
 		AnnotationAgentPrePopulateOnly:                  "true",
-		AnnotationVaultTLSSkipVerify:                    "true",
-		AnnotationVaultTLSServerName:                    "foobar.server",
-		AnnotationVaultCACert:                           "ca-cert",
-		AnnotationVaultCAKey:                            "ca-key",
-		AnnotationVaultClientCert:                       "client-cert",
-		AnnotationVaultClientKey:                        "client-key",
-		AnnotationVaultSecretVolumePath:                 "/foo/bar",
-		"vault.hashicorp.com/agent-inject-secret-foo":   "db/creds/foo",
-		"vault.hashicorp.com/agent-inject-template-foo": "template foo",
-		"vault.hashicorp.com/agent-inject-secret-bar":   "db/creds/bar",
+		AnnotationOpenbaoTLSSkipVerify:                    "true",
+		AnnotationOpenbaoTLSServerName:                    "foobar.server",
+		AnnotationOpenbaoCACert:                           "ca-cert",
+		AnnotationOpenbaoCAKey:                            "ca-key",
+		AnnotationOpenbaoClientCert:                       "client-cert",
+		AnnotationOpenbaoClientKey:                        "client-key",
+		AnnotationOpenbaoSecretVolumePath:                 "/foo/bar",
+		"openbao.openbao.org/agent-inject-secret-foo":   "db/creds/foo",
+		"openbao.openbao.org/agent-inject-template-foo": "template foo",
+		"openbao.openbao.org/agent-inject-secret-bar":   "db/creds/bar",
 	}
 
 	pod := testPod(annotations)
@@ -423,7 +423,7 @@ func TestContainerSidecarConfigMap(t *testing.T) {
 	agentConfig := AgentConfig{
 		Image:              "foobar-image",
 		Address:            "http://foobar:1234",
-		AuthType:           DefaultVaultAuthType,
+		AuthType:           DefaultOpenbaoAuthType,
 		AuthPath:           "test",
 		Namespace:          "test",
 		RevokeOnShutdown:   true,
@@ -459,7 +459,7 @@ func TestContainerSidecarConfigMap(t *testing.T) {
 		t.Errorf("wrong number of env vars, got %d, should have been %d", len(container.Env), expectedEnvs)
 	}
 
-	arg := fmt.Sprintf("touch %s && vault agent -config=%s/config.hcl", TokenFile, configVolumePath)
+	arg := fmt.Sprintf("touch %s && bao agent -config=%s/config.hcl", TokenFile, configVolumePath)
 	if container.Args[0] != arg {
 		t.Errorf("arg value wrong, should have been %s, got %s", arg, container.Args[0])
 	}
@@ -1140,7 +1140,7 @@ func TestContainerSidecarSecurityContext(t *testing.T) {
 				ProxyAddress:       "",
 			}
 
-			tt.annotations[AnnotationVaultRole] = "foobar"
+			tt.annotations[AnnotationOpenbaoRole] = "foobar"
 			pod := testPod(tt.annotations)
 			pod.Spec.Containers[0].SecurityContext = tt.appSCC
 
@@ -1175,7 +1175,7 @@ func TestContainerCache(t *testing.T) {
 	cacheVolumePatch := []jsonpatch.Operation{
 		internal.AddOp("/spec/volumes", []v1.Volume{
 			{
-				Name: "vault-agent-cache",
+				Name: "openbao-agent-cache",
 				VolumeSource: v1.VolumeSource{
 					EmptyDir: &v1.EmptyDirVolumeSource{
 						Medium: "Memory",
@@ -1193,7 +1193,7 @@ func TestContainerCache(t *testing.T) {
 		{
 			"cache enabled",
 			map[string]string{
-				AnnotationVaultRole:        "role",
+				AnnotationOpenbaoRole:        "role",
 				AnnotationAgentCacheEnable: "true",
 			},
 			true,
@@ -1201,7 +1201,7 @@ func TestContainerCache(t *testing.T) {
 		{
 			"cache disabled",
 			map[string]string{
-				AnnotationVaultRole:        "role",
+				AnnotationOpenbaoRole:        "role",
 				AnnotationAgentCacheEnable: "false",
 			},
 			false,
@@ -1209,7 +1209,7 @@ func TestContainerCache(t *testing.T) {
 		{
 			"only init container",
 			map[string]string{
-				AnnotationVaultRole:            "role",
+				AnnotationOpenbaoRole:            "role",
 				AnnotationAgentCacheEnable:     "true",
 				AnnotationAgentPrePopulateOnly: "true",
 			},
@@ -1218,7 +1218,7 @@ func TestContainerCache(t *testing.T) {
 		{
 			"only sidecar container",
 			map[string]string{
-				AnnotationVaultRole:        "role",
+				AnnotationOpenbaoRole:        "role",
 				AnnotationAgentCacheEnable: "true",
 				AnnotationAgentPrePopulate: "false",
 			},
@@ -1231,7 +1231,7 @@ func TestContainerCache(t *testing.T) {
 			agentConfig := AgentConfig{
 				Image:              "foobar-image",
 				Address:            "http://foobar:1234",
-				AuthType:           DefaultVaultAuthType,
+				AuthType:           DefaultOpenbaoAuthType,
 				AuthPath:           "test",
 				Namespace:          "test",
 				RevokeOnShutdown:   true,
@@ -1281,15 +1281,15 @@ func TestContainerCache(t *testing.T) {
 
 func TestAgentJsonPatch(t *testing.T) {
 	baseContainer := corev1.Container{
-		Name:    "vault-agent",
+		Name:    "openbao-agent",
 		Image:   "foobar-image",
 		Command: []string{"/bin/sh", "-ec"},
-		Args:    []string{`echo ${VAULT_CONFIG?} | base64 -d > /home/vault/config.json && vault agent -config=/home/vault/config.json`},
+		Args:    []string{`echo ${OPENBAO_CONFIG?} | base64 -d > /home/openbao/config.json && bao agent -config=/home/openbao/config.json`},
 		Env: append(
 			baseContainerEnvVars,
-			corev1.EnvVar{Name: "VAULT_LOG_LEVEL", Value: "info"},
-			corev1.EnvVar{Name: "VAULT_LOG_FORMAT", Value: "standard"},
-			corev1.EnvVar{Name: "VAULT_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvdmF1bHQvLnZhdWx0LXRva2VuIn19XX0sImV4aXRfYWZ0ZXJfYXV0aCI6ZmFsc2UsInBpZF9maWxlIjoiL2hvbWUvdmF1bHQvLnBpZCIsInZhdWx0Ijp7ImFkZHJlc3MiOiJodHRwOi8vZm9vYmFyOjEyMzQifSwidGVtcGxhdGVfY29uZmlnIjp7ImV4aXRfb25fcmV0cnlfZmFpbHVyZSI6dHJ1ZX19"},
+			corev1.EnvVar{Name: "OPENBAO_LOG_LEVEL", Value: "info"},
+			corev1.EnvVar{Name: "OPENBAO_LOG_FORMAT", Value: "standard"},
+			corev1.EnvVar{Name: "OPENBAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvdmF1bHQvLnZhdWx0LXRva2VuIn19XX0sImV4aXRfYWZ0ZXJfYXV0aCI6ZmFsc2UsInBpZF9maWxlIjoiL2hvbWUvdmF1bHQvLnBpZCIsInZhdWx0Ijp7ImFkZHJlc3MiOiJodHRwOi8vZm9vYmFyOjEyMzQifSwidGVtcGxhdGVfY29uZmlnIjp7ImV4aXRfb25fcmV0cnlfZmFpbHVyZSI6dHJ1ZX19"},
 		),
 		Resources: v1.ResourceRequirements{
 			Limits:   v1.ResourceList{"cpu": resource.MustParse("500m"), "memory": resource.MustParse("128Mi")},
@@ -1297,13 +1297,13 @@ func TestAgentJsonPatch(t *testing.T) {
 		},
 		VolumeMounts: []v1.VolumeMount{
 			{Name: "foobar", ReadOnly: true, MountPath: "serviceaccount/somewhere"},
-			{Name: "home-sidecar", MountPath: "/home/vault"},
-			{Name: "vault-secrets", MountPath: "/vault/secrets"},
+			{Name: "home-sidecar", MountPath: "/home/openbao"},
+			{Name: "openbao-secrets", MountPath: "/openbao/secrets"},
 		},
 		Lifecycle: &v1.Lifecycle{
 			PreStop: &v1.LifecycleHandler{
 				Exec: &v1.ExecAction{
-					Command: []string{"/bin/sh", "-c", "/bin/sleep 5 && /bin/vault token revoke -address=http://foobar:1234 -self"},
+					Command: []string{"/bin/sh", "-c", "/bin/sleep 5 && /bin/bao token revoke -address=http://foobar:1234 -self"},
 				},
 			},
 		},
@@ -1320,17 +1320,17 @@ func TestAgentJsonPatch(t *testing.T) {
 	}
 
 	baseInitContainer := baseContainer
-	baseInitContainer.Name = "vault-agent-init"
+	baseInitContainer.Name = "openbao-agent-init"
 	baseInitContainer.Env = append(
 		baseContainerEnvVars,
-		corev1.EnvVar{Name: "VAULT_LOG_LEVEL", Value: "info"},
-		corev1.EnvVar{Name: "VAULT_LOG_FORMAT", Value: "standard"},
-		corev1.EnvVar{Name: "VAULT_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvdmF1bHQvLnZhdWx0LXRva2VuIn19XX0sImV4aXRfYWZ0ZXJfYXV0aCI6dHJ1ZSwicGlkX2ZpbGUiOiIvaG9tZS92YXVsdC8ucGlkIiwidmF1bHQiOnsiYWRkcmVzcyI6Imh0dHA6Ly9mb29iYXI6MTIzNCJ9LCJ0ZW1wbGF0ZV9jb25maWciOnsiZXhpdF9vbl9yZXRyeV9mYWlsdXJlIjp0cnVlfX0="},
+		corev1.EnvVar{Name: "OPENBAO_LOG_LEVEL", Value: "info"},
+		corev1.EnvVar{Name: "OPENBAO_LOG_FORMAT", Value: "standard"},
+		corev1.EnvVar{Name: "OPENBAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvdmF1bHQvLnZhdWx0LXRva2VuIn19XX0sImV4aXRfYWZ0ZXJfYXV0aCI6dHJ1ZSwicGlkX2ZpbGUiOiIvaG9tZS92YXVsdC8ucGlkIiwidmF1bHQiOnsiYWRkcmVzcyI6Imh0dHA6Ly9mb29iYXI6MTIzNCJ9LCJ0ZW1wbGF0ZV9jb25maWciOnsiZXhpdF9vbl9yZXRyeV9mYWlsdXJlIjp0cnVlfX0="},
 	)
 	baseInitContainer.VolumeMounts = []v1.VolumeMount{
-		{Name: "home-init", MountPath: "/home/vault"},
+		{Name: "home-init", MountPath: "/home/openbao"},
 		{Name: "foobar", ReadOnly: true, MountPath: "serviceaccount/somewhere"},
-		{Name: "vault-secrets", MountPath: "/vault/secrets"},
+		{Name: "openbao-secrets", MountPath: "/openbao/secrets"},
 	}
 	baseInitContainer.Lifecycle = nil
 
@@ -1416,14 +1416,14 @@ func TestAgentJsonPatch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			pod := testPod(map[string]string{
-				AnnotationVaultRole:          "role",
+				AnnotationOpenbaoRole:          "role",
 				AnnotationAgentJsonPatch:     tt.jsonPatch,
 				AnnotationAgentInitJsonPatch: tt.jsonInitPatch,
 			})
 			agentConfig := AgentConfig{
 				Image:              "foobar-image",
 				Address:            "http://foobar:1234",
-				AuthType:           DefaultVaultAuthType,
+				AuthType:           DefaultOpenbaoAuthType,
 				AuthPath:           "test",
 				Namespace:          "test",
 				RevokeOnShutdown:   true,

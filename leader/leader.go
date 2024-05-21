@@ -33,7 +33,7 @@ func New(ctx context.Context, logger hclog.Logger, clientset kubernetes.Interfac
 		// The Become() function blocks until this replica becomes the "leader",
 		// by creating a ConfigMap with an OwnerReference. Another replica can
 		// become the leader when the current leader replica stops running, and
-		// the Kubernetes garbage collector deletes the vault-k8s-leader
+		// the Kubernetes garbage collector deletes the openbao-k8s-leader
 		// ConfigMap.
 
 		// New exponential backoff with 10 retries
@@ -43,7 +43,7 @@ func New(ctx context.Context, logger hclog.Logger, clientset kubernetes.Interfac
 		log.SetLogger(fromHCLogger(logger.Named("operator-lib")))
 
 		err := backoff.Retry(func() error {
-			if err := operator_leader.Become(ctx, "vault-k8s-leader"); err != nil {
+			if err := operator_leader.Become(ctx, "openbao-k8s-leader"); err != nil {
 				logger.Error("Trouble becoming leader", "error", err)
 				return err
 			}

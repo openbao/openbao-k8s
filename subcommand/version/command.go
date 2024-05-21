@@ -15,7 +15,7 @@ type Command struct {
 }
 
 func (c *Command) Run(_ []string) int {
-	c.UI.Output(fmt.Sprintf("vault-k8s %s", c.Version))
+	c.UI.Output(fmt.Sprintf("openbao-k8s %s", c.Version))
 	return 0
 }
 

@@ -213,7 +213,7 @@ func TestGenSource_leader_expiry(t *testing.T) {
 
 	// Add some metadata to the Secret
 	addedAnnotations := map[string]string{
-		"not-owner-by-vault-agent": "some-value",
+		"not-owner-by-openbao-agent": "some-value",
 	}
 	secret.SetAnnotations(addedAnnotations)
 	_, err = source.K8sClient.CoreV1().Secrets(source.Namespace).Update(ctx, secret, metav1.UpdateOptions{})

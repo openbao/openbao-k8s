@@ -12,7 +12,7 @@ import (
 )
 
 // ContainerInitSidecar creates a new init container to be added
-// to the pod being mutated.  After Vault 1.4 is released, this can
+// to the pod being mutated.  After Openbao 1.4 is released, this can
 // be removed because an exit_after_auth environment variable is
 // available for the agent.  This means we won't need to generate
 // two config files.
@@ -58,10 +58,10 @@ func (a *Agent) ContainerInitSidecar() (corev1.Container, error) {
 			MountPath: configVolumePath,
 			ReadOnly:  true,
 		})
-		arg = fmt.Sprintf("touch %s && vault agent -config=%s/config-init.hcl", TokenFile, configVolumePath)
+		arg = fmt.Sprintf("touch %s && bao agent -config=%s/config-init.hcl", TokenFile, configVolumePath)
 	}
 
-	if a.Vault.TLSSecret != "" {
+	if a.Openbao.TLSSecret != "" {
 		volumeMounts = append(volumeMounts, corev1.VolumeMount{
 			Name:      tlsSecretVolumeName,
 			MountPath: tlsSecretVolumePath,
@@ -69,7 +69,7 @@ func (a *Agent) ContainerInitSidecar() (corev1.Container, error) {
 		})
 	}
 
-	if a.VaultAgentCache.Persist {
+	if a.OpenbaoAgentCache.Persist {
 		volumeMounts = append(volumeMounts, a.cacheVolumeMount())
 	}
 
@@ -84,7 +84,7 @@ func (a *Agent) ContainerInitSidecar() (corev1.Container, error) {
 	}
 
 	newContainer := corev1.Container{
-		Name:         "vault-agent-init",
+		Name:         "openbao-agent-init",
 		Image:        a.ImageName,
 		Env:          envs,
 		Resources:    resources,

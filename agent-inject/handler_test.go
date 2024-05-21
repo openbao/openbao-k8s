@@ -11,8 +11,8 @@ import (
 
 	"github.com/evanphx/json-patch"
 	"github.com/hashicorp/go-hclog"
-	"github.com/hashicorp/vault-k8s/agent-inject/agent"
-	"github.com/hashicorp/vault-k8s/agent-inject/internal"
+	"github.com/openbao/openbao-k8s/agent-inject/agent"
+	"github.com/openbao/openbao-k8s/agent-inject/internal"
 	"github.com/stretchr/testify/require"
 	admissionv1 "k8s.io/api/admission/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -22,9 +22,9 @@ import (
 
 func basicHandler() Handler {
 	return Handler{
-		VaultAddress:    "https://vault:8200",
-		VaultAuthPath:   "kubernetes",
-		ImageVault:      "vault",
+		OpenbaoAddress:    "https://openbao:8200",
+		OpenbaoAuthPath:   "kubernetes",
+		ImageOpenbao:      "openbao",
 		Log:             hclog.Default().Named("handler"),
 		DefaultTemplate: agent.DefaultTemplateType,
 	}
@@ -78,7 +78,7 @@ func TestHandlerHandle(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject: "true",
-							agent.AnnotationVaultRole:   "demo",
+							agent.AnnotationOpenbaoRole:   "demo",
 						},
 					},
 					Spec: basicSpec,
@@ -127,7 +127,7 @@ func TestHandlerHandle(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject: "false",
-							agent.AnnotationVaultRole:   "demo",
+							agent.AnnotationOpenbaoRole:   "demo",
 						},
 					},
 					Spec: basicSpec,
@@ -146,7 +146,7 @@ func TestHandlerHandle(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject: "true",
-							agent.AnnotationVaultRole:   "demo",
+							agent.AnnotationOpenbaoRole:   "demo",
 						},
 					},
 					Spec: basicSpec,
@@ -174,7 +174,7 @@ func TestHandlerHandle(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject:    "true",
-							agent.AnnotationVaultRole:      "demo",
+							agent.AnnotationOpenbaoRole:      "demo",
 							agent.AnnotationAgentInitFirst: "true",
 						},
 					},
@@ -234,7 +234,7 @@ func TestHandlerHandle(t *testing.T) {
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject:    "true",
 							agent.AnnotationAgentConfigMap: "demo",
-							agent.AnnotationVaultTLSSecret: "demo",
+							agent.AnnotationOpenbaoTLSSecret: "demo",
 						},
 					},
 					Spec: basicSpec,
@@ -264,8 +264,8 @@ func TestHandlerHandle(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject:    "true",
-							agent.AnnotationVaultRole:      "demo",
-							agent.AnnotationVaultTLSSecret: "demo",
+							agent.AnnotationOpenbaoRole:      "demo",
+							agent.AnnotationOpenbaoTLSSecret: "demo",
 						},
 					},
 					Spec: basicSpec,
@@ -294,8 +294,8 @@ func TestHandlerHandle(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject:      "true",
-							agent.AnnotationVaultRole:        "demo",
-							agent.AnnotationVaultTLSSecret:   "demo",
+							agent.AnnotationOpenbaoRole:        "demo",
+							agent.AnnotationOpenbaoTLSSecret:   "demo",
 							agent.AnnotationAgentPrePopulate: "false",
 						},
 					},
@@ -322,8 +322,8 @@ func TestHandlerHandle(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject:          "true",
-							agent.AnnotationVaultRole:            "demo",
-							agent.AnnotationVaultTLSSecret:       "demo",
+							agent.AnnotationOpenbaoRole:            "demo",
+							agent.AnnotationOpenbaoTLSSecret:       "demo",
 							agent.AnnotationAgentPrePopulateOnly: "true",
 						},
 					},
@@ -350,7 +350,7 @@ func TestHandlerHandle(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject:           "true",
-							agent.AnnotationVaultRole:             "demo",
+							agent.AnnotationOpenbaoRole:             "demo",
 							agent.AnnotationAgentCopyVolumeMounts: "web-init",
 						},
 					},
@@ -378,7 +378,7 @@ func TestHandlerHandle(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject:                "true",
-							agent.AnnotationVaultRole:                  "demo",
+							agent.AnnotationOpenbaoRole:                  "demo",
 							agent.AnnotationAgentInjectDefaultTemplate: "foobar",
 						},
 					},
@@ -397,7 +397,7 @@ func TestHandlerHandle(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{
 						Annotations: map[string]string{
 							agent.AnnotationAgentInject:                "true",
-							agent.AnnotationVaultRole:                  "demo",
+							agent.AnnotationOpenbaoRole:                  "demo",
 							agent.AnnotationAgentShareProcessNamespace: "true",
 						},
 					},

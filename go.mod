@@ -1,4 +1,4 @@
-module github.com/hashicorp/vault-k8s
+module github.com/openbao/openbao-k8s
 
 go 1.22.0
 
@@ -11,7 +11,7 @@ require (
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/hashicorp/go-secure-stdlib/parseutil v0.1.8
 	github.com/hashicorp/go-secure-stdlib/tlsutil v0.1.3
-	github.com/hashicorp/vault/sdk v0.12.0
+	github.com/openbao/openbao/sdk v0.12.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/kr/text v0.2.0
 	github.com/mitchellh/cli v1.1.5

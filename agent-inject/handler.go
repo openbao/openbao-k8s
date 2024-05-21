@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-hclog"
-	"github.com/hashicorp/vault-k8s/agent-inject/agent"
-	"github.com/hashicorp/vault/sdk/helper/strutil"
+	"github.com/openbao/openbao-k8s/agent-inject/agent"
+	"github.com/openbao/openbao/sdk/helper/strutil"
 	admissionv1 "k8s.io/api/admission/v1"
 	"k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
@@ -48,13 +48,13 @@ type Handler struct {
 	// RequireAnnotation means that the annotation must be given to inject.
 	// If this is false, injection is default.
 	RequireAnnotation          bool
-	VaultAddress               string
-	VaultCACertBytes           string
-	VaultAuthType              string
-	VaultAuthPath              string
-	VaultNamespace             string
+	OpenbaoAddress               string
+	OpenbaoCACertBytes           string
+	OpenbaoAuthType              string
+	OpenbaoAuthPath              string
+	OpenbaoNamespace             string
 	ProxyAddress               string
-	ImageVault                 string
+	ImageOpenbao                 string
 	Clientset                  *kubernetes.Clientset
 	Log                        hclog.Logger
 	RevokeOnShutdown           bool
@@ -189,11 +189,11 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 
 	h.Log.Debug("setting default annotations..")
 	cfg := agent.AgentConfig{
-		Image:                      h.ImageVault,
-		Address:                    h.VaultAddress,
-		AuthType:                   h.VaultAuthType,
-		AuthPath:                   h.VaultAuthPath,
-		VaultNamespace:             h.VaultNamespace,
+		Image:                      h.ImageOpenbao,
+		Address:                    h.OpenbaoAddress,
+		AuthType:                   h.OpenbaoAuthType,
+		AuthPath:                   h.OpenbaoAuthPath,
+		OpenbaoNamespace:             h.OpenbaoNamespace,
 		ProxyAddress:               h.ProxyAddress,
 		Namespace:                  req.Namespace,
 		RevokeOnShutdown:           h.RevokeOnShutdown,
@@ -229,7 +229,7 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 		err := fmt.Errorf("error creating new agent sidecar: %s", err)
 		return admissionError(req.UID, err)
 	}
-	agentSidecar.Vault.CACertBytes = h.VaultCACertBytes
+	agentSidecar.Openbao.CACertBytes = h.OpenbaoCACertBytes
 
 	h.Log.Debug("validating agent configuration..")
 	err = agentSidecar.Validate()

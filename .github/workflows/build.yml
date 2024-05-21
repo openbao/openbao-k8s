@@ -11,7 +11,7 @@ on:
         required: false
 
 env:
-  PKG_NAME: "vault-k8s"
+  PKG_NAME: "openbao-k8s"
 
 jobs:
   get-product-version:

@@ -6,7 +6,7 @@ package agent
 import (
 	"testing"
 
-	"github.com/hashicorp/vault/sdk/helper/strutil"
+	"github.com/openbao/openbao/sdk/helper/strutil"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -19,13 +19,13 @@ func TestContainerEnvs(t *testing.T) {
 		agent        Agent
 		expectedEnvs []string
 	}{
-		{Agent{}, append(baseEnvVars, "VAULT_CONFIG")},
-		{Agent{Vault: Vault{Address: "http://localhost:8200"}, ConfigMapName: "foobar"}, append(baseEnvVars, "VAULT_SKIP_VERIFY", "VAULT_ADDR")},
-		{Agent{Vault: Vault{ClientMaxRetries: "0"}}, append(baseEnvVars, "VAULT_CONFIG", "VAULT_MAX_RETRIES")},
-		{Agent{Vault: Vault{ClientTimeout: "5s"}}, append(baseEnvVars, "VAULT_CONFIG", "VAULT_CLIENT_TIMEOUT")},
-		{Agent{Vault: Vault{ClientMaxRetries: "0", ClientTimeout: "5s"}}, append(baseEnvVars, "VAULT_CONFIG", "VAULT_MAX_RETRIES", "VAULT_CLIENT_TIMEOUT")},
-		{Agent{ConfigMapName: "foobar", Vault: Vault{Address: "http://localhost:8200", ClientMaxRetries: "0", ClientTimeout: "5s", LogLevel: "info", ProxyAddress: "http://proxy:3128"}}, append(baseEnvVars, "VAULT_MAX_RETRIES", "VAULT_CLIENT_TIMEOUT", "VAULT_LOG_LEVEL", "HTTPS_PROXY", "VAULT_SKIP_VERIFY", "VAULT_ADDR")},
-		{Agent{Vault: Vault{GoMaxProcs: "1"}}, append(baseEnvVars, "VAULT_CONFIG", "GOMAXPROCS")},
+		{Agent{}, append(baseEnvVars, "OPENBAO_CONFIG")},
+		{Agent{Openbao: Openbao{Address: "http://localhost:8200"}, ConfigMapName: "foobar"}, append(baseEnvVars, "OPENBAO_SKIP_VERIFY", "OPENBAO_ADDR")},
+		{Agent{Openbao: Openbao{ClientMaxRetries: "0"}}, append(baseEnvVars, "OPENBAO_CONFIG", "OPENBAO_MAX_RETRIES")},
+		{Agent{Openbao: Openbao{ClientTimeout: "5s"}}, append(baseEnvVars, "OPENBAO_CONFIG", "OPENBAO_CLIENT_TIMEOUT")},
+		{Agent{Openbao: Openbao{ClientMaxRetries: "0", ClientTimeout: "5s"}}, append(baseEnvVars, "OPENBAO_CONFIG", "OPENBAO_MAX_RETRIES", "OPENBAO_CLIENT_TIMEOUT")},
+		{Agent{ConfigMapName: "foobar", Openbao: Openbao{Address: "http://localhost:8200", ClientMaxRetries: "0", ClientTimeout: "5s", LogLevel: "info", ProxyAddress: "http://proxy:3128"}}, append(baseEnvVars, "OPENBAO_MAX_RETRIES", "OPENBAO_CLIENT_TIMEOUT", "OPENBAO_LOG_LEVEL", "HTTPS_PROXY", "OPENBAO_SKIP_VERIFY", "OPENBAO_ADDR")},
+		{Agent{Openbao: Openbao{GoMaxProcs: "1"}}, append(baseEnvVars, "OPENBAO_CONFIG", "GOMAXPROCS")},
 	}
 
 	for _, tt := range tests {
@@ -50,9 +50,9 @@ func TestContainerEnvsForIRSA(t *testing.T) {
 		agent        Agent
 		expectedEnvs []string
 	}{
-		{Agent{Pod: testPodWithoutIRSA()}, append(baseEnvVars, "VAULT_CONFIG")},
-		{Agent{Pod: testPodWithIRSA(), Vault: Vault{AuthType: "aws"}},
-			append(baseEnvVars, "VAULT_CONFIG", "AWS_ROLE_ARN", "AWS_WEB_IDENTITY_TOKEN_FILE", "AWS_DEFAULT_REGION", "AWS_REGION"),
+		{Agent{Pod: testPodWithoutIRSA()}, append(baseEnvVars, "OPENBAO_CONFIG")},
+		{Agent{Pod: testPodWithIRSA(), Openbao: Openbao{AuthType: "aws"}},
+			append(baseEnvVars, "OPENBAO_CONFIG", "AWS_ROLE_ARN", "AWS_WEB_IDENTITY_TOKEN_FILE", "AWS_DEFAULT_REGION", "AWS_REGION"),
 		},
 	}
 	for _, tt := range envTests {
@@ -71,11 +71,11 @@ func TestAwsRegionEnvForAwsAuthMethod(t *testing.T) {
 		agent        Agent
 		expectedEnvs []string
 	}{
-		{Agent{Pod: testPodWithRegionInAuthConfig(), Vault: Vault{AuthType: "aws", AuthConfig: getRegionMap()}},
-			append(baseEnvVars, "VAULT_CONFIG", "AWS_ROLE_ARN", "AWS_WEB_IDENTITY_TOKEN_FILE", "AWS_REGION"),
+		{Agent{Pod: testPodWithRegionInAuthConfig(), Openbao: Openbao{AuthType: "aws", AuthConfig: getRegionMap()}},
+			append(baseEnvVars, "OPENBAO_CONFIG", "AWS_ROLE_ARN", "AWS_WEB_IDENTITY_TOKEN_FILE", "AWS_REGION"),
 		},
-		{Agent{Pod: testPodWithIRSA(), Vault: Vault{AuthType: "aws"}},
-			append(baseEnvVars, "VAULT_CONFIG", "AWS_ROLE_ARN", "AWS_WEB_IDENTITY_TOKEN_FILE", "AWS_DEFAULT_REGION", "AWS_REGION"),
+		{Agent{Pod: testPodWithIRSA(), Openbao: Openbao{AuthType: "aws"}},
+			append(baseEnvVars, "OPENBAO_CONFIG", "AWS_ROLE_ARN", "AWS_WEB_IDENTITY_TOKEN_FILE", "AWS_DEFAULT_REGION", "AWS_REGION"),
 		},
 	}
 	for _, item := range input {

@@ -6,9 +6,9 @@ on: [push, workflow_dispatch]
 jobs:
   test:
     env:
-      # vault-k8s version
+      # openbao-k8s version
       VERSION: "0.0.0-dev"
-      TARBALL_FILE: vault-k8s-image.docker.tar
+      TARBALL_FILE: openbao-k8s-image.docker.tar
     outputs:
       version: ${{ env.VERSION }}
       tarball_file: ${{ env.TARBALL_FILE }}
@@ -23,7 +23,7 @@ jobs:
       - name: Build
         run: |
           REGISTRY=hashicorp make build image
-          docker save --output "${TARBALL_FILE}" hashicorp/vault-k8s:${{ env.VERSION }}
+          docker save --output "${TARBALL_FILE}" openbao/openbao-k8s:${{ env.VERSION }}
 
       - name: Test
         run: make test
@@ -38,14 +38,14 @@ jobs:
     steps:
       - run: echo "setting versions"
     outputs:
-      # vault-k8s version
+      # openbao-k8s version
       K8S_VERSIONS: '["1.29.2", "1.28.7", "1.27.11", "1.26.14", "1.25.16"]'
-      VAULT_N: "1.16.1"
-      VAULT_N_1: "1.15.6"
-      VAULT_N_2: "1.14.10"
+      OPENBAO_N: "1.16.1"
+      OPENBAO_N_1: "1.15.6"
+      OPENBAO_N_2: "1.14.10"
 
-  latest-vault:
-    name: vault:${{ matrix.vault-version }} kind:${{ matrix.k8s-version }}
+  latest-openbao:
+    name: openbao:${{ matrix.openbao-version }} kind:${{ matrix.k8s-version }}
     runs-on: ubuntu-latest
     needs:
       - test
@@ -53,22 +53,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        vault-version:
-          - ${{ needs.versions.outputs.VAULT_N }}
+        openbao-version:
+          - ${{ needs.versions.outputs.OPENBAO_N }}
         k8s-version: ${{ fromJson(needs.versions.outputs.K8S_VERSIONS) }}
 
     steps:
       - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       - uses: ./.github/actions/integration-test
-        name: vault:${{ matrix.vault-version }} kind:${{ matrix.k8s-version }}
+        name: openbao:${{ matrix.openbao-version }} kind:${{ matrix.k8s-version }}
         with:
           k8s-version: ${{ matrix.k8s-version }}
-          vault-version: ${{ matrix.vault-version }}
+          openbao-version: ${{ matrix.openbao-version }}
           tarball-file: ${{ needs.test.outputs.tarball_file }}
           version: ${{ needs.test.outputs.version }}
 
   latest-k8s:
-    name: vault:${{ matrix.vault-version }} kind:${{ matrix.k8s-version }}
+    name: openbao:${{ matrix.openbao-version }} kind:${{ matrix.k8s-version }}
     needs:
       - versions
       - test
@@ -77,16 +77,16 @@ jobs:
       matrix:
         k8s-version:
           - ${{ fromJson(needs.versions.outputs.K8S_VERSIONS)[0] }}
-        vault-version:
-          - ${{ needs.versions.outputs.VAULT_N_1 }}
-          - ${{ needs.versions.outputs.VAULT_N_2 }}
+        openbao-version:
+          - ${{ needs.versions.outputs.OPENBAO_N_1 }}
+          - ${{ needs.versions.outputs.OPENBAO_N_2 }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       - uses: ./.github/actions/integration-test
-        name: vault:${{ matrix.vault-version }} kind:${{ matrix.k8s-version }}
+        name: openbao:${{ matrix.openbao-version }} kind:${{ matrix.k8s-version }}
         with:
           k8s-version: ${{ matrix.k8s-version }}
-          vault-version: ${{ matrix.vault-version }}
+          openbao-version: ${{ matrix.openbao-version }}
           tarball-file: ${{ needs.test.outputs.tarball_file }}
           version: ${{ needs.test.outputs.version }}

@@ -7,17 +7,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "hashicorp/vault-ecosystem-foundations"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "hashicorp/vault-ecosystem-foundations"
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "daily"
-    reviewers:
-      - "hashicorp/vault-ecosystem-foundations"
