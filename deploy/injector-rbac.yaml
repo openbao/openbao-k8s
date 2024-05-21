@@ -5,18 +5,18 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: vault-injector
+  name: openbao-injector
   labels:
-    app.kubernetes.io/name: vault-injector
-    app.kubernetes.io/instance: vault
+    app.kubernetes.io/name: openbao-injector
+    app.kubernetes.io/instance: openbao
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: vault-injector-clusterrole
+  name: openbao-injector-clusterrole
   labels:
-    app.kubernetes.io/name: vault-injector
-    app.kubernetes.io/instance: vault
+    app.kubernetes.io/name: openbao-injector
+    app.kubernetes.io/instance: openbao
 rules:
 - apiGroups: ["admissionregistration.k8s.io"]
   resources: ["mutatingwebhookconfigurations"]
@@ -33,26 +33,26 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: vault-injector-binding
+  name: openbao-injector-binding
   labels:
-    app.kubernetes.io/name: vault-injector
-    app.kubernetes.io/instance: vault
+    app.kubernetes.io/name: openbao-injector
+    app.kubernetes.io/instance: openbao
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: vault-injector-clusterrole
+  name: openbao-injector-clusterrole
 subjects:
 - kind: ServiceAccount
-  name: vault-injector
-  namespace: vault
+  name: openbao-injector
+  namespace: openbao
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: vault-injector-role
+  name: openbao-injector-role
   labels:
-    app.kubernetes.io/name: vault-injector
-    app.kubernetes.io/instance: vault
+    app.kubernetes.io/name: openbao-injector
+    app.kubernetes.io/instance: openbao
 rules:
 - apiGroups: [""]
   resources: ["secrets", "configmaps"]
@@ -72,15 +72,15 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: vault-injector-rolebinding
+  name: openbao-injector-rolebinding
   labels:
-    app.kubernetes.io/name: vault-injector
-    app.kubernetes.io/instance: vault
+    app.kubernetes.io/name: openbao-injector
+    app.kubernetes.io/instance: openbao
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: vault-injector-role
+  name: openbao-injector-role
 subjects:
 - kind: ServiceAccount
-  name: vault-injector
-  namespace: vault
+  name: openbao-injector
+  namespace: openbao

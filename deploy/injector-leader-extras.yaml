@@ -6,4 +6,4 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: vault-injector-certs
+  name: openbao-injector-certs

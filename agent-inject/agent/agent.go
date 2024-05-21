@@ -11,15 +11,15 @@ import (
 
 	jsonpatch "github.com/evanphx/json-patch"
 	"github.com/hashicorp/go-secure-stdlib/parseutil"
-	"github.com/hashicorp/vault/sdk/helper/strutil"
+	"github.com/openbao/openbao/sdk/helper/strutil"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/utils/pointer"
 )
 
 const (
-	DefaultVaultImage                       = "hashicorp/vault:1.16.1"
-	DefaultVaultAuthType                    = "kubernetes"
-	DefaultVaultAuthPath                    = "auth/kubernetes"
+	DefaultOpenbaoImage                       = "openbao/openbao:1.16.1"
+	DefaultOpenbaoAuthType                    = "kubernetes"
+	DefaultOpenbaoAuthPath                    = "auth/kubernetes"
 	DefaultAgentRunAsUser                   = 100
 	DefaultAgentRunAsGroup                  = 1000
 	DefaultAgentRunAsSameUser               = false
@@ -34,23 +34,23 @@ const (
 	DefaultAgentUseLeaderElector            = false
 	DefaultAgentInjectToken                 = false
 	DefaultTemplateConfigExitOnRetryFailure = true
-	DefaultServiceAccountMount              = "/var/run/secrets/vault.hashicorp.com/serviceaccount"
+	DefaultServiceAccountMount              = "/var/run/secrets/openbao.openbao.org/serviceaccount"
 	DefaultEnableQuit                       = false
 	DefaultAutoAuthEnableOnExit             = false
 )
 
 // Agent is the top level structure holding all the
-// configurations for the Vault Agent container.
+// configurations for the Openbao Agent container.
 type Agent struct {
 	// Annotations are the current pod annotations used to
-	// configure the Vault Agent container.
+	// configure the Openbao Agent container.
 	Annotations map[string]string
 
 	// DefaultTemplate is the default template to be used when
 	// no custom template is specified via annotations.
 	DefaultTemplate string
 
-	// ImageName is the name of the Vault image to use for the
+	// ImageName is the name of the Openbao image to use for the
 	// sidecar container.
 	ImageName string
 
@@ -86,12 +86,12 @@ type Agent struct {
 	// added to the request.
 	PrePopulateOnly bool
 
-	// RevokeOnShutdown controls whether a sidecar container will attempt to revoke its Vault
+	// RevokeOnShutdown controls whether a sidecar container will attempt to revoke its Openbao
 	// token on shutting down.
 	RevokeOnShutdown bool
 
 	// RevokeGrace controls after receiving the signal for pod
-	// termination that the container will attempt to revoke its own Vault token.
+	// termination that the container will attempt to revoke its own Openbao token.
 	RevokeGrace uint64
 
 	// RequestsCPU is the requested minimum CPU amount required  when being scheduled to deploy.
@@ -103,13 +103,13 @@ type Agent struct {
 	// RequestsEphemeral is the requested minimum ephemeral storage amount required when being scheduled to deploy.
 	RequestsEphemeral string
 
-	// Secrets are all the templates, the path in Vault where the secret can be
+	// Secrets are all the templates, the path in Openbao where the secret can be
 	// found, and the unique name of the secret which will be used for the filename.
 	Secrets []*Secret
 
 	// ServiceAccountTokenVolume holds details of a volume mount for a
 	// Kubernetes service account token for the pod. This is used when we mount
-	// the service account to the Vault Agent container(s).
+	// the service account to the Openbao Agent container(s).
 	ServiceAccountTokenVolume *ServiceAccountTokenVolume
 
 	// Status is the current injection status.  The only status considered is "injected",
@@ -117,27 +117,27 @@ type Agent struct {
 	// mutation.
 	Status string
 
-	// ConfigMapName is the name of the configmap a user wants to mount to Vault Agent
+	// ConfigMapName is the name of the configmap a user wants to mount to Openbao Agent
 	// container(s).
 	ConfigMapName string
 
-	// Vault is the structure holding all the Vault specific configurations.
-	Vault Vault
+	// Openbao is the structure holding all the Openbao specific configurations.
+	Openbao Openbao
 
-	// VaultAgentCache is the structure holding the Vault agent cache specific configurations
-	VaultAgentCache VaultAgentCache
+	// OpenbaoAgentCache is the structure holding the Openbao agent cache specific configurations
+	OpenbaoAgentCache OpenbaoAgentCache
 
-	// VaultAgentTemplateConfig is the structure holding the Vault agent
+	// OpenbaoAgentTemplateConfig is the structure holding the Openbao agent
 	// template_config specific configuration
-	VaultAgentTemplateConfig VaultAgentTemplateConfig
+	OpenbaoAgentTemplateConfig OpenbaoAgentTemplateConfig
 
-	// RunAsUser is the user ID to run the Vault agent container(s) as.
+	// RunAsUser is the user ID to run the Openbao agent container(s) as.
 	RunAsUser int64
 
-	// RunAsGroup is the group ID to run the Vault agent container(s) as.
+	// RunAsGroup is the group ID to run the Openbao agent container(s) as.
 	RunAsGroup int64
 
-	// RunAsSameID sets the user ID of the Vault agent container(s) to be the
+	// RunAsSameID sets the user ID of the Openbao agent container(s) to be the
 	// same as the first application container
 	RunAsSameID bool
 
@@ -148,8 +148,8 @@ type Agent struct {
 	// SecurityContext set.
 	SetSecurityContext bool
 
-	// ExtraSecret is the Kubernetes secret to mount as a volume in the Vault agent container
-	// which can be referenced by the Agent config for secrets. Mounted at /vault/custom/
+	// ExtraSecret is the Kubernetes secret to mount as a volume in the Openbao agent container
+	// which can be referenced by the Agent config for secrets. Mounted at /openbao/custom/
 	ExtraSecret string
 
 	// AwsIamTokenAccountName is the aws iam volume mount name for the pod.
@@ -162,11 +162,11 @@ type Agent struct {
 	AwsIamTokenAccountPath string
 
 	// CopyVolumeMounts is the name of the container in the Pod whose volume mounts
-	// should be copied into the Vault Agent init and/or sidecar containers.
+	// should be copied into the Openbao Agent init and/or sidecar containers.
 	CopyVolumeMounts string
 
 	// InjectToken controls whether the auto-auth token is injected into the
-	// secrets volume (e.g. /vault/secrets/token)
+	// secrets volume (e.g. /openbao/secrets/token)
 	InjectToken bool
 
 	// EnableQuit controls whether the quit endpoint is enabled on a localhost
@@ -194,7 +194,7 @@ type ServiceAccountTokenVolume struct {
 	// Name of the volume
 	Name string
 
-	// MountPath of the volume within vault agent containers
+	// MountPath of the volume within openbao agent containers
 	MountPath string
 
 	// TokenPath to the JWT token within the volume
@@ -210,7 +210,7 @@ type Secret struct {
 	// RawName is original annotation suffix value
 	RawName string
 
-	// Path in Vault where the secret desired can be found.
+	// Path in Openbao where the secret desired can be found.
 	Path string
 
 	// Template is the optional custom template to use when rendering the secret.
@@ -236,75 +236,75 @@ type Secret struct {
 	ErrMissingKey bool
 }
 
-type Vault struct {
-	// Address is the Vault service address.
+type Openbao struct {
+	// Address is the Openbao service address.
 	Address string
 
-	// ProxyAddress is the proxy service address to use when talking to the Vault service.
+	// ProxyAddress is the proxy service address to use when talking to the Openbao service.
 	ProxyAddress string
 
-	// AuthType is type of Vault Auth Method to use.
+	// AuthType is type of Openbao Auth Method to use.
 	AuthType string
 
-	// AuthPath is the Mount Path of Vault Auth Method.
+	// AuthPath is the Mount Path of Openbao Auth Method.
 	AuthPath string
 
 	// AuthConfig is the Auto Auth Method configuration.
 	AuthConfig map[string]interface{}
 
 	// CACert is the name of the Certificate Authority certificate
-	// to use when validating Vault's server certificates. It takes
+	// to use when validating Openbao's server certificates. It takes
 	// precedence over CACertBytes.
 	CACert string
 
 	// CACertBytes is the contents of the CA certificate to trust
-	// for TLS with Vault as a PEM-encoded certificate or bundle.
+	// for TLS with Openbao as a PEM-encoded certificate or bundle.
 	// Can also be base64 encoded PEM contents.
 	CACertBytes string
 
 	// CAKey is the name of the Certificate Authority key
-	// to use when validating Vault's server certificates.
+	// to use when validating Openbao's server certificates.
 	CAKey string
 
 	// ClientCert is the name of the client certificate to use when communicating
-	// with Vault over TLS.
+	// with Openbao over TLS.
 	ClientCert string
 
 	// ClientKey is the name of the client key to use when communicating
-	// with Vault over TLS.
+	// with Openbao over TLS.
 	ClientKey string
 
 	// ClientMaxRetries configures the number of retries the client should make
-	// when 5-- errors are received from the Vault server.  Default is 2.
+	// when 5-- errors are received from the Openbao server.  Default is 2.
 	ClientMaxRetries string
 
 	// ClientTimeout is the max number in seconds the client should attempt to
-	// make a request to the Vault server.
+	// make a request to the Openbao server.
 	ClientTimeout string
 
-	// GoMaxProcs sets the Vault Agent go max procs.
+	// GoMaxProcs sets the Openbao Agent go max procs.
 	GoMaxProcs string
 
-	// LogLevel sets the Vault Agent log level.  Defaults to info.
+	// LogLevel sets the Openbao Agent log level.  Defaults to info.
 	LogLevel string
 
-	// LogFormat sets the Vault Agent log format.  Defaults to standard.
+	// LogFormat sets the Openbao Agent log format.  Defaults to standard.
 	LogFormat string
 
-	// Namespace is the Vault namespace to prepend to secret paths.
+	// Namespace is the Openbao namespace to prepend to secret paths.
 	Namespace string
 
-	// Role is the name of the Vault role to use for authentication.
+	// Role is the name of the Openbao role to use for authentication.
 	Role string
 
-	// TLSSecret is the name of the secret to be mounted to the Vault Agent container
-	// containing the TLS certificates required to communicate with Vault.
+	// TLSSecret is the name of the secret to be mounted to the Openbao Agent container
+	// containing the TLS certificates required to communicate with Openbao.
 	TLSSecret string
 
-	// TLSSkipVerify toggles verification of Vault's certificates.
+	// TLSSkipVerify toggles verification of Openbao's certificates.
 	TLSSkipVerify bool
 
-	// TLSServerName is the name of the Vault server to use when validating Vault's
+	// TLSServerName is the name of the Openbao server to use when validating Openbao's
 	// TLS certificates.
 	TLSServerName string
 
@@ -318,7 +318,7 @@ type Vault struct {
 	AgentTelemetryConfig map[string]interface{}
 }
 
-type VaultAgentCache struct {
+type OpenbaoAgentCache struct {
 	// Enable configures whether the cache is enabled or not
 	Enable bool
 
@@ -336,17 +336,17 @@ type VaultAgentCache struct {
 	ExitOnErr bool
 }
 
-type VaultAgentTemplateConfig struct {
+type OpenbaoAgentTemplateConfig struct {
 	// ExitOnRetryFailure configures whether agent should exit after failing
 	// all its retry attempts when rendering templates
 	ExitOnRetryFailure bool
 
 	// StaticSecretRenderInterval If specified, configures how often
-	// Vault Agent Template should render non-leased secrets such as KV v2
+	// Openbao Agent Template should render non-leased secrets such as KV v2
 	StaticSecretRenderInterval string
 
 	// MaxConnectionsPerHost limits the total number of connections
-	//  that the Vault Agent templating engine can use for a particular Vault host. This limit
+	//  that the Openbao Agent templating engine can use for a particular Openbao host. This limit
 	//  includes connections in the dialing, active, and idle states.
 	MaxConnectionsPerHost int64
 }
@@ -358,7 +358,7 @@ func New(pod *corev1.Pod) (*Agent, error) {
 		return nil, err
 	}
 	var iamName, iamPath string
-	if pod.Annotations[AnnotationVaultAuthType] == "aws" {
+	if pod.Annotations[AnnotationOpenbaoAuthType] == "aws" {
 		iamName, iamPath = getAwsIamTokenVolume(pod)
 	}
 
@@ -384,24 +384,24 @@ func New(pod *corev1.Pod) (*Agent, error) {
 		AwsIamTokenAccountPath:    iamPath,
 		JsonPatch:                 pod.Annotations[AnnotationAgentJsonPatch],
 		InitJsonPatch:             pod.Annotations[AnnotationAgentInitJsonPatch],
-		Vault: Vault{
-			Address:          pod.Annotations[AnnotationVaultService],
+		Openbao: Openbao{
+			Address:          pod.Annotations[AnnotationOpenbaoService],
 			ProxyAddress:     pod.Annotations[AnnotationProxyAddress],
-			AuthType:         pod.Annotations[AnnotationVaultAuthType],
-			AuthPath:         pod.Annotations[AnnotationVaultAuthPath],
-			CACert:           pod.Annotations[AnnotationVaultCACert],
-			CAKey:            pod.Annotations[AnnotationVaultCAKey],
-			ClientCert:       pod.Annotations[AnnotationVaultClientCert],
-			ClientKey:        pod.Annotations[AnnotationVaultClientKey],
-			ClientMaxRetries: pod.Annotations[AnnotationVaultClientMaxRetries],
-			ClientTimeout:    pod.Annotations[AnnotationVaultClientTimeout],
-			GoMaxProcs:       pod.Annotations[AnnotationVaultGoMaxProcs],
-			LogLevel:         pod.Annotations[AnnotationVaultLogLevel],
-			LogFormat:        pod.Annotations[AnnotationVaultLogFormat],
-			Namespace:        pod.Annotations[AnnotationVaultNamespace],
-			Role:             pod.Annotations[AnnotationVaultRole],
-			TLSSecret:        pod.Annotations[AnnotationVaultTLSSecret],
-			TLSServerName:    pod.Annotations[AnnotationVaultTLSServerName],
+			AuthType:         pod.Annotations[AnnotationOpenbaoAuthType],
+			AuthPath:         pod.Annotations[AnnotationOpenbaoAuthPath],
+			CACert:           pod.Annotations[AnnotationOpenbaoCACert],
+			CAKey:            pod.Annotations[AnnotationOpenbaoCAKey],
+			ClientCert:       pod.Annotations[AnnotationOpenbaoClientCert],
+			ClientKey:        pod.Annotations[AnnotationOpenbaoClientKey],
+			ClientMaxRetries: pod.Annotations[AnnotationOpenbaoClientMaxRetries],
+			ClientTimeout:    pod.Annotations[AnnotationOpenbaoClientTimeout],
+			GoMaxProcs:       pod.Annotations[AnnotationOpenbaoGoMaxProcs],
+			LogLevel:         pod.Annotations[AnnotationOpenbaoLogLevel],
+			LogFormat:        pod.Annotations[AnnotationOpenbaoLogFormat],
+			Namespace:        pod.Annotations[AnnotationOpenbaoNamespace],
+			Role:             pod.Annotations[AnnotationOpenbaoRole],
+			TLSSecret:        pod.Annotations[AnnotationOpenbaoTLSSecret],
+			TLSServerName:    pod.Annotations[AnnotationOpenbaoTLSServerName],
 			AuthMinBackoff:   pod.Annotations[AnnotationAgentAuthMinBackoff],
 			AuthMaxBackoff:   pod.Annotations[AnnotationAgentAuthMaxBackoff],
 		},
@@ -411,13 +411,13 @@ func New(pod *corev1.Pod) (*Agent, error) {
 	if err != nil {
 		return agent, err
 	}
-	agent.Vault.AuthConfig = agent.authConfig()
+	agent.Openbao.AuthConfig = agent.authConfig()
 	agent.Inject, err = agent.inject()
 	if err != nil {
 		return agent, err
 	}
 
-	agent.Vault.AgentTelemetryConfig = agent.telemetryConfig()
+	agent.Openbao.AgentTelemetryConfig = agent.telemetryConfig()
 
 	agent.InitFirst, err = agent.initFirst()
 	if err != nil {
@@ -446,7 +446,7 @@ func New(pod *corev1.Pod) (*Agent, error) {
 		return agent, err
 	}
 
-	agent.Vault.TLSSkipVerify, err = agent.tlsSkipVerify()
+	agent.Openbao.TLSSkipVerify, err = agent.tlsSkipVerify()
 	if err != nil {
 		return agent, err
 	}
@@ -502,7 +502,7 @@ func New(pod *corev1.Pod) (*Agent, error) {
 		return agent, err
 	}
 
-	agent.VaultAgentCache = VaultAgentCache{
+	agent.OpenbaoAgentCache = OpenbaoAgentCache{
 		Enable:           agentCacheEnable,
 		ListenerPort:     pod.Annotations[AnnotationAgentCacheListenerPort],
 		UseAutoAuthToken: pod.Annotations[AnnotationAgentCacheUseAutoAuthToken],
@@ -520,7 +520,7 @@ func New(pod *corev1.Pod) (*Agent, error) {
 		return nil, err
 	}
 
-	agent.VaultAgentTemplateConfig = VaultAgentTemplateConfig{
+	agent.OpenbaoAgentTemplateConfig = OpenbaoAgentTemplateConfig{
 		ExitOnRetryFailure:         exitOnRetryFailure,
 		StaticSecretRenderInterval: pod.Annotations[AnnotationTemplateConfigStaticSecretRenderInterval],
 		MaxConnectionsPerHost:      maxConnectionsPerHost,
@@ -548,7 +548,7 @@ func New(pod *corev1.Pod) (*Agent, error) {
 }
 
 // ShouldInject checks whether the pod in question should be injected
-// with Vault Agent containers.
+// with Openbao Agent containers.
 func ShouldInject(pod *corev1.Pod) (bool, error) {
 	raw, ok := pod.Annotations[AnnotationAgentInject]
 	if !ok {
@@ -585,7 +585,7 @@ func ShouldInject(pod *corev1.Pod) (bool, error) {
 	return true, nil
 }
 
-// Patch creates the necessary pod patches to inject the Vault Agent
+// Patch creates the necessary pod patches to inject the Openbao Agent
 // containers.
 func (a *Agent) Patch() ([]byte, error) {
 	var patches jsonpatch.Patch
@@ -619,7 +619,7 @@ func (a *Agent) Patch() ([]byte, error) {
 	}
 
 	// Add TLS Secret if one was provided
-	if a.Vault.TLSSecret != "" {
+	if a.Openbao.TLSSecret != "" {
 		patches = append(patches, addVolumes(
 			a.Pod.Spec.Volumes,
 			[]corev1.Volume{a.ContainerTLSSecretVolume()},
@@ -627,7 +627,7 @@ func (a *Agent) Patch() ([]byte, error) {
 	}
 
 	// Add persistent cache volume if configured
-	if a.VaultAgentCache.Persist {
+	if a.OpenbaoAgentCache.Persist {
 		patches = append(patches, addVolumes(
 			a.Pod.Spec.Volumes,
 			[]corev1.Volume{a.cacheVolume()},
@@ -655,7 +655,7 @@ func (a *Agent) Patch() ([]byte, error) {
 
 		// Init Containers run sequentially in Kubernetes and sometimes the order in
 		// which they run matters.  This reorders the init containers to put the agent first.
-		// For example, if an init container needed Vault secrets to work, the agent would need
+		// For example, if an init container needed Openbao secrets to work, the agent would need
 		// to run first.
 		if a.InitFirst {
 
@@ -680,7 +680,7 @@ func (a *Agent) Patch() ([]byte, error) {
 
 		// Add Volume Mounts
 		for i, container := range containers {
-			if container.Name == "vault-agent-init" {
+			if container.Name == "openbao-agent-init" {
 				continue
 			}
 			patches = append(patches, addVolumeMounts(
@@ -734,25 +734,25 @@ func (a *Agent) Validate() error {
 	}
 
 	if a.ImageName == "" {
-		return errors.New("no Vault image found")
+		return errors.New("no Openbao image found")
 	}
 
 	if a.ConfigMapName == "" {
-		if a.Vault.AuthType == "" {
-			return errors.New("no Vault Auth Type found")
+		if a.Openbao.AuthType == "" {
+			return errors.New("no Openbao Auth Type found")
 		}
 
-		if a.Vault.AuthType == DefaultVaultAuthType &&
-			a.Vault.Role == "" && a.Annotations[fmt.Sprintf("%s-role", AnnotationVaultAuthConfig)] == "" {
-			return errors.New("no Vault role found")
+		if a.Openbao.AuthType == DefaultOpenbaoAuthType &&
+			a.Openbao.Role == "" && a.Annotations[fmt.Sprintf("%s-role", AnnotationOpenbaoAuthConfig)] == "" {
+			return errors.New("no Openbao role found")
 		}
 
-		if a.Vault.AuthPath == "" {
-			return errors.New("no Vault Auth Path found")
+		if a.Openbao.AuthPath == "" {
+			return errors.New("no Openbao Auth Path found")
 		}
 
-		if a.Vault.Address == "" {
-			return errors.New("no Vault address found")
+		if a.Openbao.Address == "" {
+			return errors.New("no Openbao address found")
 		}
 	}
 	return nil
@@ -833,7 +833,7 @@ func getTokenPathFromProjectedVolume(volume corev1.Volume) (string, error) {
 	return "", fmt.Errorf("failed to find tokenPath for projected volume %q", volume.Name)
 }
 
-// IRSA support - get aws_iam_token volume mount details to inject to vault containers
+// IRSA support - get aws_iam_token volume mount details to inject to openbao containers
 func getAwsIamTokenVolume(pod *corev1.Pod) (string, string) {
 	var awsIamTokenAccountName, awsIamTokenAccountPath string
 	for _, container := range pod.Spec.Containers {
@@ -846,7 +846,7 @@ func getAwsIamTokenVolume(pod *corev1.Pod) (string, string) {
 	return awsIamTokenAccountName, awsIamTokenAccountPath
 }
 
-// IRSA support - get aws envs to inject to vault containers
+// IRSA support - get aws envs to inject to openbao containers
 func (a *Agent) getAwsEnvsFromContainer(pod *corev1.Pod) map[string]string {
 	envMap := make(map[string]string)
 	for _, container := range pod.Spec.Containers {
@@ -861,21 +861,21 @@ func (a *Agent) getAwsEnvsFromContainer(pod *corev1.Pod) map[string]string {
 	return envMap
 }
 
-func (a *Agent) vaultCliFlags() []string {
+func (a *Agent) openbaoCliFlags() []string {
 	flags := []string{
-		fmt.Sprintf("-address=%s", a.Vault.Address),
+		fmt.Sprintf("-address=%s", a.Openbao.Address),
 	}
 
-	if a.Vault.CACert != "" {
-		flags = append(flags, fmt.Sprintf("-ca-cert=%s", a.Vault.CACert))
+	if a.Openbao.CACert != "" {
+		flags = append(flags, fmt.Sprintf("-ca-cert=%s", a.Openbao.CACert))
 	}
 
-	if a.Vault.ClientCert != "" {
-		flags = append(flags, fmt.Sprintf("-client-cert=%s", a.Vault.ClientCert))
+	if a.Openbao.ClientCert != "" {
+		flags = append(flags, fmt.Sprintf("-client-cert=%s", a.Openbao.ClientCert))
 	}
 
-	if a.Vault.ClientKey != "" {
-		flags = append(flags, fmt.Sprintf("-client-key=%s", a.Vault.ClientKey))
+	if a.Openbao.ClientKey != "" {
+		flags = append(flags, fmt.Sprintf("-client-key=%s", a.Openbao.ClientKey))
 	}
 
 	return flags

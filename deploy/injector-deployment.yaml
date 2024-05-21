@@ -5,26 +5,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vault-injector
+  name: openbao-injector
   labels:
-    app.kubernetes.io/name: vault-injector
-    app.kubernetes.io/instance: vault
+    app.kubernetes.io/name: openbao-injector
+    app.kubernetes.io/instance: openbao
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app.kubernetes.io/name: vault-injector
-      app.kubernetes.io/instance: vault
+      app.kubernetes.io/name: openbao-injector
+      app.kubernetes.io/instance: openbao
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: vault-injector
-        app.kubernetes.io/instance: vault
+        app.kubernetes.io/name: openbao-injector
+        app.kubernetes.io/instance: openbao
     spec:
-      serviceAccountName: "vault-injector"
+      serviceAccountName: "openbao-injector"
       containers:
         - name: sidecar-injector
-          image: "hashicorp/vault-k8s:1.4.1"
+          image: "openbao/openbao-k8s:1.4.1"
           imagePullPolicy: IfNotPresent
           env:
             - name: NAMESPACE
@@ -41,14 +41,14 @@ spec:
               value: "info"
             - name: AGENT_INJECT_LOG_FORMAT
               value: "standard"
-            - name: AGENT_INJECT_VAULT_ADDR
-              value: "https://vault.$(NAMESPACE).svc:8200"
-            - name: AGENT_INJECT_VAULT_IMAGE
-              value: "hashicorp/vault:1.16.1"
+            - name: AGENT_INJECT_OPENBAO_ADDR
+              value: "https://openbao.$(NAMESPACE).svc:8200"
+            - name: AGENT_INJECT_OPENBAO_IMAGE
+              value: "openbao/openbao:1.16.1"
             - name: AGENT_INJECT_TLS_AUTO
-              value: vault-agent-injector-cfg
+              value: openbao-agent-injector-cfg
             - name: AGENT_INJECT_TLS_AUTO_HOSTS
-              value: "vault-agent-injector-svc,vault-agent-injector-svc.$(NAMESPACE),vault-agent-injector-svc.$(NAMESPACE).svc"
+              value: "openbao-agent-injector-svc,openbao-agent-injector-svc.$(NAMESPACE),openbao-agent-injector-svc.$(NAMESPACE).svc"
             - name: AGENT_INJECT_USE_LEADER_ELECTOR
               value: "true"
             - name: AGENT_INJECT_DEFAULT_TEMPLATE

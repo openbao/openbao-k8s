@@ -13,10 +13,10 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 
-	"github.com/hashicorp/vault-k8s/agent-inject/internal"
+	"github.com/openbao/openbao-k8s/agent-inject/internal"
 
 	jsonpatch "github.com/evanphx/json-patch"
-	"github.com/hashicorp/vault/sdk/helper/pointerutil"
+	"github.com/openbao/openbao/sdk/helper/pointerutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -25,7 +25,7 @@ func basicAgentConfig() AgentConfig {
 	return AgentConfig{
 		Image:              "foobar-image",
 		Address:            "http://foobar:8200",
-		AuthType:           DefaultVaultAuthType,
+		AuthType:           DefaultOpenbaoAuthType,
 		AuthPath:           "test",
 		Namespace:          "test",
 		RevokeOnShutdown:   true,
@@ -57,7 +57,7 @@ func TestInitCanSet(t *testing.T) {
 		annotationKey   string
 		annotationValue string
 	}{
-		{annotationKey: AnnotationVaultService, annotationValue: "http://foobar:8200"},
+		{annotationKey: AnnotationOpenbaoService, annotationValue: "http://foobar:8200"},
 		{annotationKey: AnnotationAgentImage, annotationValue: "foobar-image"},
 		{annotationKey: AnnotationAgentRequestNamespace, annotationValue: "test"},
 		{annotationKey: AnnotationAgentRevokeOnShutdown, annotationValue: "true"},
@@ -95,7 +95,7 @@ func TestInitDefaults(t *testing.T) {
 		annotationKey   string
 		annotationValue string
 	}{
-		{annotationKey: AnnotationAgentImage, annotationValue: DefaultVaultImage},
+		{annotationKey: AnnotationAgentImage, annotationValue: DefaultOpenbaoImage},
 		{annotationKey: AnnotationAgentRunAsUser, annotationValue: strconv.Itoa(DefaultAgentRunAsUser)},
 		{annotationKey: AnnotationAgentRunAsGroup, annotationValue: strconv.Itoa(DefaultAgentRunAsGroup)},
 		{annotationKey: AnnotationAgentShareProcessNamespace, annotationValue: ""},
@@ -130,7 +130,7 @@ func TestInitError(t *testing.T) {
 		t.Error("expected error no address, got none")
 	}
 
-	errMsg := "address for Vault required"
+	errMsg := "address for Openbao required"
 	if !strings.Contains(err.Error(), errMsg) {
 		t.Errorf("expected '%s' error, got %s", errMsg, err)
 	}
@@ -142,7 +142,7 @@ func TestInitError(t *testing.T) {
 		t.Error("expected error no authPath, got none")
 	}
 
-	errMsg = "Vault Auth Path required"
+	errMsg = "Openbao Auth Path required"
 	if !strings.Contains(err.Error(), errMsg) {
 		t.Errorf("expected '%s' error, got %s", errMsg, err)
 	}
@@ -167,14 +167,14 @@ func TestSecretAnnotationsWithPreserveCaseSensitivityFlagOff(t *testing.T) {
 		expectedKey  string
 		expectedPath string
 	}{
-		{"vault.hashicorp.com/agent-inject-secret-foobar", "test1", "foobar", "test1"},
-		{"vault.hashicorp.com/agent-inject-secret-FOOBAR", "test2", "foobar", "test2"},
-		{"vault.hashicorp.com/agent-inject-secret-foobar-2_3", "test3", "foobar-2_3", "test3"},
-		{"vault.hashicorp.com/agent-inject-secret-server.crt", "creds/tls/somecert", "server.crt", "creds/tls/somecert"},
-		{"vault.hashicorp.com/agent-inject-secret", "test4", "", ""},
-		{"vault.hashicorp.com/agent-inject-secret-", "test5", "", ""},
+		{"openbao.openbao.org/agent-inject-secret-foobar", "test1", "foobar", "test1"},
+		{"openbao.openbao.org/agent-inject-secret-FOOBAR", "test2", "foobar", "test2"},
+		{"openbao.openbao.org/agent-inject-secret-foobar-2_3", "test3", "foobar-2_3", "test3"},
+		{"openbao.openbao.org/agent-inject-secret-server.crt", "creds/tls/somecert", "server.crt", "creds/tls/somecert"},
+		{"openbao.openbao.org/agent-inject-secret", "test4", "", ""},
+		{"openbao.openbao.org/agent-inject-secret-", "test5", "", ""},
 		// explicitly turn on preserve case sensitivity flag
-		{"vault.hashicorp.com/agent-inject-secret-FOOBAR_EXPLICIT", "test2", "FOOBAR_EXPLICIT", "test2"},
+		{"openbao.openbao.org/agent-inject-secret-FOOBAR_EXPLICIT", "test2", "FOOBAR_EXPLICIT", "test2"},
 	}
 
 	for _, tt := range tests {
@@ -221,8 +221,8 @@ func TestSecretAnnotationsWithPreserveCaseSensitivityFlagOn(t *testing.T) {
 		expectedKey  string
 		expectedPath string
 	}{
-		{"vault.hashicorp.com/agent-inject-secret-foobar", "test1", "foobar", "test1"},
-		{"vault.hashicorp.com/agent-inject-secret-FOOBAR", "test2", "FOOBAR", "test2"},
+		{"openbao.openbao.org/agent-inject-secret-foobar", "test1", "foobar", "test1"},
+		{"openbao.openbao.org/agent-inject-secret-FOOBAR", "test2", "FOOBAR", "test2"},
 	}
 
 	for _, tt := range tests {
@@ -271,42 +271,42 @@ func TestSecretLocationFileAnnotations(t *testing.T) {
 		{
 			"simple name",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar": "vault/test1",
-				"vault.hashicorp.com/agent-inject-file-foobar":   "foobar_simple_name",
+				"openbao.openbao.org/agent-inject-secret-foobar": "openbao/test1",
+				"openbao.openbao.org/agent-inject-file-foobar":   "foobar_simple_name",
 			},
 			"foobar",
 			"foobar_simple_name",
-			"vault/test1",
+			"openbao/test1",
 		},
 		{
 			"absolute file path",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar": "vault/test1",
-				"vault.hashicorp.com/agent-inject-file-foobar":   "/some/path/foobar_simple_name",
+				"openbao.openbao.org/agent-inject-secret-foobar": "openbao/test1",
+				"openbao.openbao.org/agent-inject-file-foobar":   "/some/path/foobar_simple_name",
 			},
 			"foobar",
 			"/some/path/foobar_simple_name",
-			"vault/test1",
+			"openbao/test1",
 		},
 		{
 			"long file name",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar": "vault/test2",
-				"vault.hashicorp.com/agent-inject-file-foobar":   "this_is_very_long_and/would_fail_in_kubernetes/if_in_annotation",
+				"openbao.openbao.org/agent-inject-secret-foobar": "openbao/test2",
+				"openbao.openbao.org/agent-inject-file-foobar":   "this_is_very_long_and/would_fail_in_kubernetes/if_in_annotation",
 			},
 			"foobar",
 			"this_is_very_long_and/would_fail_in_kubernetes/if_in_annotation",
-			"vault/test2",
+			"openbao/test2",
 		},
 		{
 			"file doesn't match secret annotation",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":         "vault/test2",
-				"vault.hashicorp.com/agent-inject-file-notcorresponding": "this_is_very_long_and/would_fail_in_kubernetes/if_in_annotation",
+				"openbao.openbao.org/agent-inject-secret-foobar":         "openbao/test2",
+				"openbao.openbao.org/agent-inject-file-notcorresponding": "this_is_very_long_and/would_fail_in_kubernetes/if_in_annotation",
 			},
 			"foobar",
 			"",
-			"vault/test2",
+			"openbao/test2",
 		},
 	}
 
@@ -355,8 +355,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":   "test1",
-				"vault.hashicorp.com/agent-inject-template-foobar": "foobarTemplate",
+				"openbao.openbao.org/agent-inject-secret-foobar":   "test1",
+				"openbao.openbao.org/agent-inject-template-foobar": "foobarTemplate",
 			},
 			map[string]string{
 				"foobar": "foobarTemplate",
@@ -364,8 +364,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar2":  "test2",
-				"vault.hashicorp.com/agent-inject-template-foobar": "",
+				"openbao.openbao.org/agent-inject-secret-foobar2":  "test2",
+				"openbao.openbao.org/agent-inject-template-foobar": "",
 			},
 			map[string]string{
 				"foobar2": "",
@@ -373,8 +373,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":  "test1",
-				"vault.hashicorp.com/agent-inject-templat-foobar": "foobarTemplate",
+				"openbao.openbao.org/agent-inject-secret-foobar":  "test1",
+				"openbao.openbao.org/agent-inject-templat-foobar": "foobarTemplate",
 			},
 			map[string]string{
 				"foobar": "",
@@ -382,8 +382,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":    "test1",
-				"vault.hashicorp.com/agent-inject-template-foobar2": "foobarTemplate",
+				"openbao.openbao.org/agent-inject-secret-foobar":    "test1",
+				"openbao.openbao.org/agent-inject-template-foobar2": "foobarTemplate",
 			},
 			map[string]string{
 				"foobar":  "",
@@ -392,8 +392,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar2":  "test1",
-				"vault.hashicorp.com/agent-inject-template-foobar": "foobarTemplate",
+				"openbao.openbao.org/agent-inject-secret-foobar2":  "test1",
+				"openbao.openbao.org/agent-inject-template-foobar": "foobarTemplate",
 			},
 			map[string]string{
 				"foobar2": "",
@@ -402,8 +402,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar2":  "test1",
-				"vault.hashicorp.com/agent-inject-TEMPLATE-foobar": "foobarTemplate",
+				"openbao.openbao.org/agent-inject-secret-foobar2":  "test1",
+				"openbao.openbao.org/agent-inject-TEMPLATE-foobar": "foobarTemplate",
 			},
 			map[string]string{
 				"foobar2": "",
@@ -451,16 +451,16 @@ func TestSecretMixedTemplatesAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":        "test1",
-				"vault.hashicorp.com/agent-inject-template-foobar":      "",
-				"vault.hashicorp.com/agent-inject-template-file-foobar": "/etc/config.tmpl",
+				"openbao.openbao.org/agent-inject-secret-foobar":        "test1",
+				"openbao.openbao.org/agent-inject-template-foobar":      "",
+				"openbao.openbao.org/agent-inject-template-file-foobar": "/etc/config.tmpl",
 
-				"vault.hashicorp.com/agent-inject-secret-test2":        "test2",
-				"vault.hashicorp.com/agent-inject-template-test2":      "foobarTemplate",
-				"vault.hashicorp.com/agent-inject-template-file-test2": "",
+				"openbao.openbao.org/agent-inject-secret-test2":        "test2",
+				"openbao.openbao.org/agent-inject-template-test2":      "foobarTemplate",
+				"openbao.openbao.org/agent-inject-template-file-test2": "",
 
-				"vault.hashicorp.com/agent-inject-template-only-template":           "onlyTemplate",
-				"vault.hashicorp.com/agent-inject-template-file-only-template-file": "onlyTemplateFile",
+				"openbao.openbao.org/agent-inject-template-only-template":           "onlyTemplate",
+				"openbao.openbao.org/agent-inject-template-file-only-template-file": "onlyTemplateFile",
 			},
 			map[string]Secret{
 				"foobar": {
@@ -541,16 +541,16 @@ func TestSecretTemplateFileAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":        "test1",
-				"vault.hashicorp.com/agent-inject-template-foobar":      "foobarTemplate",
-				"vault.hashicorp.com/agent-inject-template-file-foobar": "/etc/config.tmpl",
+				"openbao.openbao.org/agent-inject-secret-foobar":        "test1",
+				"openbao.openbao.org/agent-inject-template-foobar":      "foobarTemplate",
+				"openbao.openbao.org/agent-inject-template-file-foobar": "/etc/config.tmpl",
 			}, "foobar", "foobarTemplate", "",
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":        "test1",
-				"vault.hashicorp.com/agent-inject-template-foobar":      "",
-				"vault.hashicorp.com/agent-inject-template-file-foobar": "/etc/config.tmpl",
+				"openbao.openbao.org/agent-inject-secret-foobar":        "test1",
+				"openbao.openbao.org/agent-inject-template-foobar":      "",
+				"openbao.openbao.org/agent-inject-template-file-foobar": "/etc/config.tmpl",
 			}, "foobar", "", "/etc/config.tmpl",
 		},
 	}
@@ -596,14 +596,14 @@ func TestSecretPermissionAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar": "test1",
-				"vault.hashicorp.com/agent-inject-perms-foobar":  "0600",
+				"openbao.openbao.org/agent-inject-secret-foobar": "test1",
+				"openbao.openbao.org/agent-inject-perms-foobar":  "0600",
 			}, "foobar", "0600",
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar": "test2",
-				"vault.hashicorp.com/agent-inject-perms-foobar2": "0600",
+				"openbao.openbao.org/agent-inject-secret-foobar": "test2",
+				"openbao.openbao.org/agent-inject-perms-foobar2": "0600",
 			}, "foobar", "",
 		},
 	}
@@ -643,14 +643,14 @@ func TestSecretCommandAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":  "test1",
-				"vault.hashicorp.com/agent-inject-command-foobar": "pkill -HUP nginx",
+				"openbao.openbao.org/agent-inject-secret-foobar":  "test1",
+				"openbao.openbao.org/agent-inject-command-foobar": "pkill -HUP nginx",
 			}, "foobar", "pkill -HUP nginx",
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":   "test2",
-				"vault.hashicorp.com/agent-inject-command-foobar2": "pkill -HUP nginx",
+				"openbao.openbao.org/agent-inject-secret-foobar":   "test2",
+				"openbao.openbao.org/agent-inject-command-foobar2": "pkill -HUP nginx",
 			}, "foobar", "",
 		},
 	}
@@ -693,8 +693,8 @@ func TestSecretErrorOnMissingKeyAnnotations(t *testing.T) {
 		{
 			name: "force error",
 			annotations: map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":  "test1",
-				"vault.hashicorp.com/error-on-missing-key-foobar": "True",
+				"openbao.openbao.org/agent-inject-secret-foobar":  "test1",
+				"openbao.openbao.org/error-on-missing-key-foobar": "True",
 			},
 			expectedKey: "foobar",
 			expected:    true,
@@ -702,8 +702,8 @@ func TestSecretErrorOnMissingKeyAnnotations(t *testing.T) {
 		{
 			name: "ignore error",
 			annotations: map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":  "test2",
-				"vault.hashicorp.com/error-on-missing-key-foobar": "false",
+				"openbao.openbao.org/agent-inject-secret-foobar":  "test2",
+				"openbao.openbao.org/error-on-missing-key-foobar": "false",
 			},
 			expectedKey: "foobar",
 			expected:    false,
@@ -711,7 +711,7 @@ func TestSecretErrorOnMissingKeyAnnotations(t *testing.T) {
 		{
 			name: "default value",
 			annotations: map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar": "test3",
+				"openbao.openbao.org/agent-inject-secret-foobar": "test3",
 			},
 			expectedKey: "foobar",
 			expected:    false,
@@ -719,8 +719,8 @@ func TestSecretErrorOnMissingKeyAnnotations(t *testing.T) {
 		{
 			name: "bad annotation",
 			annotations: map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foobar":  "test4",
-				"vault.hashicorp.com/error-on-missing-key-foobar": "unknown",
+				"openbao.openbao.org/agent-inject-secret-foobar":  "test4",
+				"openbao.openbao.org/error-on-missing-key-foobar": "unknown",
 			},
 			invalid: true,
 		},
@@ -787,17 +787,17 @@ func TestCouldErrorAnnotations(t *testing.T) {
 		{AnnotationAgentPrePopulateOnly, "fAlSe", false},
 		{AnnotationAgentPrePopulateOnly, "", true},
 
-		{AnnotationVaultTLSSkipVerify, "true", true},
-		{AnnotationVaultTLSSkipVerify, "false", true},
-		{AnnotationVaultTLSSkipVerify, "TRUE", true},
-		{AnnotationVaultTLSSkipVerify, "FALSE", true},
-		{AnnotationVaultTLSSkipVerify, "0", true},
-		{AnnotationVaultTLSSkipVerify, "1", true},
-		{AnnotationVaultTLSSkipVerify, "t", true},
-		{AnnotationVaultTLSSkipVerify, "f", true},
-		{AnnotationVaultTLSSkipVerify, "tRuE", false},
-		{AnnotationVaultTLSSkipVerify, "fAlSe", false},
-		{AnnotationVaultTLSSkipVerify, "", true},
+		{AnnotationOpenbaoTLSSkipVerify, "true", true},
+		{AnnotationOpenbaoTLSSkipVerify, "false", true},
+		{AnnotationOpenbaoTLSSkipVerify, "TRUE", true},
+		{AnnotationOpenbaoTLSSkipVerify, "FALSE", true},
+		{AnnotationOpenbaoTLSSkipVerify, "0", true},
+		{AnnotationOpenbaoTLSSkipVerify, "1", true},
+		{AnnotationOpenbaoTLSSkipVerify, "t", true},
+		{AnnotationOpenbaoTLSSkipVerify, "f", true},
+		{AnnotationOpenbaoTLSSkipVerify, "tRuE", false},
+		{AnnotationOpenbaoTLSSkipVerify, "fAlSe", false},
+		{AnnotationOpenbaoTLSSkipVerify, "", true},
 
 		{AnnotationAgentRevokeOnShutdown, "true", true},
 		{AnnotationAgentRevokeOnShutdown, "false", true},
@@ -892,19 +892,19 @@ func TestInitEmptyPod(t *testing.T) {
 	}
 }
 
-func TestVaultNamespaceAnnotation(t *testing.T) {
+func TestOpenbaoNamespaceAnnotation(t *testing.T) {
 	tests := []struct {
 		key                       string
 		value                     string
-		agentVaultNamespaceConfig string
+		agentOpenbaoNamespaceConfig string
 		expectedValue             string
 	}{
 		{"", "", "", ""},
 		{"", "", "test-namespace", "test-namespace"},
-		{"vault.hashicorp.com/namespace", "", "", ""},
-		{"vault.hashicorp.com/namespace", "foobar", "", "foobar"},
-		{"vault.hashicorp.com/namespace", "foobar", "test-namespace", "foobar"},
-		{"vault.hashicorp.com/namespace", "fooBar", "", "fooBar"},
+		{"openbao.openbao.org/namespace", "", "", ""},
+		{"openbao.openbao.org/namespace", "foobar", "", "foobar"},
+		{"openbao.openbao.org/namespace", "foobar", "test-namespace", "foobar"},
+		{"openbao.openbao.org/namespace", "fooBar", "", "fooBar"},
 	}
 
 	for _, tt := range tests {
@@ -914,7 +914,7 @@ func TestVaultNamespaceAnnotation(t *testing.T) {
 		pod := testPod(annotation)
 
 		agentConfig := basicAgentConfig()
-		agentConfig.VaultNamespace = tt.agentVaultNamespaceConfig
+		agentConfig.OpenbaoNamespace = tt.agentOpenbaoNamespaceConfig
 		err := Init(pod, agentConfig)
 		if err != nil {
 			t.Errorf("got error, shouldn't have: %s", err)
@@ -925,8 +925,8 @@ func TestVaultNamespaceAnnotation(t *testing.T) {
 			t.Errorf("got error, shouldn't have: %s", err)
 		}
 
-		if agent.Vault.Namespace != tt.expectedValue {
-			t.Errorf("expected %s, got %s", tt.expectedValue, agent.Vault.Namespace)
+		if agent.Openbao.Namespace != tt.expectedValue {
+			t.Errorf("expected %s, got %s", tt.expectedValue, agent.Openbao.Namespace)
 		}
 	}
 }
@@ -1032,7 +1032,7 @@ func TestAuthConfigAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"vault.hashicorp.com/role": "backwardscompat",
+				"openbao.openbao.org/role": "backwardscompat",
 			},
 			map[string]interface{}{
 				"role":       "backwardscompat",
@@ -1041,8 +1041,8 @@ func TestAuthConfigAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/role":             "backwardscompat",
-				"vault.hashicorp.com/auth-config-role": "lowerprio",
+				"openbao.openbao.org/role":             "backwardscompat",
+				"openbao.openbao.org/auth-config-role": "lowerprio",
 			},
 			map[string]interface{}{
 				"role":       "backwardscompat",
@@ -1051,7 +1051,7 @@ func TestAuthConfigAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/auth-config-token-path": "serviceaccount/somewhere-else/token",
+				"openbao.openbao.org/auth-config-token-path": "serviceaccount/somewhere-else/token",
 			},
 			map[string]interface{}{
 				"token_path": "serviceaccount/somewhere-else/token",
@@ -1059,11 +1059,11 @@ func TestAuthConfigAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/auth-config-name":                                "foo",
-				"vault.hashicorp.com/auth-config-ca-cert":                             "bar",
-				"vault.hashicorp.com/auth-config-client_cert":                         "baz",
-				"vault.hashicorp.com/auth-config-credential_poll_interval":            "1",
-				"vault.hashicorp.com/auth-config-remove_secret_id_file_after_reading": "false",
+				"openbao.openbao.org/auth-config-name":                                "foo",
+				"openbao.openbao.org/auth-config-ca-cert":                             "bar",
+				"openbao.openbao.org/auth-config-client_cert":                         "baz",
+				"openbao.openbao.org/auth-config-credential_poll_interval":            "1",
+				"openbao.openbao.org/auth-config-remove_secret_id_file_after_reading": "false",
 			},
 			map[string]interface{}{
 				"name":                                "foo",
@@ -1090,7 +1090,7 @@ func TestAuthConfigAnnotations(t *testing.T) {
 			t.Errorf("got error, shouldn't have: %s", err)
 		}
 
-		require.Equal(t, agent.Vault.AuthConfig, tt.expectedAuthConfig, "expected AuthConfig %v, got %v", tt.expectedAuthConfig, agent.Vault.AuthConfig)
+		require.Equal(t, agent.Openbao.AuthConfig, tt.expectedAuthConfig, "expected AuthConfig %v, got %v", tt.expectedAuthConfig, agent.Openbao.AuthConfig)
 	}
 }
 
@@ -1187,49 +1187,49 @@ func TestDefaultTemplateOverride(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-default-template": "json",
+				"openbao.openbao.org/agent-inject-default-template": "json",
 			},
 			"json",
 			false,
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-default-template": "JSON",
+				"openbao.openbao.org/agent-inject-default-template": "JSON",
 			},
 			"json",
 			false,
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-default-template": "map",
+				"openbao.openbao.org/agent-inject-default-template": "map",
 			},
 			"map",
 			false,
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-default-template": "MAP",
+				"openbao.openbao.org/agent-inject-default-template": "MAP",
 			},
 			"map",
 			false,
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-default-template": "foobar",
+				"openbao.openbao.org/agent-inject-default-template": "foobar",
 			},
 			"",
 			true,
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-default-template": "jsn",
+				"openbao.openbao.org/agent-inject-default-template": "jsn",
 			},
 			"",
 			true,
 		},
 		{
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-default-template": "",
+				"openbao.openbao.org/agent-inject-default-template": "",
 			},
 			"",
 			true,
@@ -1261,8 +1261,8 @@ func TestDefaultTemplateOverride(t *testing.T) {
 
 func TestAuthMinMaxBackoff(t *testing.T) {
 	pod := testPod(map[string]string{
-		"vault.hashicorp.com/auth-min-backoff": "5s",
-		"vault.hashicorp.com/auth-max-backoff": "10s",
+		"openbao.openbao.org/auth-min-backoff": "5s",
+		"openbao.openbao.org/auth-max-backoff": "10s",
 	})
 	agentConfig := basicAgentConfig()
 	err := Init(pod, agentConfig)
@@ -1275,13 +1275,13 @@ func TestAuthMinMaxBackoff(t *testing.T) {
 		t.Errorf("got error, shouldn't have: %s", err)
 	}
 
-	require.Equal(t, "5s", agent.Vault.AuthMinBackoff, "expected 5s, got %v", agent.Vault.AuthMinBackoff)
-	require.Equal(t, "10s", agent.Vault.AuthMaxBackoff, "expected 10s, got %v", agent.Vault.AuthMaxBackoff)
+	require.Equal(t, "5s", agent.Openbao.AuthMinBackoff, "expected 5s, got %v", agent.Openbao.AuthMinBackoff)
+	require.Equal(t, "10s", agent.Openbao.AuthMaxBackoff, "expected 10s, got %v", agent.Openbao.AuthMaxBackoff)
 }
 
 func TestAutoAuthExitOnError(t *testing.T) {
 	pod := testPod(map[string]string{
-		"vault.hashicorp.com/agent-auto-auth-exit-on-err": "true",
+		"openbao.openbao.org/agent-auto-auth-exit-on-err": "true",
 	})
 	agentConfig := basicAgentConfig()
 	err := Init(pod, agentConfig)
@@ -1304,13 +1304,13 @@ func TestDisableIdleConnections(t *testing.T) {
 	}{
 		"full list": {
 			annotations: map[string]string{
-				"vault.hashicorp.com/agent-disable-idle-connections": "auto-auth,caching,templating",
+				"openbao.openbao.org/agent-disable-idle-connections": "auto-auth,caching,templating",
 			},
 			expectedValue: []string{"auto-auth", "caching", "templating"},
 		},
 		"one": {
 			annotations: map[string]string{
-				"vault.hashicorp.com/agent-disable-idle-connections": "auto-auth",
+				"openbao.openbao.org/agent-disable-idle-connections": "auto-auth",
 			},
 			expectedValue: []string{"auto-auth"},
 		},
@@ -1340,13 +1340,13 @@ func TestDisableKeepAlives(t *testing.T) {
 	}{
 		"full list": {
 			annotations: map[string]string{
-				"vault.hashicorp.com/agent-disable-keep-alives": "auto-auth,caching,templating",
+				"openbao.openbao.org/agent-disable-keep-alives": "auto-auth,caching,templating",
 			},
 			expectedValue: []string{"auto-auth", "caching", "templating"},
 		},
 		"one": {
 			annotations: map[string]string{
-				"vault.hashicorp.com/agent-disable-keep-alives": "auto-auth",
+				"openbao.openbao.org/agent-disable-keep-alives": "auto-auth",
 			},
 			expectedValue: []string{"auto-auth"},
 		},
@@ -1376,8 +1376,8 @@ func TestParseTelemetryAnnotations(t *testing.T) {
 	}{
 		"prometheus": {
 			annotations: map[string]string{
-				"vault.hashicorp.com/agent-telemetry-prometheus_retention_time": "5s",
-				"vault.hashicorp.com/agent-telemetry-disable_hostname":          "true",
+				"openbao.openbao.org/agent-telemetry-prometheus_retention_time": "5s",
+				"openbao.openbao.org/agent-telemetry-disable_hostname":          "true",
 			},
 			expectedValues: map[string]interface{}{
 				"prometheus_retention_time": "5s",
@@ -1386,13 +1386,13 @@ func TestParseTelemetryAnnotations(t *testing.T) {
 		},
 		"common with some list annotations": {
 			annotations: map[string]string{
-				"vault.hashicorp.com/agent-telemetry-prefix_filter":             "[\"+vault.token\", \"-vault.expire\", \"+vault.expire.num_leases\"]",
-				"vault.hashicorp.com/agent-telemetry-maximum_gauge_cardinality": "3",
-				"vault.hashicorp.com/agent-telemetry-lease_metrics_epsilon":     "foo",
-				"vault.hashicorp.com/agent-telemetry-enable_hostname_label":     "true",
+				"openbao.openbao.org/agent-telemetry-prefix_filter":             "[\"+openbao.token\", \"-openbao.expire\", \"+openbao.expire.num_leases\"]",
+				"openbao.openbao.org/agent-telemetry-maximum_gauge_cardinality": "3",
+				"openbao.openbao.org/agent-telemetry-lease_metrics_epsilon":     "foo",
+				"openbao.openbao.org/agent-telemetry-enable_hostname_label":     "true",
 			},
 			expectedValues: map[string]interface{}{
-				"prefix_filter":             []interface{}{"+vault.token", "-vault.expire", "+vault.expire.num_leases"},
+				"prefix_filter":             []interface{}{"+openbao.token", "-openbao.expire", "+openbao.expire.num_leases"},
 				"maximum_gauge_cardinality": float64(3),
 				"lease_metrics_epsilon":     "foo",
 				"enable_hostname_label":     true,
@@ -1407,7 +1407,7 @@ func TestParseTelemetryAnnotations(t *testing.T) {
 			require.NoError(t, err)
 			agent, err := New(pod)
 			require.NoError(t, err)
-			require.Equal(t, true, reflect.DeepEqual(tc.expectedValues, agent.Vault.AgentTelemetryConfig))
+			require.Equal(t, true, reflect.DeepEqual(tc.expectedValues, agent.Openbao.AgentTelemetryConfig))
 		})
 	}
 }

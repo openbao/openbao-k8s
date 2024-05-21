@@ -15,41 +15,41 @@ import (
 
 func TestNewConfig(t *testing.T) {
 	annotations := map[string]string{
-		AnnotationAgentImage:                            "vault",
-		AnnotationVaultService:                          "https://vault:8200",
+		AnnotationAgentImage:                            "openbao",
+		AnnotationOpenbaoService:                          "https://openbao:8200",
 		AnnotationAgentStatus:                           "",
 		AnnotationAgentRequestNamespace:                 "foobar",
-		AnnotationVaultRole:                             "foobar",
+		AnnotationOpenbaoRole:                             "foobar",
 		AnnotationAgentPrePopulate:                      "true",
 		AnnotationAgentPrePopulateOnly:                  "true",
-		AnnotationVaultTLSServerName:                    "foobar.server",
-		AnnotationVaultCACert:                           "ca-cert",
-		AnnotationVaultCAKey:                            "ca-key",
-		AnnotationVaultClientCert:                       "client-cert",
-		AnnotationVaultClientKey:                        "client-key",
-		AnnotationVaultSecretVolumePath:                 "/vault/secrets",
+		AnnotationOpenbaoTLSServerName:                    "foobar.server",
+		AnnotationOpenbaoCACert:                           "ca-cert",
+		AnnotationOpenbaoCAKey:                            "ca-key",
+		AnnotationOpenbaoClientCert:                       "client-cert",
+		AnnotationOpenbaoClientKey:                        "client-key",
+		AnnotationOpenbaoSecretVolumePath:                 "/openbao/secrets",
 		AnnotationProxyAddress:                          "http://proxy:3128",
-		"vault.hashicorp.com/agent-inject-secret-foo":   "db/creds/foo",
-		"vault.hashicorp.com/agent-inject-template-foo": "template foo",
-		"vault.hashicorp.com/agent-inject-secret-bar":   "db/creds/bar",
+		"openbao.openbao.org/agent-inject-secret-foo":   "db/creds/foo",
+		"openbao.openbao.org/agent-inject-template-foo": "template foo",
+		"openbao.openbao.org/agent-inject-secret-bar":   "db/creds/bar",
 
 		// render this secret at a different path
-		"vault.hashicorp.com/agent-inject-secret-different-path":                "different-path",
-		fmt.Sprintf("%s-%s", AnnotationVaultSecretVolumePath, "different-path"): "/etc/container_environment",
+		"openbao.openbao.org/agent-inject-secret-different-path":                "different-path",
+		fmt.Sprintf("%s-%s", AnnotationOpenbaoSecretVolumePath, "different-path"): "/etc/container_environment",
 
 		// render this secret from a template on disk
-		"vault.hashicorp.com/agent-inject-secret-with-file-template":                  "with-file-template",
+		"openbao.openbao.org/agent-inject-secret-with-file-template":                  "with-file-template",
 		fmt.Sprintf("%s-%s", AnnotationAgentInjectTemplateFile, "with-file-template"): "/etc/file-template",
 
-		"vault.hashicorp.com/agent-inject-template-just-template": "just-template1",
-		"vault.hashicorp.com/secret-volume-path-just-template":    "/custom/path",
-		"vault.hashicorp.com/agent-inject-command-just-template":  "/tmp/smth.sh",
-		"vault.hashicorp.com/agent-inject-file-just-template":     ".env",
-		"vault.hashicorp.com/agent-inject-perms-just-template":    "0600",
+		"openbao.openbao.org/agent-inject-template-just-template": "just-template1",
+		"openbao.openbao.org/secret-volume-path-just-template":    "/custom/path",
+		"openbao.openbao.org/agent-inject-command-just-template":  "/tmp/smth.sh",
+		"openbao.openbao.org/agent-inject-file-just-template":     ".env",
+		"openbao.openbao.org/agent-inject-perms-just-template":    "0600",
 
-		"vault.hashicorp.com/agent-inject-template-file-just-template-file": "just-template-file",
+		"openbao.openbao.org/agent-inject-template-file-just-template-file": "just-template-file",
 
-		"vault.hashicorp.com/agent-inject-command-bar": "pkill -HUP app",
+		"openbao.openbao.org/agent-inject-command-bar": "pkill -HUP app",
 
 		AnnotationAgentCacheEnable: "true",
 	}
@@ -69,52 +69,52 @@ func TestNewConfig(t *testing.T) {
 
 	cfg, err := agent.newConfig(true)
 	if err != nil {
-		t.Errorf("got error creating Vault config, shouldn't have: %s", err)
+		t.Errorf("got error creating Openbao config, shouldn't have: %s", err)
 	}
 
 	config := &Config{}
 	if err := json.Unmarshal(cfg, config); err != nil {
-		t.Errorf("got error unmarshalling Vault config, shouldn't have: %s", err)
+		t.Errorf("got error unmarshalling Openbao config, shouldn't have: %s", err)
 	}
 
 	if config.ExitAfterAuth != true {
 		t.Error("exit_after_auth should have been true, it wasn't")
 	}
 
-	if config.Vault.TLSSkipVerify != false {
+	if config.Openbao.TLSSkipVerify != false {
 		t.Error("tls_skip_verify should have been false, it wasn't")
 	}
 
-	if config.Vault.TLSServerName != annotations[AnnotationVaultTLSServerName] {
-		t.Errorf("tls_server_name: expected %s, got %s", annotations[AnnotationVaultTLSServerName], config.Vault.TLSServerName)
+	if config.Openbao.TLSServerName != annotations[AnnotationOpenbaoTLSServerName] {
+		t.Errorf("tls_server_name: expected %s, got %s", annotations[AnnotationOpenbaoTLSServerName], config.Openbao.TLSServerName)
 	}
 
-	if config.Vault.CACert != annotations[AnnotationVaultCACert] {
-		t.Errorf("ca_cert: expected %s, got %s", annotations[AnnotationVaultCACert], config.Vault.CACert)
+	if config.Openbao.CACert != annotations[AnnotationOpenbaoCACert] {
+		t.Errorf("ca_cert: expected %s, got %s", annotations[AnnotationOpenbaoCACert], config.Openbao.CACert)
 	}
 
-	if config.Vault.CAPath != annotations[AnnotationVaultCAKey] {
-		t.Errorf("ca_key: expected %s, got %s", annotations[AnnotationVaultCAKey], config.Vault.CAPath)
+	if config.Openbao.CAPath != annotations[AnnotationOpenbaoCAKey] {
+		t.Errorf("ca_key: expected %s, got %s", annotations[AnnotationOpenbaoCAKey], config.Openbao.CAPath)
 	}
 
-	if config.Vault.ClientCert != annotations[AnnotationVaultClientCert] {
-		t.Errorf("client_cert: expected %s, got %s", annotations[AnnotationVaultClientCert], config.Vault.ClientCert)
+	if config.Openbao.ClientCert != annotations[AnnotationOpenbaoClientCert] {
+		t.Errorf("client_cert: expected %s, got %s", annotations[AnnotationOpenbaoClientCert], config.Openbao.ClientCert)
 	}
 
-	if config.Vault.ClientKey != annotations[AnnotationVaultClientKey] {
-		t.Errorf("client_key: expected %s, got %s", annotations[AnnotationVaultClientKey], config.Vault.ClientKey)
+	if config.Openbao.ClientKey != annotations[AnnotationOpenbaoClientKey] {
+		t.Errorf("client_key: expected %s, got %s", annotations[AnnotationOpenbaoClientKey], config.Openbao.ClientKey)
 	}
 
-	if config.AutoAuth.Method.Config["role"] != annotations[AnnotationVaultRole] {
-		t.Errorf("auto_auth role: expected role to be %s, got %s", annotations[AnnotationVaultRole], config.AutoAuth.Method.Config["role"])
+	if config.AutoAuth.Method.Config["role"] != annotations[AnnotationOpenbaoRole] {
+		t.Errorf("auto_auth role: expected role to be %s, got %s", annotations[AnnotationOpenbaoRole], config.AutoAuth.Method.Config["role"])
 	}
 
-	if config.AutoAuth.Method.Type != annotations[AnnotationVaultAuthType] {
-		t.Errorf("auto_auth mount type: expected type to be %s, got %s", annotations[AnnotationVaultAuthType], config.AutoAuth.Method.Type)
+	if config.AutoAuth.Method.Type != annotations[AnnotationOpenbaoAuthType] {
+		t.Errorf("auto_auth mount type: expected type to be %s, got %s", annotations[AnnotationOpenbaoAuthType], config.AutoAuth.Method.Type)
 	}
 
-	if config.AutoAuth.Method.MountPath != annotations[AnnotationVaultAuthPath] {
-		t.Errorf("auto_auth mount path: expected path to be %s, got %s", annotations[AnnotationVaultAuthPath], config.AutoAuth.Method.MountPath)
+	if config.AutoAuth.Method.MountPath != annotations[AnnotationOpenbaoAuthPath] {
+		t.Errorf("auto_auth mount path: expected path to be %s, got %s", annotations[AnnotationOpenbaoAuthPath], config.AutoAuth.Method.MountPath)
 	}
 
 	if len(config.Listener) != 0 || config.Cache != nil {
@@ -127,16 +127,16 @@ func TestNewConfig(t *testing.T) {
 
 	for _, template := range config.Templates {
 		if strings.Contains(template.Destination, "foo") {
-			if template.Destination != "/vault/secrets/foo" {
-				t.Errorf("expected template destination to be %s, got %s", "/vault/secrets/foo", template.Destination)
+			if template.Destination != "/openbao/secrets/foo" {
+				t.Errorf("expected template destination to be %s, got %s", "/openbao/secrets/foo", template.Destination)
 			}
 
 			if template.Contents != "template foo" {
 				t.Errorf("expected template contents to be %s, got %s", "template foo", template.Contents)
 			}
 		} else if strings.Contains(template.Destination, "bar") {
-			if template.Destination != "/vault/secrets/bar" {
-				t.Errorf("expected template destination to be %s, got %s", "/vault/secrets/bar", template.Destination)
+			if template.Destination != "/openbao/secrets/bar" {
+				t.Errorf("expected template destination to be %s, got %s", "/openbao/secrets/bar", template.Destination)
 			}
 
 			if !strings.Contains(template.Contents, "with secret \"db/creds/bar\"") {
@@ -167,8 +167,8 @@ func TestNewConfig(t *testing.T) {
 				t.Errorf("expected template command to be %s, got %s", "/tmp/smth.sh", template.Command)
 			}
 		} else if template.Source == "just-template-file" {
-			if template.Destination != "/vault/secrets/just-template-file" {
-				t.Errorf("expected template destination to be %s, got %s", "/vault/secrets/just-template-file", template.Destination)
+			if template.Destination != "/openbao/secrets/just-template-file" {
+				t.Errorf("expected template destination to be %s, got %s", "/openbao/secrets/just-template-file", template.Destination)
 			}
 		} else {
 			t.Error("shouldn't have got here")
@@ -185,50 +185,50 @@ func TestFilePathAndName(t *testing.T) {
 		{
 			"just secret",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
 			},
 			secretVolumePath + "/foo",
 		},
 		{
 			"with relative file path",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
-				"vault.hashicorp.com/agent-inject-file-foo":   "nested/foofile",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-file-foo":   "nested/foofile",
 			},
 			secretVolumePath + "/nested/foofile",
 		},
 		{
 			"with absolute file path",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
-				"vault.hashicorp.com/agent-inject-file-foo":   "/special/volume/foofile",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-file-foo":   "/special/volume/foofile",
 			},
 			secretVolumePath + "/special/volume/foofile",
 		},
 		{
 			"with global volume mount set, long file name",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
-				"vault.hashicorp.com/agent-inject-file-foo":   "foofile_name_is_very_very_very_long",
-				"vault.hashicorp.com/secret-volume-path":      "/new/mount/path",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-file-foo":   "foofile_name_is_very_very_very_long",
+				"openbao.openbao.org/secret-volume-path":      "/new/mount/path",
 			},
 			"/new/mount/path/foofile_name_is_very_very_very_long",
 		},
 		{
 			"with global volume mount set, absolute file path",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
-				"vault.hashicorp.com/agent-inject-file-foo":   "/special/foofile",
-				"vault.hashicorp.com/secret-volume-path":      "/new/mount/path",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-file-foo":   "/special/foofile",
+				"openbao.openbao.org/secret-volume-path":      "/new/mount/path",
 			},
 			"/new/mount/path/special/foofile",
 		},
 		{
 			"with secret volume mount set, relative file path",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
-				"vault.hashicorp.com/agent-inject-file-foo":   "nested/foofile",
-				"vault.hashicorp.com/secret-volume-path-foo":  "/new/mount/path",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-file-foo":   "nested/foofile",
+				"openbao.openbao.org/secret-volume-path-foo":  "/new/mount/path",
 			},
 			"/new/mount/path/nested/foofile",
 		},
@@ -250,12 +250,12 @@ func TestFilePathAndName(t *testing.T) {
 			}
 			cfg, err := agent.newConfig(true)
 			if err != nil {
-				t.Errorf("got error creating Vault config, shouldn't have: %s", err)
+				t.Errorf("got error creating Openbao config, shouldn't have: %s", err)
 			}
 
 			config := &Config{}
 			if err := json.Unmarshal(cfg, config); err != nil {
-				t.Errorf("got error unmarshalling Vault config, shouldn't have: %s", err)
+				t.Errorf("got error unmarshalling Openbao config, shouldn't have: %s", err)
 			}
 			if config.Templates[0].Destination != tt.destination {
 				t.Errorf("wrong destination: %s != %s", config.Templates[0].Destination, tt.destination)
@@ -273,49 +273,49 @@ func TestFilePermission(t *testing.T) {
 		{
 			"just secret",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
-				"vault.hashicorp.com/agent-inject-perms-foo":  "0600",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-perms-foo":  "0600",
 			},
 			"0600",
 		},
 		{
 			"just secret without permission",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
 			},
 			"",
 		},
 		{
 			"with relative file path",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
-				"vault.hashicorp.com/agent-inject-file-foo":   "nested/foofile",
-				"vault.hashicorp.com/agent-inject-perms-foo":  "0600",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-file-foo":   "nested/foofile",
+				"openbao.openbao.org/agent-inject-perms-foo":  "0600",
 			},
 			"0600",
 		},
 		{
 			"with relative file path without permission",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
-				"vault.hashicorp.com/agent-inject-file-foo":   "nested/foofile",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-file-foo":   "nested/foofile",
 			},
 			"",
 		},
 		{
 			"with absolute file path",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
-				"vault.hashicorp.com/agent-inject-file-foo":   "/special/volume/foofile",
-				"vault.hashicorp.com/agent-inject-perms-foo":  "0600",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-file-foo":   "/special/volume/foofile",
+				"openbao.openbao.org/agent-inject-perms-foo":  "0600",
 			},
 			"0600",
 		},
 		{
 			"with absolute file path without permission",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
-				"vault.hashicorp.com/agent-inject-file-foo":   "/special/volume/foofile",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-file-foo":   "/special/volume/foofile",
 			},
 			"",
 		},
@@ -337,12 +337,12 @@ func TestFilePermission(t *testing.T) {
 			}
 			cfg, err := agent.newConfig(true)
 			if err != nil {
-				t.Errorf("got error creating Vault config, shouldn't have: %s", err)
+				t.Errorf("got error creating Openbao config, shouldn't have: %s", err)
 			}
 
 			config := &Config{}
 			if err := json.Unmarshal(cfg, config); err != nil {
-				t.Errorf("got error unmarshalling Vault config, shouldn't have: %s", err)
+				t.Errorf("got error unmarshalling Openbao config, shouldn't have: %s", err)
 			}
 			if config.Templates[0].Perms != tt.permission {
 				t.Errorf("wrong permission: %s != %s", config.Templates[0].Perms, tt.permission)
@@ -360,23 +360,23 @@ func TestErrMissingKey(t *testing.T) {
 		{
 			"just secret",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo":  "db/creds/foo",
-				"vault.hashicorp.com/error-on-missing-key-foo": "true",
+				"openbao.openbao.org/agent-inject-secret-foo":  "db/creds/foo",
+				"openbao.openbao.org/error-on-missing-key-foo": "true",
 			},
 			true,
 		},
 		{
 			"just secret without error on missing key",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo": "db/creds/foo",
+				"openbao.openbao.org/agent-inject-secret-foo": "db/creds/foo",
 			},
 			false,
 		},
 		{
 			"with false error on missing key",
 			map[string]string{
-				"vault.hashicorp.com/agent-inject-secret-foo":  "db/creds/foo",
-				"vault.hashicorp.com/error-on-missing-key-foo": "false",
+				"openbao.openbao.org/agent-inject-secret-foo":  "db/creds/foo",
+				"openbao.openbao.org/error-on-missing-key-foo": "false",
 			},
 			false,
 		},
@@ -398,12 +398,12 @@ func TestErrMissingKey(t *testing.T) {
 			}
 			cfg, err := agent.newConfig(true)
 			if err != nil {
-				t.Errorf("got error creating Vault config, shouldn't have: %s", err)
+				t.Errorf("got error creating Openbao config, shouldn't have: %s", err)
 			}
 
 			config := &Config{}
 			if err := json.Unmarshal(cfg, config); err != nil {
-				t.Errorf("got error unmarshalling Vault config, shouldn't have: %s", err)
+				t.Errorf("got error unmarshalling Openbao config, shouldn't have: %s", err)
 			}
 			if config.Templates[0].ErrMissingKey != tt.errMissingKey {
 				t.Errorf("wrong permission: %v != %v", config.Templates[0].ErrMissingKey, tt.errMissingKey)
@@ -412,7 +412,7 @@ func TestErrMissingKey(t *testing.T) {
 	}
 }
 
-func TestConfigVaultAgentCacheNotEnabledByDefault(t *testing.T) {
+func TestConfigOpenbaoAgentCacheNotEnabledByDefault(t *testing.T) {
 	annotations := map[string]string{}
 
 	pod := testPod(annotations)
@@ -430,12 +430,12 @@ func TestConfigVaultAgentCacheNotEnabledByDefault(t *testing.T) {
 
 	cfg, err := agent.newConfig(false)
 	if err != nil {
-		t.Errorf("got error creating Vault config, shouldn't have: %s", err)
+		t.Errorf("got error creating Openbao config, shouldn't have: %s", err)
 	}
 
 	config := &Config{}
 	if err := json.Unmarshal(cfg, config); err != nil {
-		t.Errorf("got error unmarshalling Vault config, shouldn't have: %s", err)
+		t.Errorf("got error unmarshalling Openbao config, shouldn't have: %s", err)
 	}
 
 	if len(config.Listener) != 0 || config.Cache != nil {
@@ -443,7 +443,7 @@ func TestConfigVaultAgentCacheNotEnabledByDefault(t *testing.T) {
 	}
 }
 
-func TestConfigVaultAgentCache(t *testing.T) {
+func TestConfigOpenbaoAgentCache(t *testing.T) {
 	annotations := map[string]string{
 		AnnotationAgentCacheEnable:           "true",
 		AnnotationAgentCacheUseAutoAuthToken: "force",
@@ -465,12 +465,12 @@ func TestConfigVaultAgentCache(t *testing.T) {
 
 	cfg, err := agent.newConfig(false)
 	if err != nil {
-		t.Errorf("got error creating Vault config, shouldn't have: %s", err)
+		t.Errorf("got error creating Openbao config, shouldn't have: %s", err)
 	}
 
 	config := &Config{}
 	if err := json.Unmarshal(cfg, config); err != nil {
-		t.Errorf("got error unmarshalling Vault config, shouldn't have: %s", err)
+		t.Errorf("got error unmarshalling Openbao config, shouldn't have: %s", err)
 	}
 
 	if len(config.Listener) == 0 || config.Cache == nil {
@@ -494,7 +494,7 @@ func TestConfigVaultAgentCache(t *testing.T) {
 	}
 }
 
-func TestConfigVaultAgentCache_persistent(t *testing.T) {
+func TestConfigOpenbaoAgentCache_persistent(t *testing.T) {
 	tests := []struct {
 		name              string
 		annotations       map[string]string
@@ -512,7 +512,7 @@ func TestConfigVaultAgentCache_persistent(t *testing.T) {
 				UseAutoAuthToken: "true",
 				Persist: &CachePersist{
 					Type: "kubernetes",
-					Path: "/vault/agent-cache",
+					Path: "/openbao/agent-cache",
 				},
 			},
 			expectedListeners: []*Listener{
@@ -534,7 +534,7 @@ func TestConfigVaultAgentCache_persistent(t *testing.T) {
 				UseAutoAuthToken: "true",
 				Persist: &CachePersist{
 					Type:      "kubernetes",
-					Path:      "/vault/agent-cache",
+					Path:      "/openbao/agent-cache",
 					ExitOnErr: true,
 				},
 			},
@@ -588,11 +588,11 @@ func TestConfigVaultAgentCache_persistent(t *testing.T) {
 			require.NoError(t, err, "got error creating agent: %s", err)
 
 			initCfg, err := agent.newConfig(true)
-			require.NoError(t, err, "got error creating Vault config: %s", err)
+			require.NoError(t, err, "got error creating Openbao config: %s", err)
 
 			initConfig := &Config{}
 			err = json.Unmarshal(initCfg, initConfig)
-			require.NoError(t, err, "got error unmarshalling Vault init config: %s", err)
+			require.NoError(t, err, "got error unmarshalling Openbao init config: %s", err)
 
 			if tt.expectedInitCache {
 				assert.Equal(t, tt.expectedCache, initConfig.Cache)
@@ -603,11 +603,11 @@ func TestConfigVaultAgentCache_persistent(t *testing.T) {
 			}
 
 			sidecarCfg, err := agent.newConfig(false)
-			require.NoError(t, err, "got error creating Vault sidecar config: %s", err)
+			require.NoError(t, err, "got error creating Openbao sidecar config: %s", err)
 
 			sidecarConfig := &Config{}
 			err = json.Unmarshal(sidecarCfg, sidecarConfig)
-			require.NoError(t, err, "got error unmarshalling Vault sidecar config: %s", err)
+			require.NoError(t, err, "got error unmarshalling Openbao sidecar config: %s", err)
 
 			assert.Equal(t, tt.expectedCache, sidecarConfig.Cache)
 			assert.Equal(t, tt.expectedListeners, sidecarConfig.Listener)
@@ -615,7 +615,7 @@ func TestConfigVaultAgentCache_persistent(t *testing.T) {
 	}
 }
 
-func TestConfigVaultAgentTemplateConfig(t *testing.T) {
+func TestConfigOpenbaoAgentTemplateConfig(t *testing.T) {
 	tests := []struct {
 		name                   string
 		annotations            map[string]string
@@ -731,7 +731,7 @@ func TestInjectTokenSink(t *testing.T) {
 			"custom secret volume path",
 			map[string]string{
 				AnnotationAgentInjectToken:      "true",
-				AnnotationVaultSecretVolumePath: "/new/secrets",
+				AnnotationOpenbaoSecretVolumePath: "/new/secrets",
 			},
 			[]*Sink{
 				tokenHelperSink,
@@ -813,7 +813,7 @@ func TestConfigAgentQuit(t *testing.T) {
 				UseAutoAuthToken: "true",
 				Persist: &CachePersist{
 					Type: "kubernetes",
-					Path: "/vault/agent-cache",
+					Path: "/openbao/agent-cache",
 				},
 			},
 		},
@@ -829,7 +829,7 @@ func TestConfigAgentQuit(t *testing.T) {
 				UseAutoAuthToken: "true",
 				Persist: &CachePersist{
 					Type: "kubernetes",
-					Path: "/vault/agent-cache",
+					Path: "/openbao/agent-cache",
 				},
 			},
 		},
@@ -885,37 +885,37 @@ func TestConfigTelemetry(t *testing.T) {
 		{
 			"annotations that exercise all of the annotations",
 			map[string]string{
-				"vault.hashicorp.com/agent-telemetry-usage_gauge_period":                     "10m",
-				"vault.hashicorp.com/agent-telemetry-maximum_gauge_cardinality":              "500",
-				"vault.hashicorp.com/agent-telemetry-disable_hostname":                       "false",
-				"vault.hashicorp.com/agent-telemetry-enable_hostname_label":                  "false",
-				"vault.hashicorp.com/agent-telemetry-lease_metrics_epsilon":                  "1h",
-				"vault.hashicorp.com/agent-telemetry-num_lease_metrics_buckets":              "168",
-				"vault.hashicorp.com/agent-telemetry-add_lease_metrics_namespace_labels":     "false",
-				"vault.hashicorp.com/agent-telemetry-filter_default":                         "true",
-				"vault.hashicorp.com/agent-telemetry-statsite_address":                       "https://foo.com",
-				"vault.hashicorp.com/agent-telemetry-statsd_address":                         "https://foo.com",
-				"vault.hashicorp.com/agent-telemetry-circonus_api_token":                     "foo",
-				"vault.hashicorp.com/agent-telemetry-circonus_api_app":                       "nomad",
-				"vault.hashicorp.com/agent-telemetry-circonus_api_url":                       "https://api.circonus.com/v2",
-				"vault.hashicorp.com/agent-telemetry-circonus_submission_interval":           "10s",
-				"vault.hashicorp.com/agent-telemetry-circonus_submission_url":                "https://api.circonus.com/v2",
-				"vault.hashicorp.com/agent-telemetry-circonus_check_id":                      "foo",
-				"vault.hashicorp.com/agent-telemetry-circonus_check_force_metric_activation": "false",
-				"vault.hashicorp.com/agent-telemetry-circonus_check_instance_id":             "foo:bar",
-				"vault.hashicorp.com/agent-telemetry-circonus_check_search_tag":              "foo:bar",
-				"vault.hashicorp.com/agent-telemetry-circonus_check_display_name":            "foo",
-				"vault.hashicorp.com/agent-telemetry-circonus_check_tags":                    "foo,bar",
-				"vault.hashicorp.com/agent-telemetry-circonus_broker_id":                     "foo",
-				"vault.hashicorp.com/agent-telemetry-circonus_broker_select_tag":             "foo:bar",
-				"vault.hashicorp.com/agent-telemetry-dogstatsd_addr":                         "https://foo.com",
-				"vault.hashicorp.com/agent-telemetry-dogstatsd_tags":                         `["foo:bar", "foo:baz"]`,
-				"vault.hashicorp.com/agent-telemetry-prometheus_retention_time":              "24h",
-				"vault.hashicorp.com/agent-telemetry-stackdriver_project_id":                 "foo",
-				"vault.hashicorp.com/agent-telemetry-stackdriver_location":                   "useast-1",
-				"vault.hashicorp.com/agent-telemetry-stackdriver_namespace":                  "foo",
-				"vault.hashicorp.com/agent-telemetry-stackdriver_debug_logs":                 "false",
-				"vault.hashicorp.com/agent-telemetry-prefix_filter":                          `["+vault.token", "-vault.expire", "+vault.expire.num_leases"]`,
+				"openbao.openbao.org/agent-telemetry-usage_gauge_period":                     "10m",
+				"openbao.openbao.org/agent-telemetry-maximum_gauge_cardinality":              "500",
+				"openbao.openbao.org/agent-telemetry-disable_hostname":                       "false",
+				"openbao.openbao.org/agent-telemetry-enable_hostname_label":                  "false",
+				"openbao.openbao.org/agent-telemetry-lease_metrics_epsilon":                  "1h",
+				"openbao.openbao.org/agent-telemetry-num_lease_metrics_buckets":              "168",
+				"openbao.openbao.org/agent-telemetry-add_lease_metrics_namespace_labels":     "false",
+				"openbao.openbao.org/agent-telemetry-filter_default":                         "true",
+				"openbao.openbao.org/agent-telemetry-statsite_address":                       "https://foo.com",
+				"openbao.openbao.org/agent-telemetry-statsd_address":                         "https://foo.com",
+				"openbao.openbao.org/agent-telemetry-circonus_api_token":                     "foo",
+				"openbao.openbao.org/agent-telemetry-circonus_api_app":                       "nomad",
+				"openbao.openbao.org/agent-telemetry-circonus_api_url":                       "https://api.circonus.com/v2",
+				"openbao.openbao.org/agent-telemetry-circonus_submission_interval":           "10s",
+				"openbao.openbao.org/agent-telemetry-circonus_submission_url":                "https://api.circonus.com/v2",
+				"openbao.openbao.org/agent-telemetry-circonus_check_id":                      "foo",
+				"openbao.openbao.org/agent-telemetry-circonus_check_force_metric_activation": "false",
+				"openbao.openbao.org/agent-telemetry-circonus_check_instance_id":             "foo:bar",
+				"openbao.openbao.org/agent-telemetry-circonus_check_search_tag":              "foo:bar",
+				"openbao.openbao.org/agent-telemetry-circonus_check_display_name":            "foo",
+				"openbao.openbao.org/agent-telemetry-circonus_check_tags":                    "foo,bar",
+				"openbao.openbao.org/agent-telemetry-circonus_broker_id":                     "foo",
+				"openbao.openbao.org/agent-telemetry-circonus_broker_select_tag":             "foo:bar",
+				"openbao.openbao.org/agent-telemetry-dogstatsd_addr":                         "https://foo.com",
+				"openbao.openbao.org/agent-telemetry-dogstatsd_tags":                         `["foo:bar", "foo:baz"]`,
+				"openbao.openbao.org/agent-telemetry-prometheus_retention_time":              "24h",
+				"openbao.openbao.org/agent-telemetry-stackdriver_project_id":                 "foo",
+				"openbao.openbao.org/agent-telemetry-stackdriver_location":                   "useast-1",
+				"openbao.openbao.org/agent-telemetry-stackdriver_namespace":                  "foo",
+				"openbao.openbao.org/agent-telemetry-stackdriver_debug_logs":                 "false",
+				"openbao.openbao.org/agent-telemetry-prefix_filter":                          `["+openbao.token", "-openbao.expire", "+openbao.expire.num_leases"]`,
 			},
 			&Telemetry{
 				UsageGaugePeriod:                   "10m",
@@ -926,7 +926,7 @@ func TestConfigTelemetry(t *testing.T) {
 				NumLeaseMetricsBuckets:             168,
 				AddLeaseMetricsNamespaceLabels:     false,
 				FilterDefault:                      true,
-				PrefixFilter:                       []string{"+vault.token", "-vault.expire", "+vault.expire.num_leases"},
+				PrefixFilter:                       []string{"+openbao.token", "-openbao.expire", "+openbao.expire.num_leases"},
 				StatsiteAddress:                    "https://foo.com",
 				StatsdAddress:                      "https://foo.com",
 				CirconusApiToken:                   "foo",

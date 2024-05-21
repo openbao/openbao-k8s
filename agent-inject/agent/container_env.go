@@ -38,49 +38,49 @@ var baseContainerEnvVars []corev1.EnvVar = []corev1.EnvVar{
 }
 
 // ContainerEnvVars adds the applicable environment vars
-// for the Vault Agent sidecar.
+// for the Openbao Agent sidecar.
 func (a *Agent) ContainerEnvVars(init bool) ([]corev1.EnvVar, error) {
 	envs := baseContainerEnvVars
 
-	if a.Vault.GoMaxProcs != "" {
+	if a.Openbao.GoMaxProcs != "" {
 		envs = append(envs, corev1.EnvVar{
 			Name:  "GOMAXPROCS",
-			Value: a.Vault.GoMaxProcs,
+			Value: a.Openbao.GoMaxProcs,
 		})
 	}
 
-	if a.Vault.ClientTimeout != "" {
+	if a.Openbao.ClientTimeout != "" {
 		envs = append(envs, corev1.EnvVar{
-			Name:  "VAULT_CLIENT_TIMEOUT",
-			Value: a.Vault.ClientTimeout,
+			Name:  "OPENBAO_CLIENT_TIMEOUT",
+			Value: a.Openbao.ClientTimeout,
 		})
 	}
 
-	if a.Vault.ClientMaxRetries != "" {
+	if a.Openbao.ClientMaxRetries != "" {
 		envs = append(envs, corev1.EnvVar{
-			Name:  "VAULT_MAX_RETRIES",
-			Value: a.Vault.ClientMaxRetries,
+			Name:  "OPENBAO_MAX_RETRIES",
+			Value: a.Openbao.ClientMaxRetries,
 		})
 	}
 
-	if a.Vault.LogLevel != "" {
+	if a.Openbao.LogLevel != "" {
 		envs = append(envs, corev1.EnvVar{
-			Name:  "VAULT_LOG_LEVEL",
-			Value: a.Vault.LogLevel,
+			Name:  "OPENBAO_LOG_LEVEL",
+			Value: a.Openbao.LogLevel,
 		})
 	}
 
-	if a.Vault.LogFormat != "" {
+	if a.Openbao.LogFormat != "" {
 		envs = append(envs, corev1.EnvVar{
-			Name:  "VAULT_LOG_FORMAT",
-			Value: a.Vault.LogFormat,
+			Name:  "OPENBAO_LOG_FORMAT",
+			Value: a.Openbao.LogFormat,
 		})
 	}
 
-	if a.Vault.ProxyAddress != "" {
+	if a.Openbao.ProxyAddress != "" {
 		envs = append(envs, corev1.EnvVar{
 			Name:  "HTTPS_PROXY",
-			Value: a.Vault.ProxyAddress,
+			Value: a.Openbao.ProxyAddress,
 		})
 	}
 
@@ -92,62 +92,62 @@ func (a *Agent) ContainerEnvVars(init bool) ([]corev1.EnvVar, error) {
 
 		b64Config := base64.StdEncoding.EncodeToString(config)
 		envs = append(envs, corev1.EnvVar{
-			Name:  "VAULT_CONFIG",
+			Name:  "OPENBAO_CONFIG",
 			Value: b64Config,
 		})
 	} else {
-		// set up environment variables to access Vault since "vault" section may not be present in the config
-		if a.Vault.Address != "" {
+		// set up environment variables to access Openbao since "openbao" section may not be present in the config
+		if a.Openbao.Address != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "VAULT_ADDR",
-				Value: a.Vault.Address,
+				Name:  "OPENBAO_ADDR",
+				Value: a.Openbao.Address,
 			})
 		}
-		if a.Vault.CACert != "" {
+		if a.Openbao.CACert != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "VAULT_CACERT",
-				Value: a.Vault.CACert,
+				Name:  "OPENBAO_CACERT",
+				Value: a.Openbao.CACert,
 			})
 		}
-		if a.Vault.CAKey != "" {
+		if a.Openbao.CAKey != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "VAULT_CAPATH",
-				Value: a.Vault.CAKey,
+				Name:  "OPENBAO_CAPATH",
+				Value: a.Openbao.CAKey,
 			})
 		}
-		if a.Vault.ClientCert != "" {
+		if a.Openbao.ClientCert != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "VAULT_CLIENT_CERT",
-				Value: a.Vault.ClientCert,
+				Name:  "OPENBAO_CLIENT_CERT",
+				Value: a.Openbao.ClientCert,
 			})
 		}
-		if a.Vault.ClientKey != "" {
+		if a.Openbao.ClientKey != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "VAULT_CLIENT_KEY",
-				Value: a.Vault.ClientKey,
+				Name:  "OPENBAO_CLIENT_KEY",
+				Value: a.Openbao.ClientKey,
 			})
 		}
 		envs = append(envs, corev1.EnvVar{
-			Name:  "VAULT_SKIP_VERIFY",
-			Value: strconv.FormatBool(a.Vault.TLSSkipVerify),
+			Name:  "OPENBAO_SKIP_VERIFY",
+			Value: strconv.FormatBool(a.Openbao.TLSSkipVerify),
 		})
-		if a.Vault.TLSServerName != "" {
+		if a.Openbao.TLSServerName != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "VAULT_TLS_SERVER_NAME",
-				Value: a.Vault.TLSServerName,
+				Name:  "OPENBAO_TLS_SERVER_NAME",
+				Value: a.Openbao.TLSServerName,
 			})
 		}
 	}
 
-	if a.Vault.CACertBytes != "" {
+	if a.Openbao.CACertBytes != "" {
 		envs = append(envs, corev1.EnvVar{
-			Name:  "VAULT_CACERT_BYTES",
-			Value: decodeIfBase64(a.Vault.CACertBytes),
+			Name:  "OPENBAO_CACERT_BYTES",
+			Value: decodeIfBase64(a.Openbao.CACertBytes),
 		})
 	}
 
-	// Add IRSA AWS Env variables for vault containers
-	if a.Vault.AuthType == "aws" {
+	// Add IRSA AWS Env variables for openbao containers
+	if a.Openbao.AuthType == "aws" {
 		envMap := a.getAwsEnvsFromContainer(a.Pod)
 		for k, v := range envMap {
 			envs = append(envs, corev1.EnvVar{
@@ -155,8 +155,8 @@ func (a *Agent) ContainerEnvVars(init bool) ([]corev1.EnvVar, error) {
 				Value: v,
 			})
 		}
-		if a.Vault.AuthConfig["region"] != nil {
-			if r, ok := a.Vault.AuthConfig["region"].(string); ok {
+		if a.Openbao.AuthConfig["region"] != nil {
+			if r, ok := a.Openbao.AuthConfig["region"].(string); ok {
 				envs = append(envs, corev1.EnvVar{
 					Name:  "AWS_REGION",
 					Value: r,

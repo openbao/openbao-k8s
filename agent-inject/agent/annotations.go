@@ -21,308 +21,308 @@ const (
 	// AnnotationAgentStatus is the key of the annotation that is added to
 	// a pod after an injection is done.
 	// There's only one valid status we care about: "injected".
-	AnnotationAgentStatus = "vault.hashicorp.com/agent-inject-status"
+	AnnotationAgentStatus = "openbao.openbao.org/agent-inject-status"
 
 	// AnnotationAgentInject is the key of the annotation that controls whether
 	// injection is explicitly enabled or disabled for a pod. This should
 	// be set to a true or false value, as parseable by parseutil.ParseBool
-	AnnotationAgentInject = "vault.hashicorp.com/agent-inject"
+	AnnotationAgentInject = "openbao.openbao.org/agent-inject"
 
-	// AnnotationAgentInjectSecret is the key annotation that configures Vault
-	// Agent to retrieve the secrets from Vault required by the app.  The name
-	// of the secret is any unique string after "vault.hashicorp.com/agent-inject-secret-",
-	// such as "vault.hashicorp.com/agent-inject-secret-foobar".  The value is the
-	// path in Vault where the secret is located.
-	AnnotationAgentInjectSecret = "vault.hashicorp.com/agent-inject-secret"
+	// AnnotationAgentInjectSecret is the key annotation that configures Openbao
+	// Agent to retrieve the secrets from Openbao required by the app.  The name
+	// of the secret is any unique string after "openbao.openbao.org/agent-inject-secret-",
+	// such as "openbao.openbao.org/agent-inject-secret-foobar".  The value is the
+	// path in Openbao where the secret is located.
+	AnnotationAgentInjectSecret = "openbao.openbao.org/agent-inject-secret"
 
 	// AnnotationAgentInjectFile is the key of the annotation that contains the
 	// name (and optional path) of the file to create on disk. The name of the
-	// secret is the string after "vault.hashicorp.com/agent-inject-file-", and
+	// secret is the string after "openbao.openbao.org/agent-inject-file-", and
 	// should map to the same unique value provided in
-	// "vault.hashicorp.com/agent-inject-secret-". The value is the filename and
-	// path in the secrets volume where the vault secret will be written. The
+	// "openbao.openbao.org/agent-inject-secret-". The value is the filename and
+	// path in the secrets volume where the openbao secret will be written. The
 	// container mount path of the secrets volume may be modified with the
 	// secret-volume-path annotation.
-	AnnotationAgentInjectFile = "vault.hashicorp.com/agent-inject-file"
+	AnnotationAgentInjectFile = "openbao.openbao.org/agent-inject-file"
 
 	// AnnotationAgentInjectFilePermission is the key of the annotation that contains the
 	// permission of the file to create on disk. The name of the
-	// secret is the string after "vault.hashicorp.com/agent-inject-perms-", and
+	// secret is the string after "openbao.openbao.org/agent-inject-perms-", and
 	// should map to the same unique value provided in
-	// "vault.hashicorp.com/agent-inject-secret-". The value is the value of the permission, for
+	// "openbao.openbao.org/agent-inject-secret-". The value is the value of the permission, for
 	// example "0644"
-	AnnotationAgentInjectFilePermission = "vault.hashicorp.com/agent-inject-perms"
+	AnnotationAgentInjectFilePermission = "openbao.openbao.org/agent-inject-perms"
 
-	// AnnotationAgentInjectTemplate is the key annotation that configures Vault
+	// AnnotationAgentInjectTemplate is the key annotation that configures Openbao
 	// Agent what template to use for rendering the secrets.  The name
-	// of the template is any unique string after "vault.hashicorp.com/agent-inject-template-",
-	// such as "vault.hashicorp.com/agent-inject-template-foobar".  This should map
-	// to the same unique value provided in "vault.hashicorp.com/agent-inject-secret-".
+	// of the template is any unique string after "openbao.openbao.org/agent-inject-template-",
+	// such as "openbao.openbao.org/agent-inject-template-foobar".  This should map
+	// to the same unique value provided in "openbao.openbao.org/agent-inject-secret-".
 	// If not provided, a default generic template is used.
-	AnnotationAgentInjectTemplate = "vault.hashicorp.com/agent-inject-template"
+	AnnotationAgentInjectTemplate = "openbao.openbao.org/agent-inject-template"
 
 	// AnnotationAgentInjectContainers is the key of the annotation that controls
 	// in which containers the secrets volume should be mounted. Multiple containers can
 	// be specified in a comma-separated list. If not provided, the secrets volume will
 	// be mounted in all containers in the pod.
-	AnnotationAgentInjectContainers = "vault.hashicorp.com/agent-inject-containers"
+	AnnotationAgentInjectContainers = "openbao.openbao.org/agent-inject-containers"
 
 	// AnnotationAgentInjectDefaultTemplate sets the default template type. Possible values
 	// are "json" and "map".
-	AnnotationAgentInjectDefaultTemplate = "vault.hashicorp.com/agent-inject-default-template"
+	AnnotationAgentInjectDefaultTemplate = "openbao.openbao.org/agent-inject-default-template"
 
-	// AnnotationAgentInjectTemplateFile is the optional key annotation that configures Vault
+	// AnnotationAgentInjectTemplateFile is the optional key annotation that configures Openbao
 	// Agent what template on disk to use for rendering the secrets.  The name
-	// of the template is any unique string after "vault.hashicorp.com/agent-inject-template-file-",
-	// such as "vault.hashicorp.com/agent-inject-template-file-foobar".  This should map
-	// to the same unique value provided in "vault.hashicorp.com/agent-inject-secret-".
+	// of the template is any unique string after "openbao.openbao.org/agent-inject-template-file-",
+	// such as "openbao.openbao.org/agent-inject-template-file-foobar".  This should map
+	// to the same unique value provided in "openbao.openbao.org/agent-inject-secret-".
 	// The value is the filename and path of the template used by the agent to render the secrets.
 	// If not provided, the template content key annotation is used.
-	AnnotationAgentInjectTemplateFile = "vault.hashicorp.com/agent-inject-template-file"
+	AnnotationAgentInjectTemplateFile = "openbao.openbao.org/agent-inject-template-file"
 
 	// AnnotationAgentInjectToken is the annotation key for injecting the
-	// auto-auth token into the secrets volume (e.g. /vault/secrets/token)
-	AnnotationAgentInjectToken = "vault.hashicorp.com/agent-inject-token"
+	// auto-auth token into the secrets volume (e.g. /openbao/secrets/token)
+	AnnotationAgentInjectToken = "openbao.openbao.org/agent-inject-token"
 
-	// AnnotationAgentInjectCommand is the key annotation that configures Vault Agent
+	// AnnotationAgentInjectCommand is the key annotation that configures Openbao Agent
 	// to run a command after the secret is rendered. The name of the template is any
-	// unique string after "vault.hashicorp.com/agent-inject-command-". This should map
-	// to the same unique value provided in "vault.hashicorp.com/agent-inject-secret-".
+	// unique string after "openbao.openbao.org/agent-inject-command-". This should map
+	// to the same unique value provided in "openbao.openbao.org/agent-inject-secret-".
 	// If not provided (the default), no command is executed.
-	AnnotationAgentInjectCommand = "vault.hashicorp.com/agent-inject-command"
+	AnnotationAgentInjectCommand = "openbao.openbao.org/agent-inject-command"
 
-	// AnnotationAgentImage is the name of the Vault docker image to use.
-	AnnotationAgentImage = "vault.hashicorp.com/agent-image"
+	// AnnotationAgentImage is the name of the Openbao docker image to use.
+	AnnotationAgentImage = "openbao.openbao.org/agent-image"
 
 	// AnnotationAgentRequestNamespace is the Kubernetes namespace where the request
 	// originated from.
-	AnnotationAgentRequestNamespace = "vault.hashicorp.com/agent-request-namespace"
+	AnnotationAgentRequestNamespace = "openbao.openbao.org/agent-request-namespace"
 
 	// AnnotationAgentInitFirst makes the initialization container the first container
 	// to run when a pod starts. Default is last.
-	AnnotationAgentInitFirst = "vault.hashicorp.com/agent-init-first"
+	AnnotationAgentInitFirst = "openbao.openbao.org/agent-init-first"
 
 	// AnnotationAgentPrePopulate controls whether an init container is included
 	// to pre-populate the shared memory volume with secrets prior to the application
 	// starting.
-	AnnotationAgentPrePopulate = "vault.hashicorp.com/agent-pre-populate"
+	AnnotationAgentPrePopulate = "openbao.openbao.org/agent-pre-populate"
 
 	// AnnotationAgentPrePopulateOnly controls whether an init container is the only
 	// injected container.  If true, no sidecar container will be injected at runtime
 	// of the application.
-	AnnotationAgentPrePopulateOnly = "vault.hashicorp.com/agent-pre-populate-only"
+	AnnotationAgentPrePopulateOnly = "openbao.openbao.org/agent-pre-populate-only"
 
-	// AnnotationAgentConfigMap is the name of the configuration map where Vault Agent
+	// AnnotationAgentConfigMap is the name of the configuration map where Openbao Agent
 	// configuration file and templates can be found.
-	AnnotationAgentConfigMap = "vault.hashicorp.com/agent-configmap"
+	AnnotationAgentConfigMap = "openbao.openbao.org/agent-configmap"
 
 	// AnnotationAgentExtraSecret is the name of a Kubernetes secret that will be mounted
-	// into the Vault agent container so that the agent config can reference secrets.
-	AnnotationAgentExtraSecret = "vault.hashicorp.com/agent-extra-secret"
-	// AnnotationAgentLimitsCPU sets the CPU limit on the Vault Agent containers.
-	AnnotationAgentLimitsCPU = "vault.hashicorp.com/agent-limits-cpu"
+	// into the Openbao agent container so that the agent config can reference secrets.
+	AnnotationAgentExtraSecret = "openbao.openbao.org/agent-extra-secret"
+	// AnnotationAgentLimitsCPU sets the CPU limit on the Openbao Agent containers.
+	AnnotationAgentLimitsCPU = "openbao.openbao.org/agent-limits-cpu"
 
-	// AnnotationAgentLimitsMem sets the memory limit on the Vault Agent containers.
-	AnnotationAgentLimitsMem = "vault.hashicorp.com/agent-limits-mem"
+	// AnnotationAgentLimitsMem sets the memory limit on the Openbao Agent containers.
+	AnnotationAgentLimitsMem = "openbao.openbao.org/agent-limits-mem"
 
-	// AnnotationAgentLimitsEphemeral sets the ephemeral storage limit on the Vault Agent containers.
-	AnnotationAgentLimitsEphemeral = "vault.hashicorp.com/agent-limits-ephemeral"
+	// AnnotationAgentLimitsEphemeral sets the ephemeral storage limit on the Openbao Agent containers.
+	AnnotationAgentLimitsEphemeral = "openbao.openbao.org/agent-limits-ephemeral"
 
-	// AnnotationAgentRequestsCPU sets the requested CPU amount on the Vault Agent containers.
-	AnnotationAgentRequestsCPU = "vault.hashicorp.com/agent-requests-cpu"
+	// AnnotationAgentRequestsCPU sets the requested CPU amount on the Openbao Agent containers.
+	AnnotationAgentRequestsCPU = "openbao.openbao.org/agent-requests-cpu"
 
-	// AnnotationAgentRequestsMem sets the requested memory amount on the Vault Agent containers.
-	AnnotationAgentRequestsMem = "vault.hashicorp.com/agent-requests-mem"
+	// AnnotationAgentRequestsMem sets the requested memory amount on the Openbao Agent containers.
+	AnnotationAgentRequestsMem = "openbao.openbao.org/agent-requests-mem"
 
-	// AnnotationAgentRequestsEphemeral sets the ephemeral storage request on the Vault Agent containers.
-	AnnotationAgentRequestsEphemeral = "vault.hashicorp.com/agent-requests-ephemeral"
+	// AnnotationAgentRequestsEphemeral sets the ephemeral storage request on the Openbao Agent containers.
+	AnnotationAgentRequestsEphemeral = "openbao.openbao.org/agent-requests-ephemeral"
 
 	// AnnotationAgentRevokeOnShutdown controls whether a sidecar container will revoke its
-	// own Vault token before shutting down. If you are using a custom agent template, you must
-	// make sure it's written to `/home/vault/.vault-token`. Only supported for sidecar containers.
-	AnnotationAgentRevokeOnShutdown = "vault.hashicorp.com/agent-revoke-on-shutdown"
+	// own Openbao token before shutting down. If you are using a custom agent template, you must
+	// make sure it's written to `/home/openbao/.openbao-token`. Only supported for sidecar containers.
+	AnnotationAgentRevokeOnShutdown = "openbao.openbao.org/agent-revoke-on-shutdown"
 
 	// AnnotationAgentRevokeGrace sets the number of seconds after receiving the signal for pod
-	// termination that the container will attempt to revoke its own Vault token. Defaults to 5s.
-	AnnotationAgentRevokeGrace = "vault.hashicorp.com/agent-revoke-grace"
+	// termination that the container will attempt to revoke its own Openbao token. Defaults to 5s.
+	AnnotationAgentRevokeGrace = "openbao.openbao.org/agent-revoke-grace"
 
-	// AnnotationVaultNamespace is the Vault namespace where secrets can be found.
-	AnnotationVaultNamespace = "vault.hashicorp.com/namespace"
+	// AnnotationOpenbaoNamespace is the Openbao namespace where secrets can be found.
+	AnnotationOpenbaoNamespace = "openbao.openbao.org/namespace"
 
-	// AnnotationAgentRunAsUser sets the User ID to run the Vault Agent containers as.
-	AnnotationAgentRunAsUser = "vault.hashicorp.com/agent-run-as-user"
+	// AnnotationAgentRunAsUser sets the User ID to run the Openbao Agent containers as.
+	AnnotationAgentRunAsUser = "openbao.openbao.org/agent-run-as-user"
 
-	// AnnotationAgentRunAsGroup sets the Group ID to run the Vault Agent containers as.
-	AnnotationAgentRunAsGroup = "vault.hashicorp.com/agent-run-as-group"
+	// AnnotationAgentRunAsGroup sets the Group ID to run the Openbao Agent containers as.
+	AnnotationAgentRunAsGroup = "openbao.openbao.org/agent-run-as-group"
 
-	// AnnotationAgentRunAsSameUser sets the User ID of the injected Vault Agent
+	// AnnotationAgentRunAsSameUser sets the User ID of the injected Openbao Agent
 	// containers to the User ID of the first application container in the Pod.
 	// Requires Spec.Containers[0].SecurityContext.RunAsUser to be set in the
 	// Pod Spec.
-	AnnotationAgentRunAsSameUser = "vault.hashicorp.com/agent-run-as-same-user"
+	AnnotationAgentRunAsSameUser = "openbao.openbao.org/agent-run-as-same-user"
 
 	// AnnotationAgentShareProcessNamespace sets the shareProcessNamespace value on the pod spec.
-	AnnotationAgentShareProcessNamespace = "vault.hashicorp.com/agent-share-process-namespace"
+	AnnotationAgentShareProcessNamespace = "openbao.openbao.org/agent-share-process-namespace"
 
 	// AnnotationAgentSetSecurityContext controls whether a SecurityContext (uid
-	// and gid) is set on the injected Vault Agent containers
-	AnnotationAgentSetSecurityContext = "vault.hashicorp.com/agent-set-security-context"
+	// and gid) is set on the injected Openbao Agent containers
+	AnnotationAgentSetSecurityContext = "openbao.openbao.org/agent-set-security-context"
 
 	// AnnotationAgentServiceAccountTokenVolumeName is the optional name of a volume containing a
 	// service account token
-	AnnotationAgentServiceAccountTokenVolumeName = "vault.hashicorp.com/agent-service-account-token-volume-name"
+	AnnotationAgentServiceAccountTokenVolumeName = "openbao.openbao.org/agent-service-account-token-volume-name"
 
-	// AnnotationVaultService is the name of the Vault server.  This can be overridden by the
+	// AnnotationOpenbaoService is the name of the Openbao server.  This can be overridden by the
 	// user but will be set by a flag on the deployment.
-	AnnotationVaultService = "vault.hashicorp.com/service"
+	AnnotationOpenbaoService = "openbao.openbao.org/service"
 
-	// AnnotationProxyAddress is the HTTP proxy to use when talking to the Vault server.
-	AnnotationProxyAddress = "vault.hashicorp.com/proxy-address"
+	// AnnotationProxyAddress is the HTTP proxy to use when talking to the Openbao server.
+	AnnotationProxyAddress = "openbao.openbao.org/proxy-address"
 
-	// AnnotationVaultTLSSkipVerify allows users to configure verifying TLS
-	// when communicating with Vault.
-	AnnotationVaultTLSSkipVerify = "vault.hashicorp.com/tls-skip-verify"
+	// AnnotationOpenbaoTLSSkipVerify allows users to configure verifying TLS
+	// when communicating with Openbao.
+	AnnotationOpenbaoTLSSkipVerify = "openbao.openbao.org/tls-skip-verify"
 
-	// AnnotationVaultTLSSecret is the name of the Kubernetes secret containing
+	// AnnotationOpenbaoTLSSecret is the name of the Kubernetes secret containing
 	// client TLS certificates and keys.
-	AnnotationVaultTLSSecret = "vault.hashicorp.com/tls-secret"
+	AnnotationOpenbaoTLSSecret = "openbao.openbao.org/tls-secret"
 
-	// AnnotationVaultTLSServerName is the name of the Vault server to verify the
-	// authenticity of the server when communicating with Vault over TLS.
-	AnnotationVaultTLSServerName = "vault.hashicorp.com/tls-server-name"
+	// AnnotationOpenbaoTLSServerName is the name of the Openbao server to verify the
+	// authenticity of the server when communicating with Openbao over TLS.
+	AnnotationOpenbaoTLSServerName = "openbao.openbao.org/tls-server-name"
 
-	// AnnotationVaultCACert is the path of the CA certificate used to verify Vault's
+	// AnnotationOpenbaoCACert is the path of the CA certificate used to verify Openbao's
 	// CA certificate.
-	AnnotationVaultCACert = "vault.hashicorp.com/ca-cert"
+	AnnotationOpenbaoCACert = "openbao.openbao.org/ca-cert"
 
-	// AnnotationVaultCAKey is the path of the CA key used to verify Vault's CA.
-	AnnotationVaultCAKey = "vault.hashicorp.com/ca-key"
+	// AnnotationOpenbaoCAKey is the path of the CA key used to verify Openbao's CA.
+	AnnotationOpenbaoCAKey = "openbao.openbao.org/ca-key"
 
-	// AnnotationVaultClientCert is the path of the client certificate used to communicate
-	// with Vault over TLS.
-	AnnotationVaultClientCert = "vault.hashicorp.com/client-cert"
+	// AnnotationOpenbaoClientCert is the path of the client certificate used to communicate
+	// with Openbao over TLS.
+	AnnotationOpenbaoClientCert = "openbao.openbao.org/client-cert"
 
-	// AnnotationVaultClientKey is the path of the client key used to communicate
-	// with Vault over TLS.
-	AnnotationVaultClientKey = "vault.hashicorp.com/client-key"
+	// AnnotationOpenbaoClientKey is the path of the client key used to communicate
+	// with Openbao over TLS.
+	AnnotationOpenbaoClientKey = "openbao.openbao.org/client-key"
 
-	// AnnotationVaultClientMaxRetries is the number of retry attempts when 5xx errors are encountered.
-	AnnotationVaultClientMaxRetries = "vault.hashicorp.com/client-max-retries"
+	// AnnotationOpenbaoClientMaxRetries is the number of retry attempts when 5xx errors are encountered.
+	AnnotationOpenbaoClientMaxRetries = "openbao.openbao.org/client-max-retries"
 
-	// AnnotationVaultClientTimeout sets the request timeout when communicating with Vault.
-	AnnotationVaultClientTimeout = "vault.hashicorp.com/client-timeout"
+	// AnnotationOpenbaoClientTimeout sets the request timeout when communicating with Openbao.
+	AnnotationOpenbaoClientTimeout = "openbao.openbao.org/client-timeout"
 
-	// AnnotationVaultGoMaxProcs sets the Vault Agent go max procs.
-	AnnotationVaultGoMaxProcs = "vault.hashicorp.com/go-max-procs"
+	// AnnotationOpenbaoGoMaxProcs sets the Openbao Agent go max procs.
+	AnnotationOpenbaoGoMaxProcs = "openbao.openbao.org/go-max-procs"
 
-	// AnnotationVaultLogLevel sets the Vault Agent log level.
-	AnnotationVaultLogLevel = "vault.hashicorp.com/log-level"
+	// AnnotationOpenbaoLogLevel sets the Openbao Agent log level.
+	AnnotationOpenbaoLogLevel = "openbao.openbao.org/log-level"
 
-	// AnnotationVaultLogFormat sets the Vault Agent log format.
-	AnnotationVaultLogFormat = "vault.hashicorp.com/log-format"
+	// AnnotationOpenbaoLogFormat sets the Openbao Agent log format.
+	AnnotationOpenbaoLogFormat = "openbao.openbao.org/log-format"
 
-	// AnnotationVaultRole specifies the role to be used for the Kubernetes auto-auth
+	// AnnotationOpenbaoRole specifies the role to be used for the Kubernetes auto-auth
 	// method.
-	AnnotationVaultRole = "vault.hashicorp.com/role"
+	AnnotationOpenbaoRole = "openbao.openbao.org/role"
 
-	// AnnotationVaultAuthType specifies the auto-auth method type to be used.
-	AnnotationVaultAuthType = "vault.hashicorp.com/auth-type"
+	// AnnotationOpenbaoAuthType specifies the auto-auth method type to be used.
+	AnnotationOpenbaoAuthType = "openbao.openbao.org/auth-type"
 
-	// AnnotationVaultAuthPath specifies the mount path to be used for the auto-auth method.
-	AnnotationVaultAuthPath = "vault.hashicorp.com/auth-path"
+	// AnnotationOpenbaoAuthPath specifies the mount path to be used for the auto-auth method.
+	AnnotationOpenbaoAuthPath = "openbao.openbao.org/auth-path"
 
-	// AnnotationVaultAuthConfig specifies the Auto Auth Method configuration parameters.
-	// The name of the parameter is any unique string after "vault.hashicorp.com/auth-config-",
-	// such as "vault.hashicorp.com/auth-config-foobar".
-	AnnotationVaultAuthConfig = "vault.hashicorp.com/auth-config"
+	// AnnotationOpenbaoAuthConfig specifies the Auto Auth Method configuration parameters.
+	// The name of the parameter is any unique string after "openbao.openbao.org/auth-config-",
+	// such as "openbao.openbao.org/auth-config-foobar".
+	AnnotationOpenbaoAuthConfig = "openbao.openbao.org/auth-config"
 
-	// AnnotationVaultSecretVolumePath specifies where the secrets are to be
+	// AnnotationOpenbaoSecretVolumePath specifies where the secrets are to be
 	// Mounted after fetching.
-	AnnotationVaultSecretVolumePath = "vault.hashicorp.com/secret-volume-path"
+	AnnotationOpenbaoSecretVolumePath = "openbao.openbao.org/secret-volume-path"
 
 	// AnnotationPreserveSecretCase if enabled will preserve the case of secret name
 	// by default the name is converted to lower case.
-	AnnotationPreserveSecretCase = "vault.hashicorp.com/preserve-secret-case"
+	AnnotationPreserveSecretCase = "openbao.openbao.org/preserve-secret-case"
 
 	// AnnotationAgentCacheEnable if enabled will configure the sidecar container
 	// to enable agent caching
-	AnnotationAgentCacheEnable = "vault.hashicorp.com/agent-cache-enable"
+	AnnotationAgentCacheEnable = "openbao.openbao.org/agent-cache-enable"
 
 	// AnnotationAgentCacheUseAutoAuthToken configures the agent cache to use the
 	// auto auth token or not. Can be set to "force" to force usage of the auto-auth token
-	AnnotationAgentCacheUseAutoAuthToken = "vault.hashicorp.com/agent-cache-use-auto-auth-token"
+	AnnotationAgentCacheUseAutoAuthToken = "openbao.openbao.org/agent-cache-use-auto-auth-token"
 
 	// AnnotationAgentCacheListenerPort configures the port the agent cache should listen on
-	AnnotationAgentCacheListenerPort = "vault.hashicorp.com/agent-cache-listener-port"
+	AnnotationAgentCacheListenerPort = "openbao.openbao.org/agent-cache-listener-port"
 
 	// AnnotationAgentCacheExitOnErr configures whether the agent will exit on an
 	// error while restoring the persistent cache
-	AnnotationAgentCacheExitOnErr = "vault.hashicorp.com/agent-cache-exit-on-err"
+	AnnotationAgentCacheExitOnErr = "openbao.openbao.org/agent-cache-exit-on-err"
 
 	// AnnotationAgentCopyVolumeMounts is the name of the container or init container
-	// in the Pod whose volume mounts should be copied onto the Vault Agent init and
+	// in the Pod whose volume mounts should be copied onto the Openbao Agent init and
 	// sidecar containers. Ignores any Kubernetes service account token mounts.
-	AnnotationAgentCopyVolumeMounts = "vault.hashicorp.com/agent-copy-volume-mounts"
+	AnnotationAgentCopyVolumeMounts = "openbao.openbao.org/agent-copy-volume-mounts"
 
 	// AnnotationTemplateConfigExitOnRetryFailure configures whether agent
 	// will exit on template render failures once it has exhausted all its retry
 	// attempts. Defaults to true.
-	AnnotationTemplateConfigExitOnRetryFailure = "vault.hashicorp.com/template-config-exit-on-retry-failure"
+	AnnotationTemplateConfigExitOnRetryFailure = "openbao.openbao.org/template-config-exit-on-retry-failure"
 
 	// AnnotationTemplateConfigStaticSecretRenderInterval
-	// If specified, configures how often Vault Agent Template should render non-leased secrets such as KV v2.
+	// If specified, configures how often Openbao Agent Template should render non-leased secrets such as KV v2.
 	// Defaults to 5 minutes.
-	AnnotationTemplateConfigStaticSecretRenderInterval = "vault.hashicorp.com/template-static-secret-render-interval"
+	AnnotationTemplateConfigStaticSecretRenderInterval = "openbao.openbao.org/template-static-secret-render-interval"
 
 	// AnnotationTemplateConfigMaxConnectionsPerHost limits the total number of connections
-	//  that the Vault Agent templating engine can use for a particular Vault host. This limit
+	//  that the Openbao Agent templating engine can use for a particular Openbao host. This limit
 	//  includes connections in the dialing, active, and idle states.
-	AnnotationTemplateConfigMaxConnectionsPerHost = "vault.hashicorp.com/template-max-connections-per-host"
+	AnnotationTemplateConfigMaxConnectionsPerHost = "openbao.openbao.org/template-max-connections-per-host"
 
 	// AnnotationAgentEnableQuit configures whether the quit endpoint is
 	// enabled in the injected agent config
-	AnnotationAgentEnableQuit = "vault.hashicorp.com/agent-enable-quit"
+	AnnotationAgentEnableQuit = "openbao.openbao.org/agent-enable-quit"
 
 	// AnnotationAgentAuthMinBackoff specifies the minimum backoff duration used when the agent auto auth fails.
 	// Defaults to 1 second.
-	AnnotationAgentAuthMinBackoff = "vault.hashicorp.com/auth-min-backoff"
+	AnnotationAgentAuthMinBackoff = "openbao.openbao.org/auth-min-backoff"
 
 	// AnnotationAgentAuthMaxBackoff specifies the maximum backoff duration used when the agent auto auth fails.
 	// Defaults to 5 minutes.
-	AnnotationAgentAuthMaxBackoff = "vault.hashicorp.com/auth-max-backoff"
+	AnnotationAgentAuthMaxBackoff = "openbao.openbao.org/auth-max-backoff"
 
 	// AnnotationAgentDisableIdleConnections specifies disabling idle connections for various
-	// features in Vault Agent. Comma-separated string, with valid values auto-auth, caching,
+	// features in Openbao Agent. Comma-separated string, with valid values auto-auth, caching,
 	// templating.
-	AnnotationAgentDisableIdleConnections = "vault.hashicorp.com/agent-disable-idle-connections"
+	AnnotationAgentDisableIdleConnections = "openbao.openbao.org/agent-disable-idle-connections"
 
 	// AnnotationAgentDisableKeepAlives specifies disabling keep-alives for various
-	// features in Vault Agent. Comma-separated string, with valid values auto-auth, caching,
+	// features in Openbao Agent. Comma-separated string, with valid values auto-auth, caching,
 	// templating.
-	AnnotationAgentDisableKeepAlives = "vault.hashicorp.com/agent-disable-keep-alives"
+	AnnotationAgentDisableKeepAlives = "openbao.openbao.org/agent-disable-keep-alives"
 
 	// AnnotationAgentJsonPatch is used to specify a JSON patch to be applied to the agent sidecar container before
 	// it is created.
-	AnnotationAgentJsonPatch = "vault.hashicorp.com/agent-json-patch"
+	AnnotationAgentJsonPatch = "openbao.openbao.org/agent-json-patch"
 
 	// AnnotationAgentInitJsonPatch is used to specify a JSON patch to be applied to the agent init container before
 	// it is created.
-	AnnotationAgentInitJsonPatch = "vault.hashicorp.com/agent-init-json-patch"
+	AnnotationAgentInitJsonPatch = "openbao.openbao.org/agent-init-json-patch"
 
 	// AnnotationAgentAutoAuthExitOnError is used to control if a failure in the auto_auth method will cause the agent to exit or try indefinitely (the default).
-	AnnotationAgentAutoAuthExitOnError = "vault.hashicorp.com/agent-auto-auth-exit-on-err"
+	AnnotationAgentAutoAuthExitOnError = "openbao.openbao.org/agent-auto-auth-exit-on-err"
 
 	// AnnotationAgentTelemetryConfig specifies the Agent Telemetry configuration parameters.
-	// The name of the parameter is any unique string after "vault.hashicorp.com/agent-telemetry-",
-	// such as "vault.hashicorp.com/agent-telemetry-foobar".
-	AnnotationAgentTelemetryConfig = "vault.hashicorp.com/agent-telemetry"
+	// The name of the parameter is any unique string after "openbao.openbao.org/agent-telemetry-",
+	// such as "openbao.openbao.org/agent-telemetry-foobar".
+	AnnotationAgentTelemetryConfig = "openbao.openbao.org/agent-telemetry"
 
 	// AnnotationErrorOnMissingKey is the key of annotation that configures whether
 	// template should error when a key is missing in the secret. The name of the
-	// secret is the string after "vault.hashicorp.com/error-on-missing-key-", and
+	// secret is the string after "openbao.openbao.org/error-on-missing-key-", and
 	// should map to the same unique value provided in
-	// "vault.hashicorp.com/agent-inject-secret-". Defaults to false
-	AnnotationErrorOnMissingKey = "vault.hashicorp.com/error-on-missing-key"
+	// "openbao.openbao.org/agent-inject-secret-". Defaults to false
+	AnnotationErrorOnMissingKey = "openbao.openbao.org/error-on-missing-key"
 )
 
 type AgentConfig struct {
@@ -330,7 +330,7 @@ type AgentConfig struct {
 	Address                    string
 	AuthType                   string
 	AuthPath                   string
-	VaultNamespace             string
+	OpenbaoNamespace             string
 	Namespace                  string
 	RevokeOnShutdown           bool
 	UserID                     string
@@ -369,11 +369,11 @@ func Init(pod *corev1.Pod, cfg AgentConfig) error {
 	}
 
 	if cfg.Address == "" {
-		return errors.New("address for Vault required")
+		return errors.New("address for Openbao required")
 	}
 
 	if cfg.AuthPath == "" {
-		return errors.New("Vault Auth Path required")
+		return errors.New("Openbao Auth Path required")
 	}
 
 	if cfg.Namespace == "" {
@@ -384,23 +384,23 @@ func Init(pod *corev1.Pod, cfg AgentConfig) error {
 		pod.ObjectMeta.Annotations = make(map[string]string)
 	}
 
-	if _, ok := pod.ObjectMeta.Annotations[AnnotationVaultService]; !ok {
-		pod.ObjectMeta.Annotations[AnnotationVaultService] = cfg.Address
+	if _, ok := pod.ObjectMeta.Annotations[AnnotationOpenbaoService]; !ok {
+		pod.ObjectMeta.Annotations[AnnotationOpenbaoService] = cfg.Address
 	}
 
-	if _, ok := pod.ObjectMeta.Annotations[AnnotationVaultAuthType]; !ok {
+	if _, ok := pod.ObjectMeta.Annotations[AnnotationOpenbaoAuthType]; !ok {
 		if cfg.AuthType == "" {
-			cfg.AuthType = DefaultVaultAuthType
+			cfg.AuthType = DefaultOpenbaoAuthType
 		}
-		pod.ObjectMeta.Annotations[AnnotationVaultAuthType] = cfg.AuthType
+		pod.ObjectMeta.Annotations[AnnotationOpenbaoAuthType] = cfg.AuthType
 	}
 
-	if _, ok := pod.ObjectMeta.Annotations[AnnotationVaultAuthPath]; !ok {
-		pod.ObjectMeta.Annotations[AnnotationVaultAuthPath] = cfg.AuthPath
+	if _, ok := pod.ObjectMeta.Annotations[AnnotationOpenbaoAuthPath]; !ok {
+		pod.ObjectMeta.Annotations[AnnotationOpenbaoAuthPath] = cfg.AuthPath
 	}
 
-	if _, ok := pod.ObjectMeta.Annotations[AnnotationVaultNamespace]; !ok {
-		pod.ObjectMeta.Annotations[AnnotationVaultNamespace] = cfg.VaultNamespace
+	if _, ok := pod.ObjectMeta.Annotations[AnnotationOpenbaoNamespace]; !ok {
+		pod.ObjectMeta.Annotations[AnnotationOpenbaoNamespace] = cfg.OpenbaoNamespace
 	}
 
 	if _, ok := pod.ObjectMeta.Annotations[AnnotationProxyAddress]; !ok {
@@ -409,7 +409,7 @@ func Init(pod *corev1.Pod, cfg AgentConfig) error {
 
 	if _, ok := pod.ObjectMeta.Annotations[AnnotationAgentImage]; !ok {
 		if cfg.Image == "" {
-			cfg.Image = DefaultVaultImage
+			cfg.Image = DefaultOpenbaoImage
 		}
 		pod.ObjectMeta.Annotations[AnnotationAgentImage] = cfg.Image
 	}
@@ -442,8 +442,8 @@ func Init(pod *corev1.Pod, cfg AgentConfig) error {
 		pod.ObjectMeta.Annotations[AnnotationAgentRequestsEphemeral] = cfg.ResourceRequestEphemeral
 	}
 
-	if _, ok := pod.ObjectMeta.Annotations[AnnotationVaultSecretVolumePath]; !ok {
-		pod.ObjectMeta.Annotations[AnnotationVaultSecretVolumePath] = secretVolumePath
+	if _, ok := pod.ObjectMeta.Annotations[AnnotationOpenbaoSecretVolumePath]; !ok {
+		pod.ObjectMeta.Annotations[AnnotationOpenbaoSecretVolumePath] = secretVolumePath
 	}
 
 	if _, ok := pod.ObjectMeta.Annotations[AnnotationAgentRevokeOnShutdown]; !ok {
@@ -454,12 +454,12 @@ func Init(pod *corev1.Pod, cfg AgentConfig) error {
 		pod.ObjectMeta.Annotations[AnnotationAgentRevokeGrace] = strconv.Itoa(DefaultRevokeGrace)
 	}
 
-	if _, ok := pod.ObjectMeta.Annotations[AnnotationVaultLogLevel]; !ok {
-		pod.ObjectMeta.Annotations[AnnotationVaultLogLevel] = DefaultAgentLogLevel
+	if _, ok := pod.ObjectMeta.Annotations[AnnotationOpenbaoLogLevel]; !ok {
+		pod.ObjectMeta.Annotations[AnnotationOpenbaoLogLevel] = DefaultAgentLogLevel
 	}
 
-	if _, ok := pod.ObjectMeta.Annotations[AnnotationVaultLogFormat]; !ok {
-		pod.ObjectMeta.Annotations[AnnotationVaultLogFormat] = DefaultAgentLogFormat
+	if _, ok := pod.ObjectMeta.Annotations[AnnotationOpenbaoLogFormat]; !ok {
+		pod.ObjectMeta.Annotations[AnnotationOpenbaoLogFormat] = DefaultAgentLogFormat
 	}
 
 	if _, ok := pod.ObjectMeta.Annotations[AnnotationAgentServiceAccountTokenVolumeName]; !ok {
@@ -596,13 +596,13 @@ func Init(pod *corev1.Pod, cfg AgentConfig) error {
 	return nil
 }
 
-// secrets parses annotations with the pattern "vault.hashicorp.com/agent-inject-secret-".
+// secrets parses annotations with the pattern "openbao.openbao.org/agent-inject-secret-".
 // Everything following the final dash becomes the name of the secret, and the
-// value is the path in Vault. This method also matches and returns the
+// value is the path in Openbao. This method also matches and returns the
 // Template, Command, and FilePathAndName settings from annotations associated
 // with a secret name.
 //
-// For example: "vault.hashicorp.com/agent-inject-secret-foobar: db/creds/foobar"
+// For example: "openbao.openbao.org/agent-inject-secret-foobar: db/creds/foobar"
 // Name: foobar, Path: db/creds/foobar
 func (a *Agent) secrets() ([]*Secret, error) {
 	var (
@@ -644,7 +644,7 @@ func (a *Agent) secrets() ([]*Secret, error) {
 		if secret.Template == "" {
 			secret.TemplateFile = a.annotationsSecretValue(AnnotationAgentInjectTemplateFile, secret.RawName, secret.TemplateFile)
 		}
-		secret.MountPath = a.annotationsSecretValue(AnnotationVaultSecretVolumePath, secret.RawName, a.Annotations[AnnotationVaultSecretVolumePath])
+		secret.MountPath = a.annotationsSecretValue(AnnotationOpenbaoSecretVolumePath, secret.RawName, a.Annotations[AnnotationOpenbaoSecretVolumePath])
 		secret.Command = a.annotationsSecretValue(AnnotationAgentInjectCommand, secret.RawName, "")
 		secret.FilePathAndName = a.annotationsSecretValue(AnnotationAgentInjectFile, secret.RawName, "")
 		secret.FilePermission = a.annotationsSecretValue(AnnotationAgentInjectFilePermission, secret.RawName, "")
@@ -737,7 +737,7 @@ func (a *Agent) revokeGrace() (uint64, error) {
 }
 
 func (a *Agent) tlsSkipVerify() (bool, error) {
-	raw, ok := a.Annotations[AnnotationVaultTLSSkipVerify]
+	raw, ok := a.Annotations[AnnotationOpenbaoTLSSkipVerify]
 	if !ok {
 		return false, nil
 	}
@@ -889,7 +889,7 @@ func (a *Agent) injectToken() (bool, error) {
 }
 
 // telemetryConfig accumulates the agent-telemetry annotations into a map which is
-// later rendered into the telemetry{} stanza of the Vault Agent config.
+// later rendered into the telemetry{} stanza of the Openbao Agent config.
 func (a *Agent) telemetryConfig() map[string]interface{} {
 	telemetryConfig := make(map[string]interface{})
 
@@ -918,7 +918,7 @@ func (a *Agent) authConfig() map[string]interface{} {
 	}
 
 	// set authConfig parameters from annotations
-	prefix := fmt.Sprintf("%s-", AnnotationVaultAuthConfig)
+	prefix := fmt.Sprintf("%s-", AnnotationOpenbaoAuthConfig)
 	for annotation, value := range a.Annotations {
 		if strings.HasPrefix(annotation, prefix) {
 			param := strings.TrimPrefix(annotation, prefix)
@@ -927,8 +927,8 @@ func (a *Agent) authConfig() map[string]interface{} {
 		}
 	}
 
-	if a.Vault.Role != "" {
-		authConfig["role"] = a.Vault.Role
+	if a.Openbao.Role != "" {
+		authConfig["role"] = a.Openbao.Role
 	}
 
 	return authConfig

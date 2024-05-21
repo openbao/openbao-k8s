@@ -14,8 +14,8 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-secure-stdlib/parseutil"
 	"github.com/hashicorp/go-secure-stdlib/tlsutil"
-	"github.com/hashicorp/vault-k8s/agent-inject/agent"
-	"github.com/hashicorp/vault-k8s/helper/flags"
+	"github.com/openbao/openbao-k8s/agent-inject/agent"
+	"github.com/openbao/openbao-k8s/helper/flags"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -27,7 +27,7 @@ const (
 
 // Specification are the supported environment variables, prefixed with
 // AGENT_INJECT.  The names of the variables in the struct are split using
-// camel case: Specification.VaultAddr = AGENT_INJECT_VAULT_ADDR
+// camel case: Specification.OpenbaoAddr = AGENT_INJECT_OPENBAO_ADDR
 type Specification struct {
 	// Listen is the AGENT_INJECT_LISTEN environment variable.
 	Listen string `split_words:"true" `
@@ -62,29 +62,29 @@ type Specification struct {
 	// TLSKeyFile is the AGENT_INJECT_TLS_KEY_FILE environment variable.
 	TLSKeyFile string `envconfig:"tls_key_file"`
 
-	// VaultAddr is the AGENT_INJECT_VAULT_ADDR environment variable.
-	VaultAddr string `split_words:"true"`
+	// OpenbaoAddr is the AGENT_INJECT_OPENBAO_ADDR environment variable.
+	OpenbaoAddr string `split_words:"true"`
 
-	// VaultCACertBytes is the AGENT_INJECT_VAULT_CACERT_BYTES environment variable.
-	// Specifies the CA cert to trust for TLS with Vault as a PEM-encoded
+	// OpenbaoCACertBytes is the AGENT_INJECT_OPENBAO_CACERT_BYTES environment variable.
+	// Specifies the CA cert to trust for TLS with Openbao as a PEM-encoded
 	// certificate or bundle. The multi-line PEM contents may optionally be base64
 	// encoded to avoid line breaks.
-	VaultCACertBytes string `envconfig:"AGENT_INJECT_VAULT_CACERT_BYTES"`
+	OpenbaoCACertBytes string `envconfig:"AGENT_INJECT_OPENBAO_CACERT_BYTES"`
 
 	// ProxyAddr is the AGENT_INJECT_PROXY_ADDR environment variable.
 	ProxyAddr string `split_words:"true"`
 
-	// VaultImage is the AGENT_INJECT_VAULT_IMAGE environment variable.
-	VaultImage string `split_words:"true"`
+	// OpenbaoImage is the AGENT_INJECT_OPENBAO_IMAGE environment variable.
+	OpenbaoImage string `split_words:"true"`
 
-	// VaultAuthType is the AGENT_INJECT_VAULT_AUTH_TYPE environment variable.
-	VaultAuthType string `split_words:"true"`
+	// OpenbaoAuthType is the AGENT_INJECT_OPENBAO_AUTH_TYPE environment variable.
+	OpenbaoAuthType string `split_words:"true"`
 
-	// VaultAuthPath is the AGENT_INJECT_VAULT_AUTH_PATH environment variable.
-	VaultAuthPath string `split_words:"true"`
+	// OpenbaoAuthPath is the AGENT_INJECT_OPENBAO_AUTH_PATH environment variable.
+	OpenbaoAuthPath string `split_words:"true"`
 
-	// VaultNamespace is the AGENT_INJECT_VAULT_NAMESPACE environment variable.
-	VaultNamespace string `split_words:"true"`
+	// OpenbaoNamespace is the AGENT_INJECT_OPENBAO_NAMESPACE environment variable.
+	OpenbaoNamespace string `split_words:"true"`
 
 	// RevokeOnShutdown is AGENT_INJECT_REVOKE_ON_SHUTDOWN environment variable.
 	RevokeOnShutdown string `split_words:"true"`
@@ -166,28 +166,28 @@ func (c *Command) init() {
 		"PEM-encoded TLS certificate to serve. If blank, will generate random cert.")
 	c.flagSet.StringVar(&c.flagKeyFile, "tls-key-file", "",
 		"PEM-encoded TLS private key to serve. If blank, will generate random cert.")
-	c.flagSet.StringVar(&c.flagVaultImage, "vault-image", agent.DefaultVaultImage,
-		fmt.Sprintf("Docker image for Vault. Defaults to %q.", agent.DefaultVaultImage))
-	c.flagSet.StringVar(&c.flagVaultService, "vault-address", "",
-		"Address of the Vault server.")
-	c.flagSet.StringVar(&c.flagVaultCACertBytes, "vault-cacert-bytes", "",
-		"CA certificate to trust for TLS with Vault, specified as a PEM-encoded certificate or bundle. "+
+	c.flagSet.StringVar(&c.flagOpenbaoImage, "openbao-image", agent.DefaultOpenbaoImage,
+		fmt.Sprintf("Docker image for Openbao. Defaults to %q.", agent.DefaultOpenbaoImage))
+	c.flagSet.StringVar(&c.flagOpenbaoService, "openbao-address", "",
+		"Address of the Openbao server.")
+	c.flagSet.StringVar(&c.flagOpenbaoCACertBytes, "openbao-cacert-bytes", "",
+		"CA certificate to trust for TLS with Openbao, specified as a PEM-encoded certificate or bundle. "+
 			"The multi-line PEM contents may optionally be base64 encoded to avoid line breaks.")
 	c.flagSet.StringVar(&c.flagProxyAddress, "proxy-address", "",
-		"HTTP proxy address used to talk to the Vault service.")
-	c.flagSet.StringVar(&c.flagVaultAuthType, "vault-auth-type", agent.DefaultVaultAuthType,
-		fmt.Sprintf("Type of Vault Auth Method to use. Defaults to %q.", agent.DefaultVaultAuthType))
-	c.flagSet.StringVar(&c.flagVaultAuthPath, "vault-auth-path", agent.DefaultVaultAuthPath,
-		fmt.Sprintf("Mount path of the Vault Auth Method. Defaults to %q.", agent.DefaultVaultAuthPath))
-	c.flagSet.StringVar(&c.flagVaultNamespace, "vault-namespace", "", "Vault enterprise namespace.")
+		"HTTP proxy address used to talk to the Openbao service.")
+	c.flagSet.StringVar(&c.flagOpenbaoAuthType, "openbao-auth-type", agent.DefaultOpenbaoAuthType,
+		fmt.Sprintf("Type of Openbao Auth Method to use. Defaults to %q.", agent.DefaultOpenbaoAuthType))
+	c.flagSet.StringVar(&c.flagOpenbaoAuthPath, "openbao-auth-path", agent.DefaultOpenbaoAuthPath,
+		fmt.Sprintf("Mount path of the Openbao Auth Method. Defaults to %q.", agent.DefaultOpenbaoAuthPath))
+	c.flagSet.StringVar(&c.flagOpenbaoNamespace, "openbao-namespace", "", "Openbao enterprise namespace.")
 	c.flagSet.BoolVar(&c.flagRevokeOnShutdown, "revoke-on-shutdown", false,
-		"Automatically revoke Vault Token on Pod termination.")
+		"Automatically revoke Openbao Token on Pod termination.")
 	c.flagSet.StringVar(&c.flagRunAsUser, "run-as-user", strconv.Itoa(agent.DefaultAgentRunAsUser),
-		fmt.Sprintf("User (uid) to run Vault agent as. Defaults to %d.", agent.DefaultAgentRunAsUser))
+		fmt.Sprintf("User (uid) to run Openbao agent as. Defaults to %d.", agent.DefaultAgentRunAsUser))
 	c.flagSet.StringVar(&c.flagRunAsGroup, "run-as-group", strconv.Itoa(agent.DefaultAgentRunAsGroup),
-		fmt.Sprintf("Group (gid) to run Vault agent as. Defaults to %d.", agent.DefaultAgentRunAsGroup))
+		fmt.Sprintf("Group (gid) to run Openbao agent as. Defaults to %d.", agent.DefaultAgentRunAsGroup))
 	c.flagSet.BoolVar(&c.flagRunAsSameUser, "run-as-same-user", agent.DefaultAgentRunAsSameUser,
-		"Run the injected Vault agent containers as the User (uid) of the first application container in the pod. "+
+		"Run the injected Openbao agent containers as the User (uid) of the first application container in the pod. "+
 			"Requires Spec.Containers[0].SecurityContext.RunAsUser to be set in the pod spec. "+
 			"Defaults to false.")
 	c.flagSet.BoolVar(&c.flagSetSecurityContext, "set-security-context", agent.DefaultAgentSetSecurityContext,
@@ -216,9 +216,9 @@ func (c *Command) init() {
 	c.flagSet.StringVar(&c.flagAuthMaxBackoff, "auth-max-backoff", "",
 		"Sets the maximum backoff on auto-auth failure. Default is 5m")
 	c.flagSet.StringVar(&c.flagDisableIdleConnections, "disable-idle-connections", "",
-		"Comma-separated list of Vault features where idle connections should be disabled.")
+		"Comma-separated list of Openbao features where idle connections should be disabled.")
 	c.flagSet.StringVar(&c.flagDisableKeepAlives, "disable-keep-alives", "",
-		"Comma-separated list of Vault features where keep-alives should be disabled.")
+		"Comma-separated list of Openbao features where keep-alives should be disabled.")
 
 	tlsVersions := []string{}
 	for v := range tlsutil.TLSLookup {
@@ -309,31 +309,31 @@ func (c *Command) parseEnvs() error {
 		c.flagKeyFile = envs.TLSKeyFile
 	}
 
-	if envs.VaultImage != "" {
-		c.flagVaultImage = envs.VaultImage
+	if envs.OpenbaoImage != "" {
+		c.flagOpenbaoImage = envs.OpenbaoImage
 	}
 
-	if envs.VaultAddr != "" {
-		c.flagVaultService = envs.VaultAddr
+	if envs.OpenbaoAddr != "" {
+		c.flagOpenbaoService = envs.OpenbaoAddr
 	}
-	if envs.VaultCACertBytes != "" {
-		c.flagVaultCACertBytes = envs.VaultCACertBytes
+	if envs.OpenbaoCACertBytes != "" {
+		c.flagOpenbaoCACertBytes = envs.OpenbaoCACertBytes
 	}
 
 	if envs.ProxyAddr != "" {
 		c.flagProxyAddress = envs.ProxyAddr
 	}
 
-	if envs.VaultAuthType != "" {
-		c.flagVaultAuthType = envs.VaultAuthType
+	if envs.OpenbaoAuthType != "" {
+		c.flagOpenbaoAuthType = envs.OpenbaoAuthType
 	}
 
-	if envs.VaultAuthPath != "" {
-		c.flagVaultAuthPath = envs.VaultAuthPath
+	if envs.OpenbaoAuthPath != "" {
+		c.flagOpenbaoAuthPath = envs.OpenbaoAuthPath
 	}
 
-	if envs.VaultNamespace != "" {
-		c.flagVaultNamespace = envs.VaultNamespace
+	if envs.OpenbaoNamespace != "" {
+		c.flagOpenbaoNamespace = envs.OpenbaoNamespace
 	}
 
 	if envs.RevokeOnShutdown != "" {

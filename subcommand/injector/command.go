@@ -22,10 +22,10 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-secure-stdlib/tlsutil"
-	agentInject "github.com/hashicorp/vault-k8s/agent-inject"
-	"github.com/hashicorp/vault-k8s/helper/cert"
-	"github.com/hashicorp/vault-k8s/leader"
-	"github.com/hashicorp/vault-k8s/version"
+	agentInject "github.com/openbao/openbao-k8s/agent-inject"
+	"github.com/openbao/openbao-k8s/helper/cert"
+	"github.com/openbao/openbao-k8s/leader"
+	"github.com/openbao/openbao-k8s/version"
 	"github.com/mitchellh/cli"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	adminv1 "k8s.io/api/admissionregistration/v1"
@@ -44,7 +44,7 @@ import (
 type Command struct {
 	UI cli.Ui
 
-	flagListen                     string // Address of Vault Server
+	flagListen                     string // Address of Openbao Server
 	flagLogLevel                   string // Log verbosity
 	flagLogFormat                  string // Log format
 	flagCertFile                   string // TLS Certificate to serve
@@ -54,17 +54,17 @@ type Command struct {
 	flagMaxConnectionsPerHost      int64  // Set template_config.max_connections_per_host on agent
 	flagAutoName                   string // MutatingWebhookConfiguration for updating
 	flagAutoHosts                  string // SANs for the auto-generated TLS cert.
-	flagVaultService               string // Name of the Vault service
-	flagVaultCACertBytes           string // CA Cert to trust for TLS with Vault.
-	flagProxyAddress               string // HTTP proxy address used to talk to the Vault service
-	flagVaultImage                 string // Name of the Vault Image to use
-	flagVaultAuthType              string // Type of Vault Auth Method to use
-	flagVaultAuthPath              string // Mount path of the Vault Auth Method
-	flagVaultNamespace             string // Vault enterprise namespace
-	flagRevokeOnShutdown           bool   // Revoke Vault Token on pod shutdown
-	flagRunAsUser                  string // User (uid) to run Vault agent as
-	flagRunAsGroup                 string // Group (gid) to run Vault agent as
-	flagRunAsSameUser              bool   // Run Vault agent as the User (uid) of the first application container
+	flagOpenbaoService               string // Name of the Openbao service
+	flagOpenbaoCACertBytes           string // CA Cert to trust for TLS with Openbao.
+	flagProxyAddress               string // HTTP proxy address used to talk to the Openbao service
+	flagOpenbaoImage                 string // Name of the Openbao Image to use
+	flagOpenbaoAuthType              string // Type of Openbao Auth Method to use
+	flagOpenbaoAuthPath              string // Mount path of the Openbao Auth Method
+	flagOpenbaoNamespace             string // Openbao enterprise namespace
+	flagRevokeOnShutdown           bool   // Revoke Openbao Token on pod shutdown
+	flagRunAsUser                  string // User (uid) to run Openbao agent as
+	flagRunAsGroup                 string // Group (gid) to run Openbao agent as
+	flagRunAsSameUser              bool   // Run Openbao agent as the User (uid) of the first application container
 	flagSetSecurityContext         bool   // Set SecurityContext in injected containers
 	flagTelemetryPath              string // Path under which to expose metrics
 	flagUseLeaderElector           bool   // Use leader elector code
@@ -103,8 +103,8 @@ func (c *Command) Run(args []string) int {
 		return 1
 	}
 
-	if c.flagVaultService == "" {
-		c.UI.Error("No Vault service configured")
+	if c.flagOpenbaoService == "" {
+		c.UI.Error("No Openbao service configured")
 		return 1
 	}
 
@@ -122,7 +122,7 @@ func (c *Command) Run(args []string) int {
 		c.UI.Error(fmt.Sprintf("Error loading in-cluster K8S config: %s", err))
 		return 1
 	}
-	config.UserAgent = fmt.Sprintf("vault-k8s/%s", version.Version)
+	config.UserAgent = fmt.Sprintf("openbao-k8s/%s", version.Version)
 
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
@@ -194,13 +194,13 @@ func (c *Command) Run(args []string) int {
 
 	// Build the HTTP handler and server
 	injector := agentInject.Handler{
-		VaultAddress:               c.flagVaultService,
-		VaultCACertBytes:           c.flagVaultCACertBytes,
-		VaultAuthType:              c.flagVaultAuthType,
-		VaultAuthPath:              c.flagVaultAuthPath,
-		VaultNamespace:             c.flagVaultNamespace,
+		OpenbaoAddress:               c.flagOpenbaoService,
+		OpenbaoCACertBytes:           c.flagOpenbaoCACertBytes,
+		OpenbaoAuthType:              c.flagOpenbaoAuthType,
+		OpenbaoAuthPath:              c.flagOpenbaoAuthPath,
+		OpenbaoNamespace:             c.flagOpenbaoNamespace,
 		ProxyAddress:               c.flagProxyAddress,
-		ImageVault:                 c.flagVaultImage,
+		ImageOpenbao:                 c.flagOpenbaoImage,
 		Clientset:                  clientset,
 		RequireAnnotation:          true,
 		Log:                        logger,
@@ -508,9 +508,9 @@ func (c *Command) Help() string {
 }
 
 const (
-	synopsis = "Vault Agent injector service"
+	synopsis = "Openbao Agent injector service"
 	help     = `
-Usage: vault-k8s agent-inject [options]
-  Run the Admission Webhook server for injecting Vault Agent containers into pods.
+Usage: openbao-k8s agent-inject [options]
+  Run the Admission Webhook server for injecting Openbao Agent containers into pods.
 `
 )

@@ -3,5 +3,5 @@
 
 contact_links:
   - name: Ask a question
-    url: https://discuss.hashicorp.com/c/vault
-    about: For increased visibility, please post questions on the discussion forum, and tag with `k8s`
+    url: https://github.com/orgs/openbao/discussions
+    about: For increased visibility, please post questions with `k8s` in subject

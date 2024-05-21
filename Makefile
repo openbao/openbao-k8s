@@ -1,7 +1,7 @@
 REGISTRY_NAME ?= docker.io/hashicorp
-IMAGE_NAME = vault-k8s
+IMAGE_NAME = openbao-k8s
 VERSION ?= 0.0.0-dev
-VAULT_VERSION ?= 1.16.1
+OPENBAO_VERSION ?= 1.16.1
 IMAGE_TAG ?= $(REGISTRY_NAME)/$(IMAGE_NAME):$(VERSION)
 PUBLISH_LOCATION ?= https://releases.hashicorp.com
 DOCKER_DIR = ./build/docker
@@ -11,31 +11,31 @@ GOARCH ?= amd64
 BIN_NAME = $(IMAGE_NAME)
 GOFMT_FILES ?= $$(find . -name '*.go' | grep -v vendor)
 XC_PUBLISH ?=
-PKG = github.com/hashicorp/vault-k8s/version
+PKG = github.com/openbao/openbao-k8s/version
 LDFLAGS ?= "-X '$(PKG).Version=v$(VERSION)'"
 TESTARGS ?= '-test.v'
 
-VAULT_HELM_CHART_VERSION ?= 0.27.0
+OPENBAO_HELM_CHART_VERSION ?= 0.27.0
 # TODO: add support for testing against enterprise
 
-TEST_WITHOUT_VAULT_TLS ?=
-ifndef TEST_WITHOUT_VAULT_TLS
-	VAULT_VERSION_PARTS := $(subst ., , $(VAULT_VERSION))
-	VAULT_MAJOR_VERSION := $(word 1, $(VAULT_VERSION_PARTS))
-	VAULT_MINOR_VERSION := $(word 2, $(VAULT_VERSION_PARTS))
-	TEST_WITHOUT_VAULT_TLS := $(shell test $(VAULT_MAJOR_VERSION) -le 1 -a $(VAULT_MINOR_VERSION) -lt 15 && echo 1)
+TEST_WITHOUT_OPENBAO_TLS ?=
+ifndef TEST_WITHOUT_OPENBAO_TLS
+	OPENBAO_VERSION_PARTS := $(subst ., , $(OPENBAO_VERSION))
+	OPENBAO_MAJOR_VERSION := $(word 1, $(OPENBAO_VERSION_PARTS))
+	OPENBAO_MINOR_VERSION := $(word 2, $(OPENBAO_VERSION_PARTS))
+	TEST_WITHOUT_OPENBAO_TLS := $(shell test $(OPENBAO_MAJOR_VERSION) -le 1 -a $(OPENBAO_MINOR_VERSION) -lt 15 && echo 1)
 endif
 
-HELM_VALUES_FILE ?= test/vault/dev.values.yaml
-ifdef TEST_WITHOUT_VAULT_TLS
-	HELM_VALUES_FILE = test/vault/dev-no-tls.values.yaml
+HELM_VALUES_FILE ?= test/openbao/dev.values.yaml
+ifdef TEST_WITHOUT_OPENBAO_TLS
+	HELM_VALUES_FILE = test/openbao/dev-no-tls.values.yaml
 endif
 
-VAULT_HELM_DEFAULT_ARGS ?= --repo https://helm.releases.hashicorp.com --version=$(VAULT_HELM_CHART_VERSION) \
+OPENBAO_HELM_DEFAULT_ARGS ?= --repo https://helm.releases.hashicorp.com --version=$(OPENBAO_HELM_CHART_VERSION) \
 	--wait --timeout=5m \
 	--values=$(HELM_VALUES_FILE) \
-	--set server.image.tag=$(VAULT_VERSION) \
-	--set injector.agentImage.tag=$(VAULT_VERSION) \
+	--set server.image.tag=$(OPENBAO_VERSION) \
+	--set injector.agentImage.tag=$(OPENBAO_VERSION) \
 	--set 'injector.image.tag=$(VERSION)'
 
 .PHONY: all test build image clean version deploy exercise teardown
@@ -53,27 +53,27 @@ build:
 image: build
 	docker build --build-arg VERSION=$(VERSION) --no-cache -t $(IMAGE_TAG) .
 
-# Deploys Vault dev server and a locally built Agent Injector.
+# Deploys Openbao dev server and a locally built Agent Injector.
 # Run multiple times to deploy new builds of the injector.
-VAULT_HELM_POST_INSTALL_ARGS ?=
-ifndef TEST_WITHOUT_VAULT_TLS
-	VAULT_HELM_POST_INSTALL_ARGS = "--set=injector.extraEnvironmentVars.AGENT_INJECT_VAULT_CACERT_BYTES=$$(kubectl exec vault-0 -- sh -c 'cat /tmp/vault-ca.pem | base64 -w0')"
+OPENBAO_HELM_POST_INSTALL_ARGS ?=
+ifndef TEST_WITHOUT_OPENBAO_TLS
+	OPENBAO_HELM_POST_INSTALL_ARGS = "--set=injector.extraEnvironmentVars.AGENT_INJECT_OPENBAO_CACERT_BYTES=$$(kubectl exec openbao-0 -- sh -c 'cat /tmp/openbao-ca.pem | base64 -w0')"
 endif
 deploy:
-	helm upgrade --install vault vault $(VAULT_HELM_DEFAULT_ARGS) \
+	helm upgrade --install openbao openbao $(OPENBAO_HELM_DEFAULT_ARGS) \
 		--set "injector.enabled=false"
-	kubectl delete pod -l "app.kubernetes.io/instance=vault"
-	kubectl wait --for=condition=Ready --timeout=5m pod -l "app.kubernetes.io/instance=vault"
-	helm upgrade --install vault vault $(VAULT_HELM_DEFAULT_ARGS) $(VAULT_HELM_POST_INSTALL_ARGS)
+	kubectl delete pod -l "app.kubernetes.io/instance=openbao"
+	kubectl wait --for=condition=Ready --timeout=5m pod -l "app.kubernetes.io/instance=openbao"
+	helm upgrade --install openbao openbao $(OPENBAO_HELM_DEFAULT_ARGS) $(OPENBAO_HELM_POST_INSTALL_ARGS)
 
-# Populates the Vault dev server with a secret, configures kubernetes auth, and
+# Populates the Openbao dev server with a secret, configures kubernetes auth, and
 # deploys an nginx pod with annotations to have the secret injected.
 exercise:
-	kubectl exec vault-0 -- vault kv put secret/test-app hello=world
-	kubectl exec vault-0 -- vault auth list -format json | jq -e  '."kubernetes/"' || kubectl exec vault-0 -- vault auth enable kubernetes
-	kubectl exec vault-0 -- sh -c 'vault write auth/kubernetes/config kubernetes_host="https://$$KUBERNETES_PORT_443_TCP_ADDR:443"'
-	echo 'path "secret/data/*" { capabilities = ["read"] }' | kubectl exec -i vault-0 -- vault policy write test-app -
-	kubectl exec vault-0 -- vault write auth/kubernetes/role/test-app \
+	kubectl exec openbao-0 -- bao kv put secret/test-app hello=world
+	kubectl exec openbao-0 -- bao auth list -format json | jq -e  '."kubernetes/"' || kubectl exec openbao-0 -- bao auth enable kubernetes
+	kubectl exec openbao-0 -- sh -c 'bao write auth/kubernetes/config kubernetes_host="https://$$KUBERNETES_PORT_443_TCP_ADDR:443"'
+	echo 'path "secret/data/*" { capabilities = ["read"] }' | kubectl exec -i openbao-0 -- bao policy write test-app -
+	kubectl exec openbao-0 -- bao write auth/kubernetes/role/test-app \
 		bound_service_account_names=test-app-sa \
 		bound_service_account_namespaces=default \
 		policies=test-app
@@ -81,16 +81,16 @@ exercise:
 	kubectl delete pod nginx --ignore-not-found
 	kubectl run nginx \
 		--image=nginx \
-		--annotations="vault.hashicorp.com/agent-inject=true" \
-		--annotations="vault.hashicorp.com/role=test-app" \
-		--annotations="vault.hashicorp.com/agent-inject-secret-secret.txt=secret/data/test-app" \
+		--annotations="openbao.openbao.org/agent-inject=true" \
+		--annotations="openbao.openbao.org/role=test-app" \
+		--annotations="openbao.openbao.org/agent-inject-secret-secret.txt=secret/data/test-app" \
 		--overrides='{ "apiVersion": "v1", "spec": { "serviceAccountName": "test-app-sa" } }'
 	kubectl wait --for=condition=Ready --timeout=5m pod nginx
-	kubectl exec nginx -c nginx -- cat /vault/secrets/secret.txt
+	kubectl exec nginx -c nginx -- cat /openbao/secrets/secret.txt
 
 # Teardown any resources created in deploy and exercise targets.
 teardown:
-	helm uninstall --namespace default vault --wait 2> /dev/null || true
+	helm uninstall --namespace default openbao --wait 2> /dev/null || true
 	kubectl delete --ignore-not-found serviceaccount test-app-sa
 	kubectl delete --ignore-not-found pod nginx
 

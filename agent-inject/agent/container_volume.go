@@ -6,31 +6,31 @@ package agent
 import (
 	"fmt"
 
-	"github.com/hashicorp/vault/sdk/helper/strutil"
+	"github.com/openbao/openbao/sdk/helper/strutil"
 	corev1 "k8s.io/api/core/v1"
 )
 
 const (
 	tokenVolumeNameInit    = "home-init"
 	tokenVolumeNameSidecar = "home-sidecar"
-	tokenVolumePath        = "/home/vault"
-	configVolumeName       = "vault-config"
-	configVolumePath       = "/vault/configs"
-	secretVolumeName       = "vault-secrets"
-	tlsSecretVolumeName    = "vault-tls-secrets"
-	tlsSecretVolumePath    = "/vault/tls"
-	secretVolumePath       = "/vault/secrets"
+	tokenVolumePath        = "/home/openbao"
+	configVolumeName       = "openbao-config"
+	configVolumePath       = "/openbao/configs"
+	secretVolumeName       = "openbao-secrets"
+	tlsSecretVolumeName    = "openbao-tls-secrets"
+	tlsSecretVolumePath    = "/openbao/tls"
+	secretVolumePath       = "/openbao/secrets"
 	extraSecretVolumeName  = "extra-secrets"
-	extraSecretVolumePath  = "/vault/custom"
-	cacheVolumeName        = "vault-agent-cache"
-	cacheVolumePath        = "/vault/agent-cache"
+	extraSecretVolumePath  = "/openbao/custom"
+	cacheVolumeName        = "openbao-agent-cache"
+	cacheVolumePath        = "/openbao/agent-cache"
 )
 
 func (a *Agent) getUniqueMountPaths() []string {
 	var mountPaths []string
 
 	for _, secret := range a.Secrets {
-		if !strutil.StrListContains(mountPaths, secret.MountPath) && secret.MountPath != a.Annotations[AnnotationVaultSecretVolumePath] {
+		if !strutil.StrListContains(mountPaths, secret.MountPath) && secret.MountPath != a.Annotations[AnnotationOpenbaoSecretVolumePath] {
 			mountPaths = append(mountPaths, secret.MountPath)
 		}
 	}
@@ -131,7 +131,7 @@ func (a *Agent) ContainerTLSSecretVolume() corev1.Volume {
 		Name: tlsSecretVolumeName,
 		VolumeSource: corev1.VolumeSource{
 			Secret: &corev1.SecretVolumeSource{
-				SecretName: a.Vault.TLSSecret,
+				SecretName: a.Openbao.TLSSecret,
 			},
 		},
 	}
@@ -143,7 +143,7 @@ func (a *Agent) ContainerVolumeMounts() []corev1.VolumeMount {
 	volumeMounts := []corev1.VolumeMount{
 		corev1.VolumeMount{
 			Name:      secretVolumeName,
-			MountPath: a.Annotations[AnnotationVaultSecretVolumePath],
+			MountPath: a.Annotations[AnnotationOpenbaoSecretVolumePath],
 			ReadOnly:  false,
 		},
 	}

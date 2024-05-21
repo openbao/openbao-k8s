@@ -5,7 +5,7 @@ package agent
 
 import (
 	"github.com/evanphx/json-patch"
-	"github.com/hashicorp/vault-k8s/agent-inject/internal"
+	"github.com/openbao/openbao-k8s/agent-inject/internal"
 	corev1 "k8s.io/api/core/v1"
 )
 

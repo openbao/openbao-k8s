@@ -24,7 +24,7 @@ import (
 
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/go-hclog"
-	"github.com/hashicorp/vault-k8s/leader"
+	"github.com/openbao/openbao-k8s/leader"
 	adminv1 "k8s.io/api/admissionregistration/v1"
 	adminv1beta "k8s.io/api/admissionregistration/v1beta1"
 	v1 "k8s.io/api/core/v1"
@@ -36,7 +36,7 @@ import (
 
 // Name of the k8s Secret used to share the caBundle between leader and
 // followers
-const certSecretName = "vault-injector-certs"
+const certSecretName = "openbao-injector-certs"
 
 // GenSource generates a self-signed CA and certificate pair.
 //

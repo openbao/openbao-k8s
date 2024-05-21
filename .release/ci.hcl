@@ -3,14 +3,14 @@
 
 schema = "1"
 
-project "vault-k8s" {
-  team = "vault"
+project "openbao-k8s" {
+  team = "openbao"
   slack {
     notification_channel = "C03RXFX5M4L" // #feed-vault-releases
   }
   github {
-    organization = "hashicorp"
-    repository = "vault-k8s"
+    organization = "openbao"
+    repository = "openbao-k8s"
     release_branches = ["main"]
   }
 }
@@ -23,8 +23,8 @@ event "merge" {
 event "build" {
   depends = ["merge"]
   action "build" {
-    organization = "hashicorp"
-    repository = "vault-k8s"
+    organization = "openbao"
+    repository = "openbao-k8s"
     workflow = "build"
   }
 }
@@ -32,7 +32,7 @@ event "build" {
 event "prepare" {
   depends = ["build"]
   action "prepare" {
-    organization = "hashicorp"
+    organization = "openbao"
     repository   = "crt-workflows-common"
     workflow     = "prepare"
     depends      = ["build"]
@@ -54,7 +54,7 @@ event "trigger-staging" {
 event "promote-staging" {
   depends = ["trigger-staging"]
   action "promote-staging" {
-    organization = "hashicorp"
+    organization = "openbao"
     repository = "crt-workflows-common"
     workflow = "promote-staging"
     config = "release-metadata.hcl"
@@ -68,7 +68,7 @@ event "promote-staging" {
 event "promote-staging-docker" {
   depends = ["promote-staging"]
   action "promote-staging-docker" {
-    organization = "hashicorp"
+    organization = "openbao"
     repository = "crt-workflows-common"
     workflow = "promote-staging-docker"
   }
@@ -86,7 +86,7 @@ event "trigger-production" {
 event "promote-production" {
   depends = ["trigger-production"]
   action "promote-production" {
-    organization = "hashicorp"
+    organization = "openbao"
     repository = "crt-workflows-common"
     workflow = "promote-production"
   }
@@ -99,7 +99,7 @@ event "promote-production" {
 event "promote-production-docker" {
   depends = ["promote-production"]
   action "promote-production-docker" {
-    organization = "hashicorp"
+    organization = "openbao"
     repository = "crt-workflows-common"
     workflow = "promote-production-docker"
   }
