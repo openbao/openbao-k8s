@@ -11,10 +11,10 @@ require (
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/hashicorp/go-secure-stdlib/parseutil v0.1.8
 	github.com/hashicorp/go-secure-stdlib/tlsutil v0.1.3
-	github.com/openbao/openbao/sdk v0.12.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/kr/text v0.2.0
 	github.com/mitchellh/cli v1.1.5
+	github.com/openbao/openbao/sdk v1.100.0-development20240408
 	github.com/operator-framework/operator-lib v0.13.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.19.1
