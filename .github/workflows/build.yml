@@ -101,7 +101,7 @@ jobs:
           version: ${{ env.version }}
           target: default
           arch: ${{ matrix.arch }}
-          zip_artifact_name: openbao_${{ env.version }}_linux_${{ matrix.arch }}.zip
+          zip_artifact_name: ${{ env.PKG_NAME }}_${{ env.version }}_linux_${{ matrix.arch }}.zip
           tags: |
             ${{ matrix.registry }}/openbao/${{ env.PKG_NAME }}:${{ env.version }}
 
@@ -124,6 +124,6 @@ jobs:
           version: ${{ env.version }}
           target: ubi
           arch: ${{ matrix.arch }}
-          zip_artifact_name: openbao_${{ env.version }}_linux_${{ matrix.arch }}.zip
+          zip_artifact_name: ${{ env.PKG_NAME }}_${{ env.version }}_linux_${{ matrix.arch }}.zip
           tags: |
             docker.io/openbao/${{ env.PKG_NAME }}-ubi:${{ env.version }}
