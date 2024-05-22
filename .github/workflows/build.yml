@@ -88,38 +88,42 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: ["arm", "arm64", "386", "amd64"]
+        arch: [arm, arm64, amd64]
+        registry: [docker.io, quay.io, ghcr.io]
     env:
-      repo: ${{github.event.repository.name}}
+      repo: ${{ github.event.repository.name }}
       version: ${{needs.get-product-version.outputs.product-version}}
-
     steps:
       - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       - name: Docker Build (Action)
         uses: hashicorp/actions-docker-build@v2
         with:
-          version: ${{env.version}}
+          version: ${{ env.version }}
           target: default
-          arch: ${{matrix.arch}}
+          arch: ${{ matrix.arch }}
+          zip_artifact_name: openbao_${{ env.version }}_linux_${{ matrix.arch }}.zip
           tags: |
-            docker.io/hashicorp/${{env.repo}}:${{env.version}}
-            public.ecr.aws/hashicorp/${{env.repo}}:${{env.version}}
+            ${{ matrix.registry }}/openbao/${{ env.PKG_NAME }}:${{ env.version }}
 
-  build-docker-ubi-redhat:
-    name: Docker Build UBI Image for RedHat Registry
+  build-ubi:
+    name: Docker Build UBI Image
     needs:
       - get-product-version
       - build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64]
     env:
-      repo: ${{github.event.repository.name}}
-      version: ${{needs.get-product-version.outputs.product-version}}
-
+      repo: ${{ github.event.repository.name }}
+      version: ${{ needs.product-metadata.outputs.bao-version }}
     steps:
       - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       - uses: hashicorp/actions-docker-build@11d43ef520c65f58683d048ce9b47d6617893c9a # v2
         with:
-          version: ${{env.version}}
+          version: ${{ env.version }}
           target: ubi
-          arch: amd64
-          redhat_tag: quay.io/redhat-isv-containers/5f89bbc30b94cf64cfeb500b:${{env.version}}-ubi
+          arch: ${{ matrix.arch }}
+          zip_artifact_name: openbao_${{ env.version }}_linux_${{ matrix.arch }}.zip
+          tags: |
+            docker.io/openbao/${{ env.PKG_NAME }}-ubi:${{ env.version }}
