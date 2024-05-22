@@ -22,7 +22,7 @@ jobs:
 
       - name: Build
         run: |
-          REGISTRY=hashicorp make build image
+          REGISTRY=quay.io make build image
           docker save --output "${TARBALL_FILE}" openbao/openbao-k8s:${{ env.VERSION }}
 
       - name: Test
@@ -39,7 +39,7 @@ jobs:
       - run: echo "setting versions"
     outputs:
       # openbao-k8s version
-      K8S_VERSIONS: '["1.29.2", "1.28.7", "1.27.11", "1.26.14", "1.25.16"]'
+      K8S_VERSIONS: '["1.27.13", "1.28.9", "1.29.4"]'
       OPENBAO_N: "1.16.1"
       OPENBAO_N_1: "1.15.6"
       OPENBAO_N_2: "1.14.10"
