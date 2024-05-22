@@ -5,9 +5,6 @@ schema = "1"
 
 project "openbao-k8s" {
   team = "openbao"
-  slack {
-    notification_channel = "C03RXFX5M4L" // #feed-vault-releases
-  }
   github {
     organization = "openbao"
     repository = "openbao-k8s"
