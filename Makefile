@@ -1,9 +1,8 @@
 REGISTRY_NAME ?= docker.io/openbao
 IMAGE_NAME = openbao-k8s
 VERSION ?= 0.0.0-dev
-OPENBAO_VERSION ?= 1.16.1
+OPENBAO_VERSION ?= v2.0.0-beta20240618
 IMAGE_TAG ?= $(REGISTRY_NAME)/$(IMAGE_NAME):$(VERSION)
-PUBLISH_LOCATION ?= https://releases.hashicorp.com
 DOCKER_DIR = ./build/docker
 BUILD_DIR = dist
 GOOS ?= linux
@@ -15,8 +14,7 @@ PKG = github.com/openbao/openbao-k8s/version
 LDFLAGS ?= "-X '$(PKG).Version=v$(VERSION)'"
 TESTARGS ?= '-test.v'
 
-OPENBAO_HELM_CHART_VERSION ?= 0.27.0
-# TODO: add support for testing against enterprise
+OPENBAO_HELM_CHART_VERSION ?= 0.4.0
 
 TEST_WITHOUT_OPENBAO_TLS ?=
 ifndef TEST_WITHOUT_OPENBAO_TLS
@@ -31,7 +29,7 @@ ifdef TEST_WITHOUT_OPENBAO_TLS
 	HELM_VALUES_FILE = test/openbao/dev-no-tls.values.yaml
 endif
 
-OPENBAO_HELM_DEFAULT_ARGS ?= --repo https://helm.releases.hashicorp.com --version=$(OPENBAO_HELM_CHART_VERSION) \
+OPENBAO_HELM_DEFAULT_ARGS ?= --repo https://openbao.github.io/openbao-helm --version=$(OPENBAO_HELM_CHART_VERSION) \
 	--wait --timeout=5m \
 	--values=$(HELM_VALUES_FILE) \
 	--set server.image.tag=$(OPENBAO_VERSION) \
