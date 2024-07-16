@@ -76,6 +76,9 @@ Changes:
   * `github.com/josharian/intern` v1.0.0
   * `github.com/mailru/easyjson` v0.7.7
 
+Bugs:
+* Disable handling update on pods [GH-94](https://github.com/openbao/openbao-k8s/pull/94)
+
 ## 1.4.1 (April 8, 2024)
 
 Changes:
