@@ -1,4 +1,4 @@
-REGISTRY_NAME ?= docker.io/hashicorp
+REGISTRY_NAME ?= docker.io/openbao
 IMAGE_NAME = openbao-k8s
 VERSION ?= 0.0.0-dev
 OPENBAO_VERSION ?= 1.16.1
