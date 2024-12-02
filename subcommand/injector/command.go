@@ -27,6 +27,7 @@ import (
 	"github.com/openbao/openbao-k8s/helper/cert"
 	"github.com/openbao/openbao-k8s/leader"
 	"github.com/openbao/openbao-k8s/version"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	adminv1 "k8s.io/api/admissionregistration/v1"
 	adminv1beta "k8s.io/api/admissionregistration/v1beta1"
@@ -233,6 +234,7 @@ func (c *Command) Run(args []string) int {
 
 	// Registering path to expose metrics
 	if c.flagTelemetryPath != "" {
+		agentInject.MustRegisterInjectorMetrics(prometheus.DefaultRegisterer)
 		c.UI.Info(fmt.Sprintf("Registering telemetry path on %q", c.flagTelemetryPath))
 		mux.Handle(c.flagTelemetryPath, promhttp.Handler())
 	}
