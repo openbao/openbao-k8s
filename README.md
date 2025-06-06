@@ -1,6 +1,6 @@
 # OpenBao + Kubernetes (openbao-k8s)
 
-**Please note**: We take OpenBao's security and our users' trust very seriously. If you believe you have found a security issue in OpenBao, _please responsibly disclose_ by contacting us at [openbao-security@lists.lfedge.org](openbao-security@lists.lfedge.org).
+**Please note**: We take OpenBao's security and our users' trust very seriously. If you believe you have found a security issue in OpenBao, _please responsibly disclose_ by contacting us at [openbao-security@lists.openssf.org](openbao-security@lists.openssf.org).
 
 ----
 
