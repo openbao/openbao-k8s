@@ -5,6 +5,7 @@ global:
   tlsDisable: true
 injector:
   image:
+    repository: openbao/openbao-k8s
     pullPolicy: Never
   affinity: null
 server:
