@@ -62,8 +62,7 @@ runs:
       id: create_kind_export_log_root
       shell: bash
       run: |
-        openbao_flavor=community
-        log_artifact_name="kind-${{ inputs.kind-cluster-name }}-$(git rev-parse --short ${{ github.sha }})-${{ inputs.k8s-version }}-${{ inputs.openbao-version }}-${openbao_flavor}-helm-logs"
+        log_artifact_name="kind-${{ inputs.kind-cluster-name }}-$(git rev-parse --short ${{ github.sha }})-${{ inputs.k8s-version }}-${{ inputs.openbao-version }}-helm-logs"
         log_root="/tmp/${log_artifact_name}"
         mkdir -p "${log_root}"
         echo "log_root=${log_root}" >> $GITHUB_OUTPUT
