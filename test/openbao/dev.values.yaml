@@ -16,4 +16,4 @@ server:
     -dev-tls
     -dev-tls-cert-dir=/tmp
   extraEnvironmentVars:
-    OPENBAO_CACERT: /tmp/openbao-ca.pem
+    OPENBAO_CACERT: /tmp/vault-ca.pem
