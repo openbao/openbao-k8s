@@ -15,9 +15,5 @@ server:
   extraArgs: >-
     -dev-tls
     -dev-tls-cert-dir=/tmp
-    -dev-tls-san=openbao.default.svc.cluster.local
-    -dev-tls-san=openbao.default.svc
-    -dev-tls-san=openbao.default
-    -dev-tls-san=openbao
   extraEnvironmentVars:
     OPENBAO_CACERT: /tmp/openbao-ca.pem
