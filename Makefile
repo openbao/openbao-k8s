@@ -14,7 +14,7 @@ PKG = github.com/openbao/openbao-k8s/version
 LDFLAGS ?= "-X '$(PKG).Version=v$(VERSION)'"
 TESTARGS ?= '-test.v'
 
-OPENBAO_HELM_CHART_VERSION ?= 0.4.0
+OPENBAO_HELM_CHART_VERSION ?= 0.13.2
 
 TEST_WITHOUT_OPENBAO_TLS ?=
 ifndef TEST_WITHOUT_OPENBAO_TLS
