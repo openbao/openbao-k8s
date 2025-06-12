@@ -23,13 +23,13 @@ func TestContainerSidecarVolume(t *testing.T) {
 	annotations := map[string]string{
 		AnnotationOpenbaoRole: "foobar",
 		// this will have different mount path
-		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret1"):     "secrets/secret1",
+		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret1"):       "secrets/secret1",
 		fmt.Sprintf("%s-%s", AnnotationOpenbaoSecretVolumePath, "secret1"): "/etc/container_environment",
 
 		// this secret will have same mount path as default mount path
 		// adding this so we can make sure we don't have duplicate
 		// volume mounts
-		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret2"):     "secret/secret2",
+		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret2"):       "secret/secret2",
 		fmt.Sprintf("%s-%s", AnnotationOpenbaoSecretVolumePath, "secret2"): "/etc/default_path",
 
 		// Default path for all secrets
@@ -121,13 +121,13 @@ func TestContainerSidecarVolumeWithIRSA(t *testing.T) {
 	annotations := map[string]string{
 		AnnotationOpenbaoRole: "foobar",
 		// this will have different mount path
-		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret1"):     "secrets/secret1",
+		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret1"):       "secrets/secret1",
 		fmt.Sprintf("%s-%s", AnnotationOpenbaoSecretVolumePath, "secret1"): "/etc/container_environment",
 
 		// this secret will have same mount path as default mount path
 		// adding this so we can make sure we don't have duplicate
 		// volume mounts
-		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret2"):     "secret/secret2",
+		fmt.Sprintf("%s-%s", AnnotationAgentInjectSecret, "secret2"):       "secret/secret2",
 		fmt.Sprintf("%s-%s", AnnotationOpenbaoSecretVolumePath, "secret2"): "/etc/default_path",
 
 		// Default path for all secrets
@@ -403,16 +403,16 @@ func TestContainerSidecarConfigMap(t *testing.T) {
 	// we have AnnotationAgentConfigMap set
 	annotations := map[string]string{
 		AnnotationAgentConfigMap:                        "foobarConfigMap",
-		AnnotationOpenbaoRole:                             "foobar",
+		AnnotationOpenbaoRole:                           "foobar",
 		AnnotationAgentPrePopulate:                      "true",
 		AnnotationAgentPrePopulateOnly:                  "true",
-		AnnotationOpenbaoTLSSkipVerify:                    "true",
-		AnnotationOpenbaoTLSServerName:                    "foobar.server",
-		AnnotationOpenbaoCACert:                           "ca-cert",
-		AnnotationOpenbaoCAKey:                            "ca-key",
-		AnnotationOpenbaoClientCert:                       "client-cert",
-		AnnotationOpenbaoClientKey:                        "client-key",
-		AnnotationOpenbaoSecretVolumePath:                 "/foo/bar",
+		AnnotationOpenbaoTLSSkipVerify:                  "true",
+		AnnotationOpenbaoTLSServerName:                  "foobar.server",
+		AnnotationOpenbaoCACert:                         "ca-cert",
+		AnnotationOpenbaoCAKey:                          "ca-key",
+		AnnotationOpenbaoClientCert:                     "client-cert",
+		AnnotationOpenbaoClientKey:                      "client-key",
+		AnnotationOpenbaoSecretVolumePath:               "/foo/bar",
 		"openbao.openbao.org/agent-inject-secret-foo":   "db/creds/foo",
 		"openbao.openbao.org/agent-inject-template-foo": "template foo",
 		"openbao.openbao.org/agent-inject-secret-bar":   "db/creds/bar",
@@ -1193,7 +1193,7 @@ func TestContainerCache(t *testing.T) {
 		{
 			"cache enabled",
 			map[string]string{
-				AnnotationOpenbaoRole:        "role",
+				AnnotationOpenbaoRole:      "role",
 				AnnotationAgentCacheEnable: "true",
 			},
 			true,
@@ -1201,7 +1201,7 @@ func TestContainerCache(t *testing.T) {
 		{
 			"cache disabled",
 			map[string]string{
-				AnnotationOpenbaoRole:        "role",
+				AnnotationOpenbaoRole:      "role",
 				AnnotationAgentCacheEnable: "false",
 			},
 			false,
@@ -1209,7 +1209,7 @@ func TestContainerCache(t *testing.T) {
 		{
 			"only init container",
 			map[string]string{
-				AnnotationOpenbaoRole:            "role",
+				AnnotationOpenbaoRole:          "role",
 				AnnotationAgentCacheEnable:     "true",
 				AnnotationAgentPrePopulateOnly: "true",
 			},
@@ -1218,7 +1218,7 @@ func TestContainerCache(t *testing.T) {
 		{
 			"only sidecar container",
 			map[string]string{
-				AnnotationOpenbaoRole:        "role",
+				AnnotationOpenbaoRole:      "role",
 				AnnotationAgentCacheEnable: "true",
 				AnnotationAgentPrePopulate: "false",
 			},
@@ -1289,7 +1289,7 @@ func TestAgentJsonPatch(t *testing.T) {
 			baseContainerEnvVars,
 			corev1.EnvVar{Name: "OPENBAO_LOG_LEVEL", Value: "info"},
 			corev1.EnvVar{Name: "OPENBAO_LOG_FORMAT", Value: "standard"},
-			corev1.EnvVar{Name: "OPENBAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvdmF1bHQvLnZhdWx0LXRva2VuIn19XX0sImV4aXRfYWZ0ZXJfYXV0aCI6ZmFsc2UsInBpZF9maWxlIjoiL2hvbWUvdmF1bHQvLnBpZCIsInZhdWx0Ijp7ImFkZHJlc3MiOiJodHRwOi8vZm9vYmFyOjEyMzQifSwidGVtcGxhdGVfY29uZmlnIjp7ImV4aXRfb25fcmV0cnlfZmFpbHVyZSI6dHJ1ZX19"},
+			corev1.EnvVar{Name: "OPENBAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvb3BlbmJhby8ub3BlbmJhby10b2tlbiJ9fV19LCJleGl0X2FmdGVyX2F1dGgiOmZhbHNlLCJwaWRfZmlsZSI6Ii9ob21lL29wZW5iYW8vLnBpZCIsIm9wZW5iYW8iOnsiYWRkcmVzcyI6Imh0dHA6Ly9mb29iYXI6MTIzNCJ9LCJ0ZW1wbGF0ZV9jb25maWciOnsiZXhpdF9vbl9yZXRyeV9mYWlsdXJlIjp0cnVlfX0="},
 		),
 		Resources: v1.ResourceRequirements{
 			Limits:   v1.ResourceList{"cpu": resource.MustParse("500m"), "memory": resource.MustParse("128Mi")},
@@ -1325,7 +1325,7 @@ func TestAgentJsonPatch(t *testing.T) {
 		baseContainerEnvVars,
 		corev1.EnvVar{Name: "OPENBAO_LOG_LEVEL", Value: "info"},
 		corev1.EnvVar{Name: "OPENBAO_LOG_FORMAT", Value: "standard"},
-		corev1.EnvVar{Name: "OPENBAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvdmF1bHQvLnZhdWx0LXRva2VuIn19XX0sImV4aXRfYWZ0ZXJfYXV0aCI6dHJ1ZSwicGlkX2ZpbGUiOiIvaG9tZS92YXVsdC8ucGlkIiwidmF1bHQiOnsiYWRkcmVzcyI6Imh0dHA6Ly9mb29iYXI6MTIzNCJ9LCJ0ZW1wbGF0ZV9jb25maWciOnsiZXhpdF9vbl9yZXRyeV9mYWlsdXJlIjp0cnVlfX0="},
+		corev1.EnvVar{Name: "OPENBAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvb3BlbmJhby8ub3BlbmJhby10b2tlbiJ9fV19LCJleGl0X2FmdGVyX2F1dGgiOnRydWUsInBpZF9maWxlIjoiL2hvbWUvb3BlbmJhby8ucGlkIiwib3BlbmJhbyI6eyJhZGRyZXNzIjoiaHR0cDovL2Zvb2JhcjoxMjM0In0sInRlbXBsYXRlX2NvbmZpZyI6eyJleGl0X29uX3JldHJ5X2ZhaWx1cmUiOnRydWV9fQ=="},
 	)
 	baseInitContainer.VolumeMounts = []v1.VolumeMount{
 		{Name: "home-init", MountPath: "/home/openbao"},
@@ -1416,7 +1416,7 @@ func TestAgentJsonPatch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			pod := testPod(map[string]string{
-				AnnotationOpenbaoRole:          "role",
+				AnnotationOpenbaoRole:        "role",
 				AnnotationAgentJsonPatch:     tt.jsonPatch,
 				AnnotationAgentInitJsonPatch: tt.jsonInitPatch,
 			})
