@@ -48,7 +48,7 @@ func TestContainerSidecarVolume(t *testing.T) {
 	agentConfig := AgentConfig{
 		Image:              "foobar-image",
 		Address:            "http://foobar:1234",
-		AuthType:           DefaultOpenbaoAuthType,
+		AuthType:           DefaultBaoAuthType,
 		AuthPath:           "test",
 		Namespace:          "test",
 		RevokeOnShutdown:   true,
@@ -217,7 +217,7 @@ func TestContainerSidecar(t *testing.T) {
 	agentConfig := AgentConfig{
 		Image:              "foobar-image",
 		Address:            "http://foobar:1234",
-		AuthType:           DefaultOpenbaoAuthType,
+		AuthType:           DefaultBaoAuthType,
 		AuthPath:           "test",
 		Namespace:          "test",
 		UserID:             "1000",
@@ -253,16 +253,16 @@ func TestContainerSidecar(t *testing.T) {
 		t.Errorf("wrong number of env vars, got %d, should have been %d", len(container.Env), expectedEnvs)
 	}
 
-	if container.Env[3].Name != "OPENBAO_LOG_LEVEL" {
-		t.Errorf("env name wrong, should have been %s, got %s", "OPENBAO_LOG_LEVEL", container.Env[0].Name)
+	if container.Env[3].Name != "BAO_LOG_LEVEL" {
+		t.Errorf("env name wrong, should have been %s, got %s", "BAO_LOG_LEVEL", container.Env[0].Name)
 	}
 
 	if container.Env[3].Value == "" {
 		t.Error("env value empty, it shouldn't be")
 	}
 
-	if container.Env[4].Name != "OPENBAO_LOG_FORMAT" {
-		t.Errorf("env name wrong, should have been %s, got %s", "OPENBAO_LOG_FORMAT", container.Env[1].Name)
+	if container.Env[4].Name != "BAO_LOG_FORMAT" {
+		t.Errorf("env name wrong, should have been %s, got %s", "BAO_LOG_FORMAT", container.Env[1].Name)
 	}
 
 	if container.Env[5].Name != "HTTPS_PROXY" {
@@ -273,8 +273,8 @@ func TestContainerSidecar(t *testing.T) {
 		t.Error("env value empty, it shouldn't be")
 	}
 
-	if container.Env[6].Name != "OPENBAO_CONFIG" {
-		t.Errorf("env name wrong, should have been %s, got %s", "OPENBAO_CONFIG", container.Env[3].Name)
+	if container.Env[6].Name != "BAO_CONFIG" {
+		t.Errorf("env name wrong, should have been %s, got %s", "BAO_CONFIG", container.Env[3].Name)
 	}
 
 	if container.Env[5].Value == "" {
@@ -356,7 +356,7 @@ func TestContainerSidecarRevokeHook(t *testing.T) {
 			agentConfig := AgentConfig{
 				Image:              "foobar-image",
 				Address:            "http://foobar:1234",
-				AuthType:           DefaultOpenbaoAuthType,
+				AuthType:           DefaultBaoAuthType,
 				AuthPath:           "test",
 				Namespace:          "test",
 				RevokeOnShutdown:   tt.revokeFlag,
@@ -423,7 +423,7 @@ func TestContainerSidecarConfigMap(t *testing.T) {
 	agentConfig := AgentConfig{
 		Image:              "foobar-image",
 		Address:            "http://foobar:1234",
-		AuthType:           DefaultOpenbaoAuthType,
+		AuthType:           DefaultBaoAuthType,
 		AuthPath:           "test",
 		Namespace:          "test",
 		RevokeOnShutdown:   true,
@@ -1231,7 +1231,7 @@ func TestContainerCache(t *testing.T) {
 			agentConfig := AgentConfig{
 				Image:              "foobar-image",
 				Address:            "http://foobar:1234",
-				AuthType:           DefaultOpenbaoAuthType,
+				AuthType:           DefaultBaoAuthType,
 				AuthPath:           "test",
 				Namespace:          "test",
 				RevokeOnShutdown:   true,
@@ -1284,12 +1284,12 @@ func TestAgentJsonPatch(t *testing.T) {
 		Name:    "openbao-agent",
 		Image:   "foobar-image",
 		Command: []string{"/bin/sh", "-ec"},
-		Args:    []string{`echo ${OPENBAO_CONFIG?} | base64 -d > /home/openbao/config.json && bao agent -config=/home/openbao/config.json`},
+		Args:    []string{`echo ${BAO_CONFIG?} | base64 -d > /home/openbao/config.json && bao agent -config=/home/openbao/config.json`},
 		Env: append(
 			baseContainerEnvVars,
-			corev1.EnvVar{Name: "OPENBAO_LOG_LEVEL", Value: "info"},
-			corev1.EnvVar{Name: "OPENBAO_LOG_FORMAT", Value: "standard"},
-			corev1.EnvVar{Name: "OPENBAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvb3BlbmJhby8ub3BlbmJhby10b2tlbiJ9fV19LCJleGl0X2FmdGVyX2F1dGgiOmZhbHNlLCJwaWRfZmlsZSI6Ii9ob21lL29wZW5iYW8vLnBpZCIsIm9wZW5iYW8iOnsiYWRkcmVzcyI6Imh0dHA6Ly9mb29iYXI6MTIzNCJ9LCJ0ZW1wbGF0ZV9jb25maWciOnsiZXhpdF9vbl9yZXRyeV9mYWlsdXJlIjp0cnVlfX0="},
+			corev1.EnvVar{Name: "BAO_LOG_LEVEL", Value: "info"},
+			corev1.EnvVar{Name: "BAO_LOG_FORMAT", Value: "standard"},
+			corev1.EnvVar{Name: "BAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvb3BlbmJhby8ub3BlbmJhby10b2tlbiJ9fV19LCJleGl0X2FmdGVyX2F1dGgiOmZhbHNlLCJwaWRfZmlsZSI6Ii9ob21lL29wZW5iYW8vLnBpZCIsIm9wZW5iYW8iOnsiYWRkcmVzcyI6Imh0dHA6Ly9mb29iYXI6MTIzNCJ9LCJ0ZW1wbGF0ZV9jb25maWciOnsiZXhpdF9vbl9yZXRyeV9mYWlsdXJlIjp0cnVlfX0="},
 		),
 		Resources: v1.ResourceRequirements{
 			Limits:   v1.ResourceList{"cpu": resource.MustParse("500m"), "memory": resource.MustParse("128Mi")},
@@ -1323,9 +1323,9 @@ func TestAgentJsonPatch(t *testing.T) {
 	baseInitContainer.Name = "openbao-agent-init"
 	baseInitContainer.Env = append(
 		baseContainerEnvVars,
-		corev1.EnvVar{Name: "OPENBAO_LOG_LEVEL", Value: "info"},
-		corev1.EnvVar{Name: "OPENBAO_LOG_FORMAT", Value: "standard"},
-		corev1.EnvVar{Name: "OPENBAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvb3BlbmJhby8ub3BlbmJhby10b2tlbiJ9fV19LCJleGl0X2FmdGVyX2F1dGgiOnRydWUsInBpZF9maWxlIjoiL2hvbWUvb3BlbmJhby8ucGlkIiwib3BlbmJhbyI6eyJhZGRyZXNzIjoiaHR0cDovL2Zvb2JhcjoxMjM0In0sInRlbXBsYXRlX2NvbmZpZyI6eyJleGl0X29uX3JldHJ5X2ZhaWx1cmUiOnRydWV9fQ=="},
+		corev1.EnvVar{Name: "BAO_LOG_LEVEL", Value: "info"},
+		corev1.EnvVar{Name: "BAO_LOG_FORMAT", Value: "standard"},
+		corev1.EnvVar{Name: "BAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvb3BlbmJhby8ub3BlbmJhby10b2tlbiJ9fV19LCJleGl0X2FmdGVyX2F1dGgiOnRydWUsInBpZF9maWxlIjoiL2hvbWUvb3BlbmJhby8ucGlkIiwib3BlbmJhbyI6eyJhZGRyZXNzIjoiaHR0cDovL2Zvb2JhcjoxMjM0In0sInRlbXBsYXRlX2NvbmZpZyI6eyJleGl0X29uX3JldHJ5X2ZhaWx1cmUiOnRydWV9fQ=="},
 	)
 	baseInitContainer.VolumeMounts = []v1.VolumeMount{
 		{Name: "home-init", MountPath: "/home/openbao"},
@@ -1423,7 +1423,7 @@ func TestAgentJsonPatch(t *testing.T) {
 			agentConfig := AgentConfig{
 				Image:              "foobar-image",
 				Address:            "http://foobar:1234",
-				AuthType:           DefaultOpenbaoAuthType,
+				AuthType:           DefaultBaoAuthType,
 				AuthPath:           "test",
 				Namespace:          "test",
 				RevokeOnShutdown:   true,

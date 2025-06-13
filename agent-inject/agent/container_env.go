@@ -51,28 +51,28 @@ func (a *Agent) ContainerEnvVars(init bool) ([]corev1.EnvVar, error) {
 
 	if a.Openbao.ClientTimeout != "" {
 		envs = append(envs, corev1.EnvVar{
-			Name:  "OPENBAO_CLIENT_TIMEOUT",
+			Name:  "BAO_CLIENT_TIMEOUT",
 			Value: a.Openbao.ClientTimeout,
 		})
 	}
 
 	if a.Openbao.ClientMaxRetries != "" {
 		envs = append(envs, corev1.EnvVar{
-			Name:  "OPENBAO_MAX_RETRIES",
+			Name:  "BAO_MAX_RETRIES",
 			Value: a.Openbao.ClientMaxRetries,
 		})
 	}
 
 	if a.Openbao.LogLevel != "" {
 		envs = append(envs, corev1.EnvVar{
-			Name:  "OPENBAO_LOG_LEVEL",
+			Name:  "BAO_LOG_LEVEL",
 			Value: a.Openbao.LogLevel,
 		})
 	}
 
 	if a.Openbao.LogFormat != "" {
 		envs = append(envs, corev1.EnvVar{
-			Name:  "OPENBAO_LOG_FORMAT",
+			Name:  "BAO_LOG_FORMAT",
 			Value: a.Openbao.LogFormat,
 		})
 	}
@@ -92,48 +92,48 @@ func (a *Agent) ContainerEnvVars(init bool) ([]corev1.EnvVar, error) {
 
 		b64Config := base64.StdEncoding.EncodeToString(config)
 		envs = append(envs, corev1.EnvVar{
-			Name:  "OPENBAO_CONFIG",
+			Name:  "BAO_CONFIG",
 			Value: b64Config,
 		})
 	} else {
 		// set up environment variables to access Openbao since "openbao" section may not be present in the config
 		if a.Openbao.Address != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "OPENBAO_ADDR",
+				Name:  "BAO_ADDR",
 				Value: a.Openbao.Address,
 			})
 		}
 		if a.Openbao.CACert != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "OPENBAO_CACERT",
+				Name:  "BAO_CACERT",
 				Value: a.Openbao.CACert,
 			})
 		}
 		if a.Openbao.CAKey != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "OPENBAO_CAPATH",
+				Name:  "BAO_CAPATH",
 				Value: a.Openbao.CAKey,
 			})
 		}
 		if a.Openbao.ClientCert != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "OPENBAO_CLIENT_CERT",
+				Name:  "BAO_CLIENT_CERT",
 				Value: a.Openbao.ClientCert,
 			})
 		}
 		if a.Openbao.ClientKey != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "OPENBAO_CLIENT_KEY",
+				Name:  "BAO_CLIENT_KEY",
 				Value: a.Openbao.ClientKey,
 			})
 		}
 		envs = append(envs, corev1.EnvVar{
-			Name:  "OPENBAO_SKIP_VERIFY",
+			Name:  "BAO_SKIP_VERIFY",
 			Value: strconv.FormatBool(a.Openbao.TLSSkipVerify),
 		})
 		if a.Openbao.TLSServerName != "" {
 			envs = append(envs, corev1.EnvVar{
-				Name:  "OPENBAO_TLS_SERVER_NAME",
+				Name:  "BAO_TLS_SERVER_NAME",
 				Value: a.Openbao.TLSServerName,
 			})
 		}
@@ -141,7 +141,7 @@ func (a *Agent) ContainerEnvVars(init bool) ([]corev1.EnvVar, error) {
 
 	if a.Openbao.CACertBytes != "" {
 		envs = append(envs, corev1.EnvVar{
-			Name:  "OPENBAO_CACERT_BYTES",
+			Name:  "BAO_CACERT_BYTES",
 			Value: decodeIfBase64(a.Openbao.CACertBytes),
 		})
 	}

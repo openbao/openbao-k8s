@@ -54,13 +54,13 @@ type Command struct {
 	flagMaxConnectionsPerHost      int64  // Set template_config.max_connections_per_host on agent
 	flagAutoName                   string // MutatingWebhookConfiguration for updating
 	flagAutoHosts                  string // SANs for the auto-generated TLS cert.
-	flagOpenbaoService               string // Name of the Openbao service
-	flagOpenbaoCACertBytes           string // CA Cert to trust for TLS with Openbao.
+	flagBaoService                 string // Name of the Openbao service
+	flagBaoCACertBytes             string // CA Cert to trust for TLS with Openbao.
 	flagProxyAddress               string // HTTP proxy address used to talk to the Openbao service
-	flagOpenbaoImage                 string // Name of the Openbao Image to use
-	flagOpenbaoAuthType              string // Type of Openbao Auth Method to use
-	flagOpenbaoAuthPath              string // Mount path of the Openbao Auth Method
-	flagOpenbaoNamespace             string // Openbao enterprise namespace
+	flagBaoImage                   string // Name of the Openbao Image to use
+	flagBaoAuthType                string // Type of Openbao Auth Method to use
+	flagBaoAuthPath                string // Mount path of the Openbao Auth Method
+	flagBaoNamespace               string // Openbao enterprise namespace
 	flagRevokeOnShutdown           bool   // Revoke Openbao Token on pod shutdown
 	flagRunAsUser                  string // User (uid) to run Openbao agent as
 	flagRunAsGroup                 string // Group (gid) to run Openbao agent as
@@ -103,7 +103,7 @@ func (c *Command) Run(args []string) int {
 		return 1
 	}
 
-	if c.flagOpenbaoService == "" {
+	if c.flagBaoService == "" {
 		c.UI.Error("No Openbao service configured")
 		return 1
 	}
@@ -194,13 +194,13 @@ func (c *Command) Run(args []string) int {
 
 	// Build the HTTP handler and server
 	injector := agentInject.Handler{
-		OpenbaoAddress:               c.flagOpenbaoService,
-		OpenbaoCACertBytes:           c.flagOpenbaoCACertBytes,
-		OpenbaoAuthType:              c.flagOpenbaoAuthType,
-		OpenbaoAuthPath:              c.flagOpenbaoAuthPath,
-		OpenbaoNamespace:             c.flagOpenbaoNamespace,
+		OpenbaoAddress:             c.flagBaoService,
+		OpenbaoCACertBytes:         c.flagBaoCACertBytes,
+		OpenbaoAuthType:            c.flagBaoAuthType,
+		OpenbaoAuthPath:            c.flagBaoAuthPath,
+		OpenbaoNamespace:           c.flagBaoNamespace,
 		ProxyAddress:               c.flagProxyAddress,
-		ImageOpenbao:                 c.flagOpenbaoImage,
+		ImageOpenbao:               c.flagBaoImage,
 		Clientset:                  clientset,
 		RequireAnnotation:          true,
 		Log:                        logger,

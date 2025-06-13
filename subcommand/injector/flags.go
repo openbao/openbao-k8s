@@ -23,11 +23,17 @@ const (
 	DefaultLogLevel      = "info"
 	DefaultLogFormat     = "standard"
 	defaultTLSMinVersion = "tls12"
+	EnvBaoAddress        = "AGENT_INJECT_BAO_ADDR"
+	EnvBaoCACertBytes    = "AGENT_INJECT_BAO_CACERT_BYTES"
+	EnvBaoImage          = "AGENT_INJECT_BAO_IMAGE"
+	EnvBaoAuthType       = "AGENT_INJECT_BAO_AUTH_TYPE"
+	EnvBaoAuthPath       = "AGENT_INJECT_BAO_AUTH_PATH"
+	EnvBaoNamespace      = "AGENT_INJECT_BAO_NAMESPACE"
 )
 
 // Specification are the supported environment variables, prefixed with
 // AGENT_INJECT.  The names of the variables in the struct are split using
-// camel case: Specification.OpenbaoAddr = AGENT_INJECT_OPENBAO_ADDR
+// camel case: Specification.OpenbaoAddr = AGENT_INJECT_BAO_ADDR
 type Specification struct {
 	// Listen is the AGENT_INJECT_LISTEN environment variable.
 	Listen string `split_words:"true" `
@@ -62,29 +68,8 @@ type Specification struct {
 	// TLSKeyFile is the AGENT_INJECT_TLS_KEY_FILE environment variable.
 	TLSKeyFile string `envconfig:"tls_key_file"`
 
-	// OpenbaoAddr is the AGENT_INJECT_OPENBAO_ADDR environment variable.
-	OpenbaoAddr string `split_words:"true"`
-
-	// OpenbaoCACertBytes is the AGENT_INJECT_OPENBAO_CACERT_BYTES environment variable.
-	// Specifies the CA cert to trust for TLS with Openbao as a PEM-encoded
-	// certificate or bundle. The multi-line PEM contents may optionally be base64
-	// encoded to avoid line breaks.
-	OpenbaoCACertBytes string `envconfig:"AGENT_INJECT_OPENBAO_CACERT_BYTES"`
-
 	// ProxyAddr is the AGENT_INJECT_PROXY_ADDR environment variable.
 	ProxyAddr string `split_words:"true"`
-
-	// OpenbaoImage is the AGENT_INJECT_OPENBAO_IMAGE environment variable.
-	OpenbaoImage string `split_words:"true"`
-
-	// OpenbaoAuthType is the AGENT_INJECT_OPENBAO_AUTH_TYPE environment variable.
-	OpenbaoAuthType string `split_words:"true"`
-
-	// OpenbaoAuthPath is the AGENT_INJECT_OPENBAO_AUTH_PATH environment variable.
-	OpenbaoAuthPath string `split_words:"true"`
-
-	// OpenbaoNamespace is the AGENT_INJECT_OPENBAO_NAMESPACE environment variable.
-	OpenbaoNamespace string `split_words:"true"`
 
 	// RevokeOnShutdown is AGENT_INJECT_REVOKE_ON_SHUTDOWN environment variable.
 	RevokeOnShutdown string `split_words:"true"`
@@ -166,20 +151,20 @@ func (c *Command) init() {
 		"PEM-encoded TLS certificate to serve. If blank, will generate random cert.")
 	c.flagSet.StringVar(&c.flagKeyFile, "tls-key-file", "",
 		"PEM-encoded TLS private key to serve. If blank, will generate random cert.")
-	c.flagSet.StringVar(&c.flagOpenbaoImage, "openbao-image", agent.DefaultOpenbaoImage,
-		fmt.Sprintf("Docker image for Openbao. Defaults to %q.", agent.DefaultOpenbaoImage))
-	c.flagSet.StringVar(&c.flagOpenbaoService, "openbao-address", "",
+	c.flagSet.StringVar(&c.flagBaoImage, "bao-image", agent.DefaultBaoImage,
+		fmt.Sprintf("Docker image for Openbao. Defaults to %q.", agent.DefaultBaoImage))
+	c.flagSet.StringVar(&c.flagBaoService, "bao-address", "",
 		"Address of the Openbao server.")
-	c.flagSet.StringVar(&c.flagOpenbaoCACertBytes, "openbao-cacert-bytes", "",
+	c.flagSet.StringVar(&c.flagBaoCACertBytes, "bao-cacert-bytes", "",
 		"CA certificate to trust for TLS with Openbao, specified as a PEM-encoded certificate or bundle. "+
 			"The multi-line PEM contents may optionally be base64 encoded to avoid line breaks.")
 	c.flagSet.StringVar(&c.flagProxyAddress, "proxy-address", "",
 		"HTTP proxy address used to talk to the Openbao service.")
-	c.flagSet.StringVar(&c.flagOpenbaoAuthType, "openbao-auth-type", agent.DefaultOpenbaoAuthType,
-		fmt.Sprintf("Type of Openbao Auth Method to use. Defaults to %q.", agent.DefaultOpenbaoAuthType))
-	c.flagSet.StringVar(&c.flagOpenbaoAuthPath, "openbao-auth-path", agent.DefaultOpenbaoAuthPath,
-		fmt.Sprintf("Mount path of the Openbao Auth Method. Defaults to %q.", agent.DefaultOpenbaoAuthPath))
-	c.flagSet.StringVar(&c.flagOpenbaoNamespace, "openbao-namespace", "", "Openbao enterprise namespace.")
+	c.flagSet.StringVar(&c.flagBaoAuthType, "bao-auth-type", agent.DefaultBaoAuthType,
+		fmt.Sprintf("Type of Openbao Auth Method to use. Defaults to %q.", agent.DefaultBaoAuthType))
+	c.flagSet.StringVar(&c.flagBaoAuthPath, "bao-auth-path", agent.DefaultBaoAuthPath,
+		fmt.Sprintf("Mount path of the Openbao Auth Method. Defaults to %q.", agent.DefaultBaoAuthPath))
+	c.flagSet.StringVar(&c.flagBaoNamespace, "bao-namespace", "", "Openbao namespace.")
 	c.flagSet.BoolVar(&c.flagRevokeOnShutdown, "revoke-on-shutdown", false,
 		"Automatically revoke Openbao Token on Pod termination.")
 	c.flagSet.StringVar(&c.flagRunAsUser, "run-as-user", strconv.Itoa(agent.DefaultAgentRunAsUser),
@@ -309,31 +294,31 @@ func (c *Command) parseEnvs() error {
 		c.flagKeyFile = envs.TLSKeyFile
 	}
 
-	if envs.OpenbaoImage != "" {
-		c.flagOpenbaoImage = envs.OpenbaoImage
+	if v := ReadBaoVariable(EnvBaoImage); v != "" {
+		c.flagBaoImage = v
 	}
 
-	if envs.OpenbaoAddr != "" {
-		c.flagOpenbaoService = envs.OpenbaoAddr
+	if v := ReadBaoVariable(EnvBaoAddress); v != "" {
+		c.flagBaoService = v
 	}
-	if envs.OpenbaoCACertBytes != "" {
-		c.flagOpenbaoCACertBytes = envs.OpenbaoCACertBytes
+	if v := ReadBaoVariable(EnvBaoCACertBytes); v != "" {
+		c.flagBaoCACertBytes = v
 	}
 
 	if envs.ProxyAddr != "" {
 		c.flagProxyAddress = envs.ProxyAddr
 	}
 
-	if envs.OpenbaoAuthType != "" {
-		c.flagOpenbaoAuthType = envs.OpenbaoAuthType
+	if v := ReadBaoVariable(EnvBaoAuthType); v != "" {
+		c.flagBaoAuthType = v
 	}
 
-	if envs.OpenbaoAuthPath != "" {
-		c.flagOpenbaoAuthPath = envs.OpenbaoAuthPath
+	if v := ReadBaoVariable(EnvBaoAuthPath); v != "" {
+		c.flagBaoAuthPath = v
 	}
 
-	if envs.OpenbaoNamespace != "" {
-		c.flagOpenbaoNamespace = envs.OpenbaoNamespace
+	if v := ReadBaoVariable(EnvBaoNamespace); v != "" {
+		c.flagBaoNamespace = v
 	}
 
 	if envs.RevokeOnShutdown != "" {
