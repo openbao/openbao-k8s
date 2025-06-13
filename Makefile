@@ -14,7 +14,7 @@ PKG = github.com/openbao/openbao-k8s/version
 LDFLAGS ?= "-X '$(PKG).Version=v$(VERSION)'"
 TESTARGS ?= '-test.v'
 
-OPENBAO_HELM_CHART_VERSION ?= 0.4.0
+OPENBAO_HELM_CHART_VERSION ?= 0.13.2
 
 TEST_WITHOUT_OPENBAO_TLS ?=
 ifndef TEST_WITHOUT_OPENBAO_TLS
@@ -55,7 +55,7 @@ image: build
 # Run multiple times to deploy new builds of the injector.
 OPENBAO_HELM_POST_INSTALL_ARGS ?=
 ifndef TEST_WITHOUT_OPENBAO_TLS
-	OPENBAO_HELM_POST_INSTALL_ARGS = "--set=injector.extraEnvironmentVars.AGENT_INJECT_OPENBAO_CACERT_BYTES=$$(kubectl exec openbao-0 -- sh -c 'cat /tmp/openbao-ca.pem | base64 -w0')"
+	OPENBAO_HELM_POST_INSTALL_ARGS = "--set=injector.extraEnvironmentVars.AGENT_INJECT_OPENBAO_CACERT_BYTES=$$(kubectl exec openbao-0 -- sh -c 'cat /tmp/vault-ca.pem | base64 -w0')"
 endif
 deploy:
 	helm upgrade --install openbao openbao $(OPENBAO_HELM_DEFAULT_ARGS) \
