@@ -20,7 +20,7 @@ const (
 	DefaultResourceLimitMem   = "128Mi"
 	DefaultResourceRequestCPU = "250m"
 	DefaultResourceRequestMem = "64Mi"
-	DefaultContainerArg       = "echo ${OPENBAO_CONFIG?} | base64 -d > /home/openbao/config.json && bao agent -config=/home/openbao/config.json"
+	DefaultContainerArg       = "echo ${BAO_CONFIG?} | base64 -d > /home/openbao/config.json && bao agent -config=/home/openbao/config.json"
 	DefaultRevokeGrace        = 5
 	DefaultAgentLogLevel      = "info"
 	DefaultAgentLogFormat     = "standard"

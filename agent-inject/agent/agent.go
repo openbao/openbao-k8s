@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	DefaultOpenbaoImage                       = "openbao/openbao:1.16.1"
-	DefaultOpenbaoAuthType                    = "kubernetes"
-	DefaultOpenbaoAuthPath                    = "auth/kubernetes"
+	DefaultBaoImage                         = "openbao/openbao:1.16.1"
+	DefaultBaoAuthType                      = "kubernetes"
+	DefaultBaoAuthPath                      = "auth/kubernetes"
 	DefaultAgentRunAsUser                   = 100
 	DefaultAgentRunAsGroup                  = 1000
 	DefaultAgentRunAsSameUser               = false
@@ -742,7 +742,7 @@ func (a *Agent) Validate() error {
 			return errors.New("no Openbao Auth Type found")
 		}
 
-		if a.Openbao.AuthType == DefaultOpenbaoAuthType &&
+		if a.Openbao.AuthType == DefaultBaoAuthType &&
 			a.Openbao.Role == "" && a.Annotations[fmt.Sprintf("%s-role", AnnotationOpenbaoAuthConfig)] == "" {
 			return errors.New("no Openbao role found")
 		}

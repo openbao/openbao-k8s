@@ -115,12 +115,12 @@ func TestCommandEnvs(t *testing.T) {
 		cmdPtr *string
 	}{
 		{env: "AGENT_INJECT_LISTEN", value: ":8080", cmdPtr: &cmd.flagListen},
-		{env: "AGENT_INJECT_OPENBAO_ADDR", value: "http://openbao:8200", cmdPtr: &cmd.flagOpenbaoService},
-		{env: "AGENT_INJECT_OPENBAO_CACERT_BYTES", value: "foo", cmdPtr: &cmd.flagOpenbaoCACertBytes},
+		{env: "AGENT_INJECT_BAO_ADDR", value: "http://openbao:8200", cmdPtr: &cmd.flagBaoService},
+		{env: "AGENT_INJECT_BAO_CACERT_BYTES", value: "foo", cmdPtr: &cmd.flagBaoCACertBytes},
 		{env: "AGENT_INJECT_PROXY_ADDR", value: "http://proxy:3128", cmdPtr: &cmd.flagProxyAddress},
-		{env: "AGENT_INJECT_OPENBAO_AUTH_PATH", value: "auth-path-test", cmdPtr: &cmd.flagOpenbaoAuthPath},
-		{env: "AGENT_INJECT_OPENBAO_IMAGE", value: "openbao/openbao:1.16.1", cmdPtr: &cmd.flagOpenbaoImage},
-		{env: "AGENT_INJECT_OPENBAO_NAMESPACE", value: "test-namespace", cmdPtr: &cmd.flagOpenbaoNamespace},
+		{env: "AGENT_INJECT_BAO_AUTH_PATH", value: "auth-path-test", cmdPtr: &cmd.flagBaoAuthPath},
+		{env: "AGENT_INJECT_BAO_IMAGE", value: "openbao/openbao:1.16.1", cmdPtr: &cmd.flagBaoImage},
+		{env: "AGENT_INJECT_BAO_NAMESPACE", value: "test-namespace", cmdPtr: &cmd.flagBaoNamespace},
 		{env: "AGENT_INJECT_TLS_KEY_FILE", value: "server.key", cmdPtr: &cmd.flagKeyFile},
 		{env: "AGENT_INJECT_TLS_CERT_FILE", value: "server.crt", cmdPtr: &cmd.flagCertFile},
 		{env: "AGENT_INJECT_TLS_AUTO_HOSTS", value: "foobar.com", cmdPtr: &cmd.flagAutoHosts},

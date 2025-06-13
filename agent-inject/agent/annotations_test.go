@@ -25,7 +25,7 @@ func basicAgentConfig() AgentConfig {
 	return AgentConfig{
 		Image:              "foobar-image",
 		Address:            "http://foobar:8200",
-		AuthType:           DefaultOpenbaoAuthType,
+		AuthType:           DefaultBaoAuthType,
 		AuthPath:           "test",
 		Namespace:          "test",
 		RevokeOnShutdown:   true,
@@ -95,7 +95,7 @@ func TestInitDefaults(t *testing.T) {
 		annotationKey   string
 		annotationValue string
 	}{
-		{annotationKey: AnnotationAgentImage, annotationValue: DefaultOpenbaoImage},
+		{annotationKey: AnnotationAgentImage, annotationValue: DefaultBaoImage},
 		{annotationKey: AnnotationAgentRunAsUser, annotationValue: strconv.Itoa(DefaultAgentRunAsUser)},
 		{annotationKey: AnnotationAgentRunAsGroup, annotationValue: strconv.Itoa(DefaultAgentRunAsGroup)},
 		{annotationKey: AnnotationAgentShareProcessNamespace, annotationValue: ""},
