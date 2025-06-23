@@ -1,7 +1,7 @@
 // Copyright The OpenBao Contributors
 // SPDX-License-Identifier: MPL-2.0
 
-package agent
+package injector
 
 import (
 	"os"
