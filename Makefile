@@ -79,9 +79,9 @@ exercise:
 	kubectl delete pod nginx --ignore-not-found
 	kubectl run nginx \
 		--image=nginx \
-		--annotations="openbao.openbao.org/agent-inject=true" \
-		--annotations="openbao.openbao.org/role=test-app" \
-		--annotations="openbao.openbao.org/agent-inject-secret-secret.txt=secret/data/test-app" \
+		--annotations="openbao.org/agent-inject=true" \
+		--annotations="openbao.org/role=test-app" \
+		--annotations="openbao.org/agent-inject-secret-secret.txt=secret/data/test-app" \
 		--overrides='{ "apiVersion": "v1", "spec": { "serviceAccountName": "test-app-sa" } }'
 	kubectl wait --for=condition=Ready --timeout=5m pod nginx
 	kubectl exec nginx -c nginx -- cat /openbao/secrets/secret.txt
