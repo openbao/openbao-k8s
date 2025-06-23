@@ -41,9 +41,9 @@ spec:
               value: "info"
             - name: AGENT_INJECT_LOG_FORMAT
               value: "standard"
-            - name: AGENT_INJECT_OPENBAO_ADDR
+            - name: AGENT_INJECT_BAO_ADDR
               value: "https://openbao.$(NAMESPACE).svc:8200"
-            - name: AGENT_INJECT_OPENBAO_IMAGE
+            - name: AGENT_INJECT_BAO_IMAGE
               value: "openbao/openbao:1.16.1"
             - name: AGENT_INJECT_TLS_AUTO
               value: openbao-agent-injector-cfg

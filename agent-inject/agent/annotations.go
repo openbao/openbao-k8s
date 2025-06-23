@@ -390,7 +390,7 @@ func Init(pod *corev1.Pod, cfg AgentConfig) error {
 
 	if _, ok := pod.ObjectMeta.Annotations[AnnotationOpenbaoAuthType]; !ok {
 		if cfg.AuthType == "" {
-			cfg.AuthType = DefaultOpenbaoAuthType
+			cfg.AuthType = DefaultBaoAuthType
 		}
 		pod.ObjectMeta.Annotations[AnnotationOpenbaoAuthType] = cfg.AuthType
 	}
@@ -409,7 +409,7 @@ func Init(pod *corev1.Pod, cfg AgentConfig) error {
 
 	if _, ok := pod.ObjectMeta.Annotations[AnnotationAgentImage]; !ok {
 		if cfg.Image == "" {
-			cfg.Image = DefaultOpenbaoImage
+			cfg.Image = DefaultBaoImage
 		}
 		pod.ObjectMeta.Annotations[AnnotationAgentImage] = cfg.Image
 	}
