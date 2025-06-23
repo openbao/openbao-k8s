@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/name: openbao-injector
     app.kubernetes.io/instance: openbao
 webhooks:
-  - name: openbao.openbao.org
+  - name: openbao.org
     sideEffects: None
     admissionReviewVersions:
       - "v1"

@@ -167,14 +167,14 @@ func TestSecretAnnotationsWithPreserveCaseSensitivityFlagOff(t *testing.T) {
 		expectedKey  string
 		expectedPath string
 	}{
-		{"openbao.openbao.org/agent-inject-secret-foobar", "test1", "foobar", "test1"},
-		{"openbao.openbao.org/agent-inject-secret-FOOBAR", "test2", "foobar", "test2"},
-		{"openbao.openbao.org/agent-inject-secret-foobar-2_3", "test3", "foobar-2_3", "test3"},
-		{"openbao.openbao.org/agent-inject-secret-server.crt", "creds/tls/somecert", "server.crt", "creds/tls/somecert"},
-		{"openbao.openbao.org/agent-inject-secret", "test4", "", ""},
-		{"openbao.openbao.org/agent-inject-secret-", "test5", "", ""},
+		{"openbao.org/agent-inject-secret-foobar", "test1", "foobar", "test1"},
+		{"openbao.org/agent-inject-secret-FOOBAR", "test2", "foobar", "test2"},
+		{"openbao.org/agent-inject-secret-foobar-2_3", "test3", "foobar-2_3", "test3"},
+		{"openbao.org/agent-inject-secret-server.crt", "creds/tls/somecert", "server.crt", "creds/tls/somecert"},
+		{"openbao.org/agent-inject-secret", "test4", "", ""},
+		{"openbao.org/agent-inject-secret-", "test5", "", ""},
 		// explicitly turn on preserve case sensitivity flag
-		{"openbao.openbao.org/agent-inject-secret-FOOBAR_EXPLICIT", "test2", "FOOBAR_EXPLICIT", "test2"},
+		{"openbao.org/agent-inject-secret-FOOBAR_EXPLICIT", "test2", "FOOBAR_EXPLICIT", "test2"},
 	}
 
 	for _, tt := range tests {
@@ -221,8 +221,8 @@ func TestSecretAnnotationsWithPreserveCaseSensitivityFlagOn(t *testing.T) {
 		expectedKey  string
 		expectedPath string
 	}{
-		{"openbao.openbao.org/agent-inject-secret-foobar", "test1", "foobar", "test1"},
-		{"openbao.openbao.org/agent-inject-secret-FOOBAR", "test2", "FOOBAR", "test2"},
+		{"openbao.org/agent-inject-secret-foobar", "test1", "foobar", "test1"},
+		{"openbao.org/agent-inject-secret-FOOBAR", "test2", "FOOBAR", "test2"},
 	}
 
 	for _, tt := range tests {
@@ -271,8 +271,8 @@ func TestSecretLocationFileAnnotations(t *testing.T) {
 		{
 			"simple name",
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar": "openbao/test1",
-				"openbao.openbao.org/agent-inject-file-foobar":   "foobar_simple_name",
+				"openbao.org/agent-inject-secret-foobar": "openbao/test1",
+				"openbao.org/agent-inject-file-foobar":   "foobar_simple_name",
 			},
 			"foobar",
 			"foobar_simple_name",
@@ -281,8 +281,8 @@ func TestSecretLocationFileAnnotations(t *testing.T) {
 		{
 			"absolute file path",
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar": "openbao/test1",
-				"openbao.openbao.org/agent-inject-file-foobar":   "/some/path/foobar_simple_name",
+				"openbao.org/agent-inject-secret-foobar": "openbao/test1",
+				"openbao.org/agent-inject-file-foobar":   "/some/path/foobar_simple_name",
 			},
 			"foobar",
 			"/some/path/foobar_simple_name",
@@ -291,8 +291,8 @@ func TestSecretLocationFileAnnotations(t *testing.T) {
 		{
 			"long file name",
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar": "openbao/test2",
-				"openbao.openbao.org/agent-inject-file-foobar":   "this_is_very_long_and/would_fail_in_kubernetes/if_in_annotation",
+				"openbao.org/agent-inject-secret-foobar": "openbao/test2",
+				"openbao.org/agent-inject-file-foobar":   "this_is_very_long_and/would_fail_in_kubernetes/if_in_annotation",
 			},
 			"foobar",
 			"this_is_very_long_and/would_fail_in_kubernetes/if_in_annotation",
@@ -301,8 +301,8 @@ func TestSecretLocationFileAnnotations(t *testing.T) {
 		{
 			"file doesn't match secret annotation",
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":         "openbao/test2",
-				"openbao.openbao.org/agent-inject-file-notcorresponding": "this_is_very_long_and/would_fail_in_kubernetes/if_in_annotation",
+				"openbao.org/agent-inject-secret-foobar":         "openbao/test2",
+				"openbao.org/agent-inject-file-notcorresponding": "this_is_very_long_and/would_fail_in_kubernetes/if_in_annotation",
 			},
 			"foobar",
 			"",
@@ -355,8 +355,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":   "test1",
-				"openbao.openbao.org/agent-inject-template-foobar": "foobarTemplate",
+				"openbao.org/agent-inject-secret-foobar":   "test1",
+				"openbao.org/agent-inject-template-foobar": "foobarTemplate",
 			},
 			map[string]string{
 				"foobar": "foobarTemplate",
@@ -364,8 +364,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar2":  "test2",
-				"openbao.openbao.org/agent-inject-template-foobar": "",
+				"openbao.org/agent-inject-secret-foobar2":  "test2",
+				"openbao.org/agent-inject-template-foobar": "",
 			},
 			map[string]string{
 				"foobar2": "",
@@ -373,8 +373,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":  "test1",
-				"openbao.openbao.org/agent-inject-templat-foobar": "foobarTemplate",
+				"openbao.org/agent-inject-secret-foobar":  "test1",
+				"openbao.org/agent-inject-templat-foobar": "foobarTemplate",
 			},
 			map[string]string{
 				"foobar": "",
@@ -382,8 +382,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":    "test1",
-				"openbao.openbao.org/agent-inject-template-foobar2": "foobarTemplate",
+				"openbao.org/agent-inject-secret-foobar":    "test1",
+				"openbao.org/agent-inject-template-foobar2": "foobarTemplate",
 			},
 			map[string]string{
 				"foobar":  "",
@@ -392,8 +392,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar2":  "test1",
-				"openbao.openbao.org/agent-inject-template-foobar": "foobarTemplate",
+				"openbao.org/agent-inject-secret-foobar2":  "test1",
+				"openbao.org/agent-inject-template-foobar": "foobarTemplate",
 			},
 			map[string]string{
 				"foobar2": "",
@@ -402,8 +402,8 @@ func TestSecretTemplateAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar2":  "test1",
-				"openbao.openbao.org/agent-inject-TEMPLATE-foobar": "foobarTemplate",
+				"openbao.org/agent-inject-secret-foobar2":  "test1",
+				"openbao.org/agent-inject-TEMPLATE-foobar": "foobarTemplate",
 			},
 			map[string]string{
 				"foobar2": "",
@@ -451,16 +451,16 @@ func TestSecretMixedTemplatesAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":        "test1",
-				"openbao.openbao.org/agent-inject-template-foobar":      "",
-				"openbao.openbao.org/agent-inject-template-file-foobar": "/etc/config.tmpl",
+				"openbao.org/agent-inject-secret-foobar":        "test1",
+				"openbao.org/agent-inject-template-foobar":      "",
+				"openbao.org/agent-inject-template-file-foobar": "/etc/config.tmpl",
 
-				"openbao.openbao.org/agent-inject-secret-test2":        "test2",
-				"openbao.openbao.org/agent-inject-template-test2":      "foobarTemplate",
-				"openbao.openbao.org/agent-inject-template-file-test2": "",
+				"openbao.org/agent-inject-secret-test2":        "test2",
+				"openbao.org/agent-inject-template-test2":      "foobarTemplate",
+				"openbao.org/agent-inject-template-file-test2": "",
 
-				"openbao.openbao.org/agent-inject-template-only-template":           "onlyTemplate",
-				"openbao.openbao.org/agent-inject-template-file-only-template-file": "onlyTemplateFile",
+				"openbao.org/agent-inject-template-only-template":           "onlyTemplate",
+				"openbao.org/agent-inject-template-file-only-template-file": "onlyTemplateFile",
 			},
 			map[string]Secret{
 				"foobar": {
@@ -541,16 +541,16 @@ func TestSecretTemplateFileAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":        "test1",
-				"openbao.openbao.org/agent-inject-template-foobar":      "foobarTemplate",
-				"openbao.openbao.org/agent-inject-template-file-foobar": "/etc/config.tmpl",
+				"openbao.org/agent-inject-secret-foobar":        "test1",
+				"openbao.org/agent-inject-template-foobar":      "foobarTemplate",
+				"openbao.org/agent-inject-template-file-foobar": "/etc/config.tmpl",
 			}, "foobar", "foobarTemplate", "",
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":        "test1",
-				"openbao.openbao.org/agent-inject-template-foobar":      "",
-				"openbao.openbao.org/agent-inject-template-file-foobar": "/etc/config.tmpl",
+				"openbao.org/agent-inject-secret-foobar":        "test1",
+				"openbao.org/agent-inject-template-foobar":      "",
+				"openbao.org/agent-inject-template-file-foobar": "/etc/config.tmpl",
 			}, "foobar", "", "/etc/config.tmpl",
 		},
 	}
@@ -596,14 +596,14 @@ func TestSecretPermissionAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar": "test1",
-				"openbao.openbao.org/agent-inject-perms-foobar":  "0600",
+				"openbao.org/agent-inject-secret-foobar": "test1",
+				"openbao.org/agent-inject-perms-foobar":  "0600",
 			}, "foobar", "0600",
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar": "test2",
-				"openbao.openbao.org/agent-inject-perms-foobar2": "0600",
+				"openbao.org/agent-inject-secret-foobar": "test2",
+				"openbao.org/agent-inject-perms-foobar2": "0600",
 			}, "foobar", "",
 		},
 	}
@@ -643,14 +643,14 @@ func TestSecretCommandAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":  "test1",
-				"openbao.openbao.org/agent-inject-command-foobar": "pkill -HUP nginx",
+				"openbao.org/agent-inject-secret-foobar":  "test1",
+				"openbao.org/agent-inject-command-foobar": "pkill -HUP nginx",
 			}, "foobar", "pkill -HUP nginx",
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":   "test2",
-				"openbao.openbao.org/agent-inject-command-foobar2": "pkill -HUP nginx",
+				"openbao.org/agent-inject-secret-foobar":   "test2",
+				"openbao.org/agent-inject-command-foobar2": "pkill -HUP nginx",
 			}, "foobar", "",
 		},
 	}
@@ -693,8 +693,8 @@ func TestSecretErrorOnMissingKeyAnnotations(t *testing.T) {
 		{
 			name: "force error",
 			annotations: map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":  "test1",
-				"openbao.openbao.org/error-on-missing-key-foobar": "True",
+				"openbao.org/agent-inject-secret-foobar":  "test1",
+				"openbao.org/error-on-missing-key-foobar": "True",
 			},
 			expectedKey: "foobar",
 			expected:    true,
@@ -702,8 +702,8 @@ func TestSecretErrorOnMissingKeyAnnotations(t *testing.T) {
 		{
 			name: "ignore error",
 			annotations: map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":  "test2",
-				"openbao.openbao.org/error-on-missing-key-foobar": "false",
+				"openbao.org/agent-inject-secret-foobar":  "test2",
+				"openbao.org/error-on-missing-key-foobar": "false",
 			},
 			expectedKey: "foobar",
 			expected:    false,
@@ -711,7 +711,7 @@ func TestSecretErrorOnMissingKeyAnnotations(t *testing.T) {
 		{
 			name: "default value",
 			annotations: map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar": "test3",
+				"openbao.org/agent-inject-secret-foobar": "test3",
 			},
 			expectedKey: "foobar",
 			expected:    false,
@@ -719,8 +719,8 @@ func TestSecretErrorOnMissingKeyAnnotations(t *testing.T) {
 		{
 			name: "bad annotation",
 			annotations: map[string]string{
-				"openbao.openbao.org/agent-inject-secret-foobar":  "test4",
-				"openbao.openbao.org/error-on-missing-key-foobar": "unknown",
+				"openbao.org/agent-inject-secret-foobar":  "test4",
+				"openbao.org/error-on-missing-key-foobar": "unknown",
 			},
 			invalid: true,
 		},
@@ -901,10 +901,10 @@ func TestOpenbaoNamespaceAnnotation(t *testing.T) {
 	}{
 		{"", "", "", ""},
 		{"", "", "test-namespace", "test-namespace"},
-		{"openbao.openbao.org/namespace", "", "", ""},
-		{"openbao.openbao.org/namespace", "foobar", "", "foobar"},
-		{"openbao.openbao.org/namespace", "foobar", "test-namespace", "foobar"},
-		{"openbao.openbao.org/namespace", "fooBar", "", "fooBar"},
+		{"openbao.org/namespace", "", "", ""},
+		{"openbao.org/namespace", "foobar", "", "foobar"},
+		{"openbao.org/namespace", "foobar", "test-namespace", "foobar"},
+		{"openbao.org/namespace", "fooBar", "", "fooBar"},
 	}
 
 	for _, tt := range tests {
@@ -1032,7 +1032,7 @@ func TestAuthConfigAnnotations(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"openbao.openbao.org/role": "backwardscompat",
+				"openbao.org/role": "backwardscompat",
 			},
 			map[string]interface{}{
 				"role":       "backwardscompat",
@@ -1041,8 +1041,8 @@ func TestAuthConfigAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/role":             "backwardscompat",
-				"openbao.openbao.org/auth-config-role": "lowerprio",
+				"openbao.org/role":             "backwardscompat",
+				"openbao.org/auth-config-role": "lowerprio",
 			},
 			map[string]interface{}{
 				"role":       "backwardscompat",
@@ -1051,7 +1051,7 @@ func TestAuthConfigAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/auth-config-token-path": "serviceaccount/somewhere-else/token",
+				"openbao.org/auth-config-token-path": "serviceaccount/somewhere-else/token",
 			},
 			map[string]interface{}{
 				"token_path": "serviceaccount/somewhere-else/token",
@@ -1059,11 +1059,11 @@ func TestAuthConfigAnnotations(t *testing.T) {
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/auth-config-name":                                "foo",
-				"openbao.openbao.org/auth-config-ca-cert":                             "bar",
-				"openbao.openbao.org/auth-config-client_cert":                         "baz",
-				"openbao.openbao.org/auth-config-credential_poll_interval":            "1",
-				"openbao.openbao.org/auth-config-remove_secret_id_file_after_reading": "false",
+				"openbao.org/auth-config-name":                                "foo",
+				"openbao.org/auth-config-ca-cert":                             "bar",
+				"openbao.org/auth-config-client_cert":                         "baz",
+				"openbao.org/auth-config-credential_poll_interval":            "1",
+				"openbao.org/auth-config-remove_secret_id_file_after_reading": "false",
 			},
 			map[string]interface{}{
 				"name":                                "foo",
@@ -1187,49 +1187,49 @@ func TestDefaultTemplateOverride(t *testing.T) {
 	}{
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-default-template": "json",
+				"openbao.org/agent-inject-default-template": "json",
 			},
 			"json",
 			false,
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-default-template": "JSON",
+				"openbao.org/agent-inject-default-template": "JSON",
 			},
 			"json",
 			false,
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-default-template": "map",
+				"openbao.org/agent-inject-default-template": "map",
 			},
 			"map",
 			false,
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-default-template": "MAP",
+				"openbao.org/agent-inject-default-template": "MAP",
 			},
 			"map",
 			false,
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-default-template": "foobar",
+				"openbao.org/agent-inject-default-template": "foobar",
 			},
 			"",
 			true,
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-default-template": "jsn",
+				"openbao.org/agent-inject-default-template": "jsn",
 			},
 			"",
 			true,
 		},
 		{
 			map[string]string{
-				"openbao.openbao.org/agent-inject-default-template": "",
+				"openbao.org/agent-inject-default-template": "",
 			},
 			"",
 			true,
@@ -1261,8 +1261,8 @@ func TestDefaultTemplateOverride(t *testing.T) {
 
 func TestAuthMinMaxBackoff(t *testing.T) {
 	pod := testPod(map[string]string{
-		"openbao.openbao.org/auth-min-backoff": "5s",
-		"openbao.openbao.org/auth-max-backoff": "10s",
+		"openbao.org/auth-min-backoff": "5s",
+		"openbao.org/auth-max-backoff": "10s",
 	})
 	agentConfig := basicAgentConfig()
 	err := Init(pod, agentConfig)
@@ -1281,7 +1281,7 @@ func TestAuthMinMaxBackoff(t *testing.T) {
 
 func TestAutoAuthExitOnError(t *testing.T) {
 	pod := testPod(map[string]string{
-		"openbao.openbao.org/agent-auto-auth-exit-on-err": "true",
+		"openbao.org/agent-auto-auth-exit-on-err": "true",
 	})
 	agentConfig := basicAgentConfig()
 	err := Init(pod, agentConfig)
@@ -1304,13 +1304,13 @@ func TestDisableIdleConnections(t *testing.T) {
 	}{
 		"full list": {
 			annotations: map[string]string{
-				"openbao.openbao.org/agent-disable-idle-connections": "auto-auth,caching,templating",
+				"openbao.org/agent-disable-idle-connections": "auto-auth,caching,templating",
 			},
 			expectedValue: []string{"auto-auth", "caching", "templating"},
 		},
 		"one": {
 			annotations: map[string]string{
-				"openbao.openbao.org/agent-disable-idle-connections": "auto-auth",
+				"openbao.org/agent-disable-idle-connections": "auto-auth",
 			},
 			expectedValue: []string{"auto-auth"},
 		},
@@ -1340,13 +1340,13 @@ func TestDisableKeepAlives(t *testing.T) {
 	}{
 		"full list": {
 			annotations: map[string]string{
-				"openbao.openbao.org/agent-disable-keep-alives": "auto-auth,caching,templating",
+				"openbao.org/agent-disable-keep-alives": "auto-auth,caching,templating",
 			},
 			expectedValue: []string{"auto-auth", "caching", "templating"},
 		},
 		"one": {
 			annotations: map[string]string{
-				"openbao.openbao.org/agent-disable-keep-alives": "auto-auth",
+				"openbao.org/agent-disable-keep-alives": "auto-auth",
 			},
 			expectedValue: []string{"auto-auth"},
 		},
@@ -1376,8 +1376,8 @@ func TestParseTelemetryAnnotations(t *testing.T) {
 	}{
 		"prometheus": {
 			annotations: map[string]string{
-				"openbao.openbao.org/agent-telemetry-prometheus_retention_time": "5s",
-				"openbao.openbao.org/agent-telemetry-disable_hostname":          "true",
+				"openbao.org/agent-telemetry-prometheus_retention_time": "5s",
+				"openbao.org/agent-telemetry-disable_hostname":          "true",
 			},
 			expectedValues: map[string]interface{}{
 				"prometheus_retention_time": "5s",
@@ -1386,10 +1386,10 @@ func TestParseTelemetryAnnotations(t *testing.T) {
 		},
 		"common with some list annotations": {
 			annotations: map[string]string{
-				"openbao.openbao.org/agent-telemetry-prefix_filter":             "[\"+openbao.token\", \"-openbao.expire\", \"+openbao.expire.num_leases\"]",
-				"openbao.openbao.org/agent-telemetry-maximum_gauge_cardinality": "3",
-				"openbao.openbao.org/agent-telemetry-lease_metrics_epsilon":     "foo",
-				"openbao.openbao.org/agent-telemetry-enable_hostname_label":     "true",
+				"openbao.org/agent-telemetry-prefix_filter":             "[\"+openbao.token\", \"-openbao.expire\", \"+openbao.expire.num_leases\"]",
+				"openbao.org/agent-telemetry-maximum_gauge_cardinality": "3",
+				"openbao.org/agent-telemetry-lease_metrics_epsilon":     "foo",
+				"openbao.org/agent-telemetry-enable_hostname_label":     "true",
 			},
 			expectedValues: map[string]interface{}{
 				"prefix_filter":             []interface{}{"+openbao.token", "-openbao.expire", "+openbao.expire.num_leases"},

@@ -413,9 +413,9 @@ func TestContainerSidecarConfigMap(t *testing.T) {
 		AnnotationOpenbaoClientCert:                     "client-cert",
 		AnnotationOpenbaoClientKey:                      "client-key",
 		AnnotationOpenbaoSecretVolumePath:               "/foo/bar",
-		"openbao.openbao.org/agent-inject-secret-foo":   "db/creds/foo",
-		"openbao.openbao.org/agent-inject-template-foo": "template foo",
-		"openbao.openbao.org/agent-inject-secret-bar":   "db/creds/bar",
+		"openbao.org/agent-inject-secret-foo":           "db/creds/foo",
+		"openbao.org/agent-inject-template-foo":         "template foo",
+		"openbao.org/agent-inject-secret-bar":           "db/creds/bar",
 	}
 
 	pod := testPod(annotations)
