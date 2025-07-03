@@ -1289,7 +1289,7 @@ func TestAgentJsonPatch(t *testing.T) {
 			baseContainerEnvVars,
 			corev1.EnvVar{Name: "BAO_LOG_LEVEL", Value: "info"},
 			corev1.EnvVar{Name: "BAO_LOG_FORMAT", Value: "standard"},
-			corev1.EnvVar{Name: "BAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvb3BlbmJhby8ub3BlbmJhby10b2tlbiJ9fV19LCJleGl0X2FmdGVyX2F1dGgiOmZhbHNlLCJwaWRfZmlsZSI6Ii9ob21lL29wZW5iYW8vLnBpZCIsIm9wZW5iYW8iOnsiYWRkcmVzcyI6Imh0dHA6Ly9mb29iYXI6MTIzNCJ9LCJ0ZW1wbGF0ZV9jb25maWciOnsiZXhpdF9vbl9yZXRyeV9mYWlsdXJlIjp0cnVlfX0="},
+			corev1.EnvVar{Name: "BAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvb3BlbmJhby8ub3BlbmJhby10b2tlbiJ9fV19LCJleGl0X2FmdGVyX2F1dGgiOmZhbHNlLCJwaWRfZmlsZSI6Ii9ob21lL29wZW5iYW8vLnBpZCIsInZhdWx0Ijp7ImFkZHJlc3MiOiJodHRwOi8vZm9vYmFyOjEyMzQifSwidGVtcGxhdGVfY29uZmlnIjp7ImV4aXRfb25fcmV0cnlfZmFpbHVyZSI6dHJ1ZX19"},
 		),
 		Resources: v1.ResourceRequirements{
 			Limits:   v1.ResourceList{"cpu": resource.MustParse("500m"), "memory": resource.MustParse("128Mi")},
@@ -1325,7 +1325,7 @@ func TestAgentJsonPatch(t *testing.T) {
 		baseContainerEnvVars,
 		corev1.EnvVar{Name: "BAO_LOG_LEVEL", Value: "info"},
 		corev1.EnvVar{Name: "BAO_LOG_FORMAT", Value: "standard"},
-		corev1.EnvVar{Name: "BAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvb3BlbmJhby8ub3BlbmJhby10b2tlbiJ9fV19LCJleGl0X2FmdGVyX2F1dGgiOnRydWUsInBpZF9maWxlIjoiL2hvbWUvb3BlbmJhby8ucGlkIiwib3BlbmJhbyI6eyJhZGRyZXNzIjoiaHR0cDovL2Zvb2JhcjoxMjM0In0sInRlbXBsYXRlX2NvbmZpZyI6eyJleGl0X29uX3JldHJ5X2ZhaWx1cmUiOnRydWV9fQ=="},
+		corev1.EnvVar{Name: "BAO_CONFIG", Value: "eyJhdXRvX2F1dGgiOnsibWV0aG9kIjp7InR5cGUiOiJrdWJlcm5ldGVzIiwibW91bnRfcGF0aCI6InRlc3QiLCJjb25maWciOnsicm9sZSI6InJvbGUiLCJ0b2tlbl9wYXRoIjoic2VydmljZWFjY291bnQvc29tZXdoZXJlL3Rva2VuIn19LCJzaW5rIjpbeyJ0eXBlIjoiZmlsZSIsImNvbmZpZyI6eyJwYXRoIjoiL2hvbWUvb3BlbmJhby8ub3BlbmJhby10b2tlbiJ9fV19LCJleGl0X2FmdGVyX2F1dGgiOnRydWUsInBpZF9maWxlIjoiL2hvbWUvb3BlbmJhby8ucGlkIiwidmF1bHQiOnsiYWRkcmVzcyI6Imh0dHA6Ly9mb29iYXI6MTIzNCJ9LCJ0ZW1wbGF0ZV9jb25maWciOnsiZXhpdF9vbl9yZXRyeV9mYWlsdXJlIjp0cnVlfX0="},
 	)
 	baseInitContainer.VolumeMounts = []v1.VolumeMount{
 		{Name: "home-init", MountPath: "/home/openbao"},

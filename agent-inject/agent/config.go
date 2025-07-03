@@ -25,7 +25,7 @@ type Config struct {
 	AutoAuth               *AutoAuth       `json:"auto_auth"`
 	ExitAfterAuth          bool            `json:"exit_after_auth"`
 	PidFile                string          `json:"pid_file"`
-	Openbao                  *OpenbaoConfig    `json:"openbao"`
+	Openbao                *OpenbaoConfig  `json:"vault"`
 	Templates              []*Template     `json:"template,omitempty"`
 	Listener               []*Listener     `json:"listener,omitempty"`
 	Cache                  *Cache          `json:"cache,omitempty"`
