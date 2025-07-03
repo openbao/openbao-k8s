@@ -47,7 +47,7 @@ runs:
     - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
       with:
         repository: "openbao/openbao-helm"
-        ref: "v0.27.0"
+        ref: "openbao-0.16.1"
         path: "openbao-helm"
 
     - name: Create Kind Cluster
