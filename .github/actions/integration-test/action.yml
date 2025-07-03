@@ -89,9 +89,9 @@ runs:
       working-directory: openbao-helm
       run: |
         # assumes Python based yq :(
-        yq --in-place --yaml-roundtrip '.injector.image.tag |= "${{ inputs.version }}"' ./values.yaml
-        yq --in-place --yaml-roundtrip '.server.image.tag |= "${{ inputs.openbao-version }}"' ./values.yaml
-        yq --in-place --yaml-roundtrip '.injector.agentImage.tag |= "${{ inputs.openbao-version }}"' ./values.yaml
+        yq --in-place --yaml-roundtrip '.injector.image.tag |= "${{ inputs.version }}"' ./charts/openbao/values.yaml
+        yq --in-place --yaml-roundtrip '.server.image.tag |= "${{ inputs.openbao-version }}"' ./charts/openbao/values.yaml
+        yq --in-place --yaml-roundtrip '.injector.agentImage.tag |= "${{ inputs.openbao-version }}"' ./charts/openbao/values.yaml
         bats ./test/acceptance -t --filter injector
 
     - name: export kind cluster logs
