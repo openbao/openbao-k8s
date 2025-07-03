@@ -92,6 +92,7 @@ runs:
         yq --in-place --yaml-roundtrip '.injector.image.tag |= "${{ inputs.version }}"' ./charts/openbao/values.yaml
         yq --in-place --yaml-roundtrip '.server.image.tag |= "${{ inputs.openbao-version }}"' ./charts/openbao/values.yaml
         yq --in-place --yaml-roundtrip '.injector.agentImage.tag |= "${{ inputs.openbao-version }}"' ./charts/openbao/values.yaml
+        yq --in-place --yaml-roundtrip '.injector.image.repository |= "openbao/openbao-k8s"' ./charts/openbao/values.yaml # temporarily needed as openbao-helm still references vault-agent-injector
         bats ./test/acceptance -t --filter injector
 
     - name: export kind cluster logs
