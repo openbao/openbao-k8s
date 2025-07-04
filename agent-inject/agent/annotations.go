@@ -81,7 +81,7 @@ const (
 	AnnotationAgentInjectTemplateFile = "openbao.org/agent-inject-template-file"
 
 	// AnnotationAgentInjectToken is the annotation key for injecting the
-	// auto-auth token into the secrets volume (e.g. /openbao/secrets/token)
+	// auto-auth token into the secrets volume (e.g. /vault/secrets/token)
 	AnnotationAgentInjectToken = "openbao.org/agent-inject-token"
 
 	// AnnotationAgentInjectCommand is the key annotation that configures Openbao Agent
