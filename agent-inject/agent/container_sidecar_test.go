@@ -1298,7 +1298,7 @@ func TestAgentJsonPatch(t *testing.T) {
 		VolumeMounts: []v1.VolumeMount{
 			{Name: "foobar", ReadOnly: true, MountPath: "serviceaccount/somewhere"},
 			{Name: "home-sidecar", MountPath: "/home/openbao"},
-			{Name: "openbao-secrets", MountPath: "/openbao/secrets"},
+			{Name: "openbao-secrets", MountPath: "/vault/secrets"},
 		},
 		Lifecycle: &v1.Lifecycle{
 			PreStop: &v1.LifecycleHandler{
@@ -1330,7 +1330,7 @@ func TestAgentJsonPatch(t *testing.T) {
 	baseInitContainer.VolumeMounts = []v1.VolumeMount{
 		{Name: "home-init", MountPath: "/home/openbao"},
 		{Name: "foobar", ReadOnly: true, MountPath: "serviceaccount/somewhere"},
-		{Name: "openbao-secrets", MountPath: "/openbao/secrets"},
+		{Name: "openbao-secrets", MountPath: "/vault/secrets"},
 	}
 	baseInitContainer.Lifecycle = nil
 

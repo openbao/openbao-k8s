@@ -27,7 +27,7 @@ func TestNewConfig(t *testing.T) {
 		AnnotationOpenbaoCAKey:                            "ca-key",
 		AnnotationOpenbaoClientCert:                       "client-cert",
 		AnnotationOpenbaoClientKey:                        "client-key",
-		AnnotationOpenbaoSecretVolumePath:                 "/openbao/secrets",
+		AnnotationOpenbaoSecretVolumePath:                 "/vault/secrets",
 		AnnotationProxyAddress:                          "http://proxy:3128",
 		"openbao.org/agent-inject-secret-foo":   "db/creds/foo",
 		"openbao.org/agent-inject-template-foo": "template foo",
@@ -127,16 +127,16 @@ func TestNewConfig(t *testing.T) {
 
 	for _, template := range config.Templates {
 		if strings.Contains(template.Destination, "foo") {
-			if template.Destination != "/openbao/secrets/foo" {
-				t.Errorf("expected template destination to be %s, got %s", "/openbao/secrets/foo", template.Destination)
+			if template.Destination != "/vault/secrets/foo" {
+				t.Errorf("expected template destination to be %s, got %s", "/vault/secrets/foo", template.Destination)
 			}
 
 			if template.Contents != "template foo" {
 				t.Errorf("expected template contents to be %s, got %s", "template foo", template.Contents)
 			}
 		} else if strings.Contains(template.Destination, "bar") {
-			if template.Destination != "/openbao/secrets/bar" {
-				t.Errorf("expected template destination to be %s, got %s", "/openbao/secrets/bar", template.Destination)
+			if template.Destination != "/vault/secrets/bar" {
+				t.Errorf("expected template destination to be %s, got %s", "/vault/secrets/bar", template.Destination)
 			}
 
 			if !strings.Contains(template.Contents, "with secret \"db/creds/bar\"") {
@@ -167,8 +167,8 @@ func TestNewConfig(t *testing.T) {
 				t.Errorf("expected template command to be %s, got %s", "/tmp/smth.sh", template.Command)
 			}
 		} else if template.Source == "just-template-file" {
-			if template.Destination != "/openbao/secrets/just-template-file" {
-				t.Errorf("expected template destination to be %s, got %s", "/openbao/secrets/just-template-file", template.Destination)
+			if template.Destination != "/vault/secrets/just-template-file" {
+				t.Errorf("expected template destination to be %s, got %s", "/vault/secrets/just-template-file", template.Destination)
 			}
 		} else {
 			t.Error("shouldn't have got here")
@@ -512,7 +512,7 @@ func TestConfigOpenbaoAgentCache_persistent(t *testing.T) {
 				UseAutoAuthToken: "true",
 				Persist: &CachePersist{
 					Type: "kubernetes",
-					Path: "/openbao/agent-cache",
+					Path: "/vault/agent-cache",
 				},
 			},
 			expectedListeners: []*Listener{
@@ -534,7 +534,7 @@ func TestConfigOpenbaoAgentCache_persistent(t *testing.T) {
 				UseAutoAuthToken: "true",
 				Persist: &CachePersist{
 					Type:      "kubernetes",
-					Path:      "/openbao/agent-cache",
+					Path:      "/vault/agent-cache",
 					ExitOnErr: true,
 				},
 			},
@@ -813,7 +813,7 @@ func TestConfigAgentQuit(t *testing.T) {
 				UseAutoAuthToken: "true",
 				Persist: &CachePersist{
 					Type: "kubernetes",
-					Path: "/openbao/agent-cache",
+					Path: "/vault/agent-cache",
 				},
 			},
 		},
@@ -829,7 +829,7 @@ func TestConfigAgentQuit(t *testing.T) {
 				UseAutoAuthToken: "true",
 				Persist: &CachePersist{
 					Type: "kubernetes",
-					Path: "/openbao/agent-cache",
+					Path: "/vault/agent-cache",
 				},
 			},
 		},

@@ -84,7 +84,7 @@ exercise:
 		--annotations="openbao.org/agent-inject-secret-secret.txt=secret/data/test-app" \
 		--overrides='{ "apiVersion": "v1", "spec": { "serviceAccountName": "test-app-sa" } }'
 	kubectl wait --for=condition=Ready --timeout=5m pod nginx
-	kubectl exec nginx -c nginx -- cat /openbao/secrets/secret.txt
+	kubectl exec nginx -c nginx -- cat /vault/secrets/secret.txt
 
 # Teardown any resources created in deploy and exercise targets.
 teardown:
