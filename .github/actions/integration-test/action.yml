@@ -47,7 +47,7 @@ runs:
     - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
       with:
         repository: "openbao/openbao-helm"
-        ref: "openbao-0.16.1"
+        ref: "feat/openbao-agent-injector" # temporary branch used until first release
         path: "openbao-helm"
 
     - name: Create Kind Cluster
@@ -92,7 +92,7 @@ runs:
         yq --in-place --yaml-roundtrip '.injector.image.tag |= "${{ inputs.version }}"' ./charts/openbao/values.yaml
         yq --in-place --yaml-roundtrip '.server.image.tag |= "${{ inputs.openbao-version }}"' ./charts/openbao/values.yaml
         yq --in-place --yaml-roundtrip '.injector.agentImage.tag |= "${{ inputs.openbao-version }}"' ./charts/openbao/values.yaml
-        yq --in-place --yaml-roundtrip '.injector.image.repository |= "openbao/openbao-k8s"' ./charts/openbao/values.yaml # temporarily needed as openbao-helm still references vault-agent-injector
+        yq --in-place --yaml-roundtrip '.injector.image.registry |= "docker.io"' ./charts/openbao/values.yaml # currently needed as pipeline tags image as docker.io
         bats ./test/acceptance -t --filter injector
 
     - name: export kind cluster logs
