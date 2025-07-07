@@ -2,6 +2,7 @@ name: build
 
 on:
   push:
+  pull_request:
   workflow_dispatch:
     inputs:
       version:
@@ -88,7 +89,6 @@ jobs:
     strategy:
       matrix:
         arch: [arm, arm64, amd64]
-        registry: [docker.io, quay.io, ghcr.io]
     env:
       repo: ${{ github.event.repository.name }}
       version: ${{needs.get-product-version.outputs.product-version}}
@@ -102,17 +102,19 @@ jobs:
           arch: ${{ matrix.arch }}
           zip_artifact_name: ${{ env.PKG_NAME }}_${{ env.version }}_linux_${{ matrix.arch }}.zip
           tags: |
-            ${{ matrix.registry }}/openbao/${{ env.PKG_NAME }}:${{ env.version }}
+            quay.io/openbao/${{ env.PKG_NAME }}:${{ env.version }}
+            ghcr.io/openbao/${{ env.PKG_NAME }}:${{ env.version }}
+            docker.io/openbao/${{ env.PKG_NAME }}:${{ env.version }}
 
   build-ubi:
-    name: Docker Build UBI Image
+    name: Docker ${{ matrix.arch }} Build UBI Image
     needs:
       - get-product-version
       - build
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [amd64]
+        arch: [arm, arm64, amd64]
     env:
       repo: ${{ github.event.repository.name }}
       version: ${{ needs.product-metadata.outputs.bao-version }}
@@ -125,4 +127,6 @@ jobs:
           arch: ${{ matrix.arch }}
           zip_artifact_name: ${{ env.PKG_NAME }}_${{ env.version }}_linux_${{ matrix.arch }}.zip
           tags: |
+            quay.io/openbao/${{ env.PKG_NAME }}-ubi:${{ env.version }}
+            ghcr.io/openbao/${{ env.PKG_NAME }}-ubi:${{ env.version }}
             docker.io/openbao/${{ env.PKG_NAME }}-ubi:${{ env.version }}
