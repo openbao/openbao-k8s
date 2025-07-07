@@ -22,6 +22,6 @@
 # directory for misc build files etc.
 scratch/
 build/
-vault-helm/
+openbao-helm/
 
 dist/

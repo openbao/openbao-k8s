@@ -1,7 +1,7 @@
 REGISTRY_NAME ?= docker.io/openbao
 IMAGE_NAME = openbao-k8s
 VERSION ?= 0.0.0-dev
-OPENBAO_VERSION ?= v2.0.0-beta20240618
+OPENBAO_VERSION ?= 2.3.1
 IMAGE_TAG ?= $(REGISTRY_NAME)/$(IMAGE_NAME):$(VERSION)
 DOCKER_DIR = ./build/docker
 BUILD_DIR = dist
@@ -14,7 +14,7 @@ PKG = github.com/openbao/openbao-k8s/version
 LDFLAGS ?= "-X '$(PKG).Version=v$(VERSION)'"
 TESTARGS ?= '-test.v'
 
-OPENBAO_HELM_CHART_VERSION ?= 0.4.0
+OPENBAO_HELM_CHART_VERSION ?= 0.16.1
 
 TEST_WITHOUT_OPENBAO_TLS ?=
 ifndef TEST_WITHOUT_OPENBAO_TLS
@@ -55,7 +55,7 @@ image: build
 # Run multiple times to deploy new builds of the injector.
 OPENBAO_HELM_POST_INSTALL_ARGS ?=
 ifndef TEST_WITHOUT_OPENBAO_TLS
-	OPENBAO_HELM_POST_INSTALL_ARGS = "--set=injector.extraEnvironmentVars.AGENT_INJECT_OPENBAO_CACERT_BYTES=$$(kubectl exec openbao-0 -- sh -c 'cat /tmp/openbao-ca.pem | base64 -w0')"
+	OPENBAO_HELM_POST_INSTALL_ARGS = "--set=injector.extraEnvironmentVars.AGENT_INJECT_BAO_CACERT_BYTES=$$(kubectl exec openbao-0 -- sh -c 'cat /tmp/vault-ca.pem | base64 -w0')"
 endif
 deploy:
 	helm upgrade --install openbao openbao $(OPENBAO_HELM_DEFAULT_ARGS) \
@@ -82,6 +82,7 @@ exercise:
 		--annotations="openbao.org/agent-inject=true" \
 		--annotations="openbao.org/role=test-app" \
 		--annotations="openbao.org/agent-inject-secret-secret.txt=secret/data/test-app" \
+		--annotations="openbao.org/tls-server-name=openbao-0" \
 		--overrides='{ "apiVersion": "v1", "spec": { "serviceAccountName": "test-app-sa" } }'
 	kubectl wait --for=condition=Ready --timeout=5m pod nginx
 	kubectl exec nginx -c nginx -- cat /vault/secrets/secret.txt
