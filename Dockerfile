@@ -12,7 +12,7 @@
 # `default` is the production docker image which cannot be built locally.
 # For local dev and testing purposes, please build and use the `dev` docker image.
 
-FROM alpine:3.19.1 as dev
+FROM alpine:3.19.1 AS dev
 
 RUN addgroup openbao && \
     adduser -S -G openbao openbao
@@ -24,7 +24,7 @@ USER openbao
 ENTRYPOINT ["/openbao-k8s"]
 
 # This target creates a production release image for the project.
-FROM alpine:3.19.1 as default
+FROM alpine:3.19.1 AS default
 
 # PRODUCT_VERSION is the tag built, e.g. v0.1.0
 # PRODUCT_REVISION is the git hash built
@@ -62,7 +62,7 @@ ENTRYPOINT ["/bin/openbao-k8s"]
 
 # This target creates a production ubi release image
 # for the project for use on OpenShift.
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1161.1715068733 as ubi
+FROM registry.access.redhat.com/ubi9-minimal:9.6 AS ubi
 
 ARG PRODUCT_NAME
 ARG PRODUCT_VERSION
