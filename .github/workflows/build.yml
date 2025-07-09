@@ -2,6 +2,7 @@ name: build
 
 on:
   push:
+  pull_request:
   workflow_dispatch:
     inputs:
       version:
@@ -88,10 +89,9 @@ jobs:
     strategy:
       matrix:
         arch: [arm, arm64, amd64]
-        registry: [docker.io, quay.io, ghcr.io]
     env:
       repo: ${{ github.event.repository.name }}
-      version: ${{needs.get-product-version.outputs.product-version}}
+      version: ${{ needs.get-product-version.outputs.product-version }}
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
       - name: Docker Build (Action)
@@ -102,20 +102,22 @@ jobs:
           arch: ${{ matrix.arch }}
           zip_artifact_name: ${{ env.PKG_NAME }}_${{ env.version }}_linux_${{ matrix.arch }}.zip
           tags: |
-            ${{ matrix.registry }}/openbao/${{ env.PKG_NAME }}:${{ env.version }}
+            quay.io/openbao/${{ env.PKG_NAME }}:${{ env.version }}
+            ghcr.io/openbao/${{ env.PKG_NAME }}:${{ env.version }}
+            docker.io/openbao/${{ env.PKG_NAME }}:${{ env.version }}
 
   build-ubi:
-    name: Docker Build UBI Image
+    name: Docker ${{ matrix.arch }} Build UBI Image
     needs:
       - get-product-version
       - build
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [amd64]
+        arch: [arm64, amd64]
     env:
       repo: ${{ github.event.repository.name }}
-      version: ${{ needs.product-metadata.outputs.bao-version }}
+      version: ${{ needs.get-product-version.outputs.product-version }}
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
       - uses: hashicorp/actions-docker-build@200254326a30d7b747745592f8f4d226bbe4abe4 # v2.2.0
@@ -125,4 +127,6 @@ jobs:
           arch: ${{ matrix.arch }}
           zip_artifact_name: ${{ env.PKG_NAME }}_${{ env.version }}_linux_${{ matrix.arch }}.zip
           tags: |
+            quay.io/openbao/${{ env.PKG_NAME }}-ubi:${{ env.version }}
+            ghcr.io/openbao/${{ env.PKG_NAME }}-ubi:${{ env.version }}
             docker.io/openbao/${{ env.PKG_NAME }}-ubi:${{ env.version }}
