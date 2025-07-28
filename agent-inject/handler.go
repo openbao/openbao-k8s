@@ -179,6 +179,10 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 	for annotation, value := range pod.Annotations {
 		if suffix, ok := strings.CutPrefix(annotation, "vault.hashicorp.com/"); ok {
 			newAnnotation := "openbao.org/" + suffix
+			if _, exists := pod.Annotations[newAnnotation]; exists {
+				delete(pod.Annotations, annotation)
+				continue
+			}
 
 			pod.Annotations[newAnnotation] = value
 			delete(pod.Annotations, annotation)
