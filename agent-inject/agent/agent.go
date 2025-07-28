@@ -586,8 +586,8 @@ func ShouldInject(pod *corev1.Pod) (bool, error) {
 }
 
 // Patch creates the necessary pod patches to inject the Openbao Agent
-// containers.
-func (a *Agent) Patch() ([]byte, error) {
+// containers. Optionally accepts additional patches to include.
+func (a *Agent) Patch(additionalPatches ...jsonpatch.Operation) ([]byte, error) {
 	var patches jsonpatch.Patch
 	// Add a volume for the token sink
 	patches = append(patches, addVolumes(
@@ -711,6 +711,11 @@ func (a *Agent) Patch() ([]byte, error) {
 	patches = append(patches, updateAnnotations(
 		a.Pod.Annotations,
 		map[string]string{AnnotationAgentStatus: "injected"})...)
+
+	// Add any additional patches provided
+	if len(additionalPatches) > 0 {
+		patches = append(patches, additionalPatches...)
+	}
 
 	// Generate the patch
 	if len(patches) > 0 {

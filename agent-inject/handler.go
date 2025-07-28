@@ -179,17 +179,16 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 	for annotation, value := range pod.Annotations {
 		if suffix, ok := strings.CutPrefix(annotation, "vault.hashicorp.com/"); ok {
 			newAnnotation := "openbao.org/" + suffix
-			if _, exists := pod.Annotations[newAnnotation]; exists {
-				delete(pod.Annotations, annotation)
-				continue
-			}
+			// Only migrate if the target annotation doesn't already exist
+			if _, exists := pod.Annotations[newAnnotation]; !exists {
+				pod.Annotations[newAnnotation] = value
 
-			pod.Annotations[newAnnotation] = value
+				annotationPatch = append(annotationPatch, []jsonpatch.Operation{
+					internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(newAnnotation), value),
+					internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
+				}...)
+			}
 			delete(pod.Annotations, annotation)
-			annotationPatch = append(annotationPatch, []jsonpatch.Operation{
-				internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(newAnnotation), value),
-				internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
-			}...)
 		}
 	}
 
@@ -260,18 +259,9 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 	}
 
 	h.Log.Debug("creating patches for the pod..")
-	patch, err := agentSidecar.Patch()
+	patch, err := agentSidecar.Patch(annotationPatch...)
 	if err != nil {
 		err := fmt.Errorf("error creating patch for agent: %s", err)
-		return admissionError(req.UID, err)
-	}
-
-	var patchWithAnnotations jsonpatch.Patch
-	if err = json.Unmarshal(patch, &patchWithAnnotations); err != nil {
-		return admissionError(req.UID, err)
-	}
-	patchWithAnnotations = append(patchWithAnnotations, annotationPatch...)
-	if patch, err = json.Marshal(patchWithAnnotations); err != nil {
 		return admissionError(req.UID, err)
 	}
 
