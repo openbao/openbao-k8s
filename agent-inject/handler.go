@@ -10,8 +10,10 @@ import (
 	"net/http"
 	"strings"
 
+	jsonpatch "github.com/evanphx/json-patch"
 	"github.com/hashicorp/go-hclog"
 	"github.com/openbao/openbao-k8s/agent-inject/agent"
+	"github.com/openbao/openbao-k8s/agent-inject/internal"
 	"github.com/openbao/openbao/sdk/helper/strutil"
 	admissionv1 "k8s.io/api/admission/v1"
 	"k8s.io/api/admission/v1beta1"
@@ -48,13 +50,13 @@ type Handler struct {
 	// RequireAnnotation means that the annotation must be given to inject.
 	// If this is false, injection is default.
 	RequireAnnotation          bool
-	OpenbaoAddress               string
-	OpenbaoCACertBytes           string
-	OpenbaoAuthType              string
-	OpenbaoAuthPath              string
-	OpenbaoNamespace             string
+	OpenbaoAddress             string
+	OpenbaoCACertBytes         string
+	OpenbaoAuthType            string
+	OpenbaoAuthPath            string
+	OpenbaoNamespace           string
 	ProxyAddress               string
-	ImageOpenbao                 string
+	ImageOpenbao               string
 	Clientset                  *kubernetes.Clientset
 	Log                        hclog.Logger
 	RevokeOnShutdown           bool
@@ -172,6 +174,24 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 		UID:     req.UID,
 	}
 
+	var annotationPatch jsonpatch.Patch
+	// Migrate Vault annotations to OpenBao
+	for annotation, value := range pod.Annotations {
+		if suffix, ok := strings.CutPrefix(annotation, "vault.hashicorp.com/"); ok {
+			newAnnotation := "openbao.org/" + suffix
+			// Only migrate if the target annotation doesn't already exist
+			if _, exists := pod.Annotations[newAnnotation]; !exists {
+				pod.Annotations[newAnnotation] = value
+
+				annotationPatch = append(annotationPatch, []jsonpatch.Operation{
+					internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(newAnnotation), value),
+					internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
+				}...)
+			}
+			delete(pod.Annotations, annotation)
+		}
+	}
+
 	h.Log.Debug("checking if should inject agent..")
 	inject, err := agent.ShouldInject(&pod)
 	if err != nil && !strings.Contains(err.Error(), "no inject annotation found") {
@@ -193,7 +213,7 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 		Address:                    h.OpenbaoAddress,
 		AuthType:                   h.OpenbaoAuthType,
 		AuthPath:                   h.OpenbaoAuthPath,
-		OpenbaoNamespace:             h.OpenbaoNamespace,
+		OpenbaoNamespace:           h.OpenbaoNamespace,
 		ProxyAddress:               h.ProxyAddress,
 		Namespace:                  req.Namespace,
 		RevokeOnShutdown:           h.RevokeOnShutdown,
@@ -239,7 +259,7 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 	}
 
 	h.Log.Debug("creating patches for the pod..")
-	patch, err := agentSidecar.Patch()
+	patch, err := agentSidecar.Patch(annotationPatch...)
 	if err != nil {
 		err := fmt.Errorf("error creating patch for agent: %s", err)
 		return admissionError(req.UID, err)
