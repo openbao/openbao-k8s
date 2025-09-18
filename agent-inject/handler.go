@@ -187,6 +187,10 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 					internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(newAnnotation), value),
 					internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
 				}...)
+			} else {
+				annotationPatch = append(annotationPatch, []jsonpatch.Operation{
+					internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
+				}...)
 			}
 			delete(pod.Annotations, annotation)
 		}

@@ -166,6 +166,70 @@ func TestHandlerHandle(t *testing.T) {
 		},
 
 		{
+			"rewrite of vault annotations",
+			basicHandler(),
+			admissionv1.AdmissionRequest{
+				Namespace: "test",
+				Object: encodeRaw(t, &corev1.Pod{
+					ObjectMeta: metav1.ObjectMeta{
+						Annotations: map[string]string{
+							"vault.hashicorp.com/agent-inject": "true",
+							"vault.hashicorp.com/role": "demo",
+						},
+					},
+					Spec: basicSpec,
+				}),
+			},
+			"",
+			[]jsonpatch.Operation{
+				internal.AddOp("/spec/volumes", nil),
+				internal.AddOp("/spec/volumes/-", nil),
+				internal.AddOp("/spec/volumes", nil),
+				internal.AddOp("/spec/containers/0/volumeMounts/-", nil),
+				internal.AddOp("/spec/initContainers/-", nil),
+				internal.AddOp("/spec/initContainers/0/volumeMounts/-", nil),
+				internal.AddOp("/spec/containers/-", nil),
+				internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(agent.AnnotationAgentStatus), nil),
+				internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(agent.AnnotationAgentInject), nil),
+				internal.RemoveOp("/metadata/annotations/"+internal.EscapeJSONPointer("vault.hashicorp.com/agent-inject")),
+				internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(agent.AnnotationOpenbaoRole), nil),
+				internal.RemoveOp("/metadata/annotations/"+internal.EscapeJSONPointer("vault.hashicorp.com/role")),
+			},
+		},
+
+		{
+			"prefer openbao annotation over vault annotations",
+			basicHandler(),
+			admissionv1.AdmissionRequest{
+				Namespace: "test",
+				Object: encodeRaw(t, &corev1.Pod{
+					ObjectMeta: metav1.ObjectMeta{
+						Annotations: map[string]string{
+							"vault.hashicorp.com/agent-inject": "true",
+							agent.AnnotationAgentInject: "true",
+							"vault.hashicorp.com/role": "demo",
+							agent.AnnotationOpenbaoRole: "demo",
+						},
+					},
+					Spec: basicSpec,
+				}),
+			},
+			"",
+			[]jsonpatch.Operation{
+				internal.AddOp("/spec/volumes", nil),
+				internal.AddOp("/spec/volumes/-", nil),
+				internal.AddOp("/spec/volumes", nil),
+				internal.AddOp("/spec/containers/0/volumeMounts/-", nil),
+				internal.AddOp("/spec/initContainers/-", nil),
+				internal.AddOp("/spec/initContainers/0/volumeMounts/-", nil),
+				internal.AddOp("/spec/containers/-", nil),
+				internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(agent.AnnotationAgentStatus), nil),
+				internal.RemoveOp("/metadata/annotations/"+internal.EscapeJSONPointer("vault.hashicorp.com/agent-inject")),
+				internal.RemoveOp("/metadata/annotations/"+internal.EscapeJSONPointer("vault.hashicorp.com/role")),
+			},
+		},
+
+		{
 			"init first ",
 			basicHandler(),
 			admissionv1.AdmissionRequest{
