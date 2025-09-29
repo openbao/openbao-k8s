@@ -131,8 +131,11 @@ type Specification struct {
 	// DisableKeepAlives is the AGENT_INJECT_DISABLE_KEEP_ALIVES environment variable
 	DisableKeepAlives string `split_words:"true"`
 
-	// RewriteAnnotations is the AGENT_INJECT_REWRITE_ANNOTATIONS environment variable
-	RewriteAnnotations string `split_words:"true"`
+	// EnableVaultAnnotations is the AGENT_INJECT_ENABLE_VAULT_ANNOTATIONS environment variable
+	EnableVaultAnnotations string `split_words:"true"`
+
+	// RewriteVaultAnnotations is the AGENT_INJECT_REWRITE_VAULT_ANNOTATIONS environment variable
+	RewriteVaultAnnotations string `split_words:"true"`
 }
 
 func (c *Command) init() {
@@ -207,7 +210,9 @@ func (c *Command) init() {
 		"Comma-separated list of Openbao features where idle connections should be disabled.")
 	c.flagSet.StringVar(&c.flagDisableKeepAlives, "disable-keep-alives", "",
 		"Comma-separated list of Openbao features where keep-alives should be disabled.")
-	c.flagSet.BoolVar(&c.flagRewriteAnnotations, "rewrite-annotations", true,
+	c.flagSet.BoolVar(&c.flagEnableVaultAnnotations, "enable-vault-annotations", true,
+		"Enable vault.hashicorp.com annotations")
+	c.flagSet.BoolVar(&c.flagRewriteVaultAnnotations, "rewrite-vault-annotations", true,
 		"Rewrite vault.hashicorp.com annotations to openbao.org")
 
 	tlsVersions := []string{}
@@ -432,8 +437,15 @@ func (c *Command) parseEnvs() error {
 		c.flagDisableKeepAlives = envs.DisableKeepAlives
 	}
 
-	if envs.RewriteAnnotations != "" {
-		c.flagRewriteAnnotations, err = parseutil.ParseBool(envs.RewriteAnnotations)
+	if envs.EnableVaultAnnotations != "" {
+		c.flagEnableVaultAnnotations, err = parseutil.ParseBool(envs.EnableVaultAnnotations)
+		if err != nil {
+			return err
+		}
+	}
+
+	if envs.RewriteVaultAnnotations != "" {
+		c.flagRewriteVaultAnnotations, err = parseutil.ParseBool(envs.RewriteVaultAnnotations)
 		if err != nil {
 			return err
 		}
