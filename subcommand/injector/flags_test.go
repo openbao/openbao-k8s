@@ -179,6 +179,8 @@ func TestCommandEnvBools(t *testing.T) {
 		{env: "AGENT_INJECT_USE_LEADER_ELECTOR", value: false, cmdPtr: &cmd.flagUseLeaderElector},
 		{env: "AGENT_INJECT_TEMPLATE_CONFIG_EXIT_ON_RETRY_FAILURE", value: true, cmdPtr: &cmd.flagExitOnRetryFailure},
 		{env: "AGENT_INJECT_TEMPLATE_CONFIG_EXIT_ON_RETRY_FAILURE", value: false, cmdPtr: &cmd.flagExitOnRetryFailure},
+		{env: "AGENT_INJECT_REWRITE_ANNOTATIONS", value: true, cmdPtr: &cmd.flagRewriteAnnotations},
+		{env: "AGENT_INJECT_REWRITE_ANNOTATIONS", value: false, cmdPtr: &cmd.flagRewriteAnnotations},
 	}
 
 	for _, tt := range tests {

@@ -14,9 +14,9 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-secure-stdlib/parseutil"
 	"github.com/hashicorp/go-secure-stdlib/tlsutil"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/openbao/openbao-k8s/agent-inject/agent"
 	"github.com/openbao/openbao-k8s/helper/flags"
-	"github.com/kelseyhightower/envconfig"
 )
 
 const (
@@ -130,6 +130,9 @@ type Specification struct {
 
 	// DisableKeepAlives is the AGENT_INJECT_DISABLE_KEEP_ALIVES environment variable
 	DisableKeepAlives string `split_words:"true"`
+
+	// RewriteAnnotations is the AGENT_INJECT_REWRITE_ANNOTATIONS environment variable
+	RewriteAnnotations string `split_words:"true"`
 }
 
 func (c *Command) init() {
@@ -204,6 +207,8 @@ func (c *Command) init() {
 		"Comma-separated list of Openbao features where idle connections should be disabled.")
 	c.flagSet.StringVar(&c.flagDisableKeepAlives, "disable-keep-alives", "",
 		"Comma-separated list of Openbao features where keep-alives should be disabled.")
+	c.flagSet.BoolVar(&c.flagRewriteAnnotations, "rewrite-annotations", true,
+		"Rewrite vault.hashicorp.com annotations to openbao.org")
 
 	tlsVersions := []string{}
 	for v := range tlsutil.TLSLookup {
@@ -425,6 +430,13 @@ func (c *Command) parseEnvs() error {
 
 	if envs.DisableKeepAlives != "" {
 		c.flagDisableKeepAlives = envs.DisableKeepAlives
+	}
+
+	if envs.RewriteAnnotations != "" {
+		c.flagRewriteAnnotations, err = parseutil.ParseBool(envs.RewriteAnnotations)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
