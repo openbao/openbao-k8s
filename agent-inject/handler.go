@@ -177,14 +177,14 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 
 	var annotationPatch jsonpatch.Patch
 	// Migrate Vault annotations to OpenBao
-	if h.RewriteAnnotations {
-		for annotation, value := range pod.Annotations {
-			if suffix, ok := strings.CutPrefix(annotation, "vault.hashicorp.com/"); ok {
-				newAnnotation := "openbao.org/" + suffix
-				// Only migrate if the target annotation doesn't already exist
-				if _, exists := pod.Annotations[newAnnotation]; !exists {
-					pod.Annotations[newAnnotation] = value
+	for annotation, value := range pod.Annotations {
+		if suffix, ok := strings.CutPrefix(annotation, "vault.hashicorp.com/"); ok {
+			newAnnotation := "openbao.org/" + suffix
+			// Only migrate if the target annotation doesn't already exist
+			if _, exists := pod.Annotations[newAnnotation]; !exists {
+				pod.Annotations[newAnnotation] = value
 
+				if h.RewriteAnnotations {
 					annotationPatch = append(annotationPatch, []jsonpatch.Operation{
 						internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(newAnnotation), value),
 						internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
@@ -194,8 +194,8 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 						internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
 					}...)
 				}
-				delete(pod.Annotations, annotation)
 			}
+			delete(pod.Annotations, annotation)
 		}
 	}
 
