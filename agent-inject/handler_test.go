@@ -22,11 +22,13 @@ import (
 
 func basicHandler() Handler {
 	return Handler{
-		OpenbaoAddress:  "https://openbao:8200",
-		OpenbaoAuthPath: "kubernetes",
-		ImageOpenbao:    "openbao",
-		Log:             hclog.Default().Named("handler"),
-		DefaultTemplate: agent.DefaultTemplateType,
+		OpenbaoAddress:          "https://openbao:8200",
+		OpenbaoAuthPath:         "kubernetes",
+		ImageOpenbao:            "openbao",
+		Log:                     hclog.Default().Named("handler"),
+		DefaultTemplate:         agent.DefaultTemplateType,
+		EnableVaultAnnotations:  true,
+		RewriteVaultAnnotations: true,
 	}
 }
 
@@ -167,7 +169,14 @@ func TestHandlerHandle(t *testing.T) {
 
 		{
 			"disable vault annotations",
-			basicHandler(),
+			Handler{
+				OpenbaoAddress:         "https://openbao:8200",
+				OpenbaoAuthPath:        "kubernetes",
+				ImageOpenbao:           "openbao",
+				Log:                    hclog.Default().Named("handler"),
+				DefaultTemplate:        agent.DefaultTemplateType,
+				EnableVaultAnnotations: false,
+			},
 			admissionv1.AdmissionRequest{
 				Namespace: "test",
 				Object: encodeRaw(t, &corev1.Pod{
@@ -187,12 +196,13 @@ func TestHandlerHandle(t *testing.T) {
 		{
 			"disable rewrite of vault annotations",
 			Handler{
-				OpenbaoAddress:         "https://openbao:8200",
-				OpenbaoAuthPath:        "kubernetes",
-				ImageOpenbao:           "openbao",
-				Log:                    hclog.Default().Named("handler"),
-				DefaultTemplate:        agent.DefaultTemplateType,
-				EnableVaultAnnotations: true,
+				OpenbaoAddress:          "https://openbao:8200",
+				OpenbaoAuthPath:         "kubernetes",
+				ImageOpenbao:            "openbao",
+				Log:                     hclog.Default().Named("handler"),
+				DefaultTemplate:         agent.DefaultTemplateType,
+				EnableVaultAnnotations:  true,
+				RewriteVaultAnnotations: false,
 			},
 			admissionv1.AdmissionRequest{
 				Namespace: "test",
