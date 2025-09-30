@@ -194,6 +194,41 @@ func TestHandlerHandle(t *testing.T) {
 		},
 
 		{
+			"openbao annotations should work with disabled vault annotations",
+			Handler{
+				OpenbaoAddress:         "https://openbao:8200",
+				OpenbaoAuthPath:        "kubernetes",
+				ImageOpenbao:           "openbao",
+				Log:                    hclog.Default().Named("handler"),
+				DefaultTemplate:        agent.DefaultTemplateType,
+				EnableVaultAnnotations: false,
+			},
+			admissionv1.AdmissionRequest{
+				Namespace: "test",
+				Object: encodeRaw(t, &corev1.Pod{
+					ObjectMeta: metav1.ObjectMeta{
+						Annotations: map[string]string{
+							agent.AnnotationAgentInject: "true",
+							agent.AnnotationOpenbaoRole: "demo",
+						},
+					},
+					Spec: basicSpec,
+				}),
+			},
+			"",
+			[]jsonpatch.Operation{
+				internal.AddOp("/spec/volumes", nil),
+				internal.AddOp("/spec/volumes/-", nil),
+				internal.AddOp("/spec/volumes", nil),
+				internal.AddOp("/spec/containers/0/volumeMounts/-", nil),
+				internal.AddOp("/spec/initContainers/-", nil),
+				internal.AddOp("/spec/initContainers/0/volumeMounts/-", nil),
+				internal.AddOp("/spec/containers/-", nil),
+				internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(agent.AnnotationAgentStatus), nil),
+			},
+		},
+
+		{
 			"rewrite of vault annotations",
 			basicHandler(),
 			admissionv1.AdmissionRequest{
