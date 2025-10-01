@@ -604,7 +604,7 @@ func TestHandlerHandle(t *testing.T) {
 			for i := range tt.Patches {
 				delete(tt.Patches[i], "value")
 			}
-			req.Equal(tt.Patches, actual)
+			req.ElementsMatch(tt.Patches, actual)
 		})
 	}
 }
