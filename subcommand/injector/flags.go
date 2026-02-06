@@ -131,9 +131,6 @@ type Specification struct {
 	// DisableKeepAlives is the AGENT_INJECT_DISABLE_KEEP_ALIVES environment variable
 	DisableKeepAlives string `split_words:"true"`
 
-	// EnableVaultAnnotations is the AGENT_INJECT_ENABLE_VAULT_ANNOTATIONS environment variable
-	EnableVaultAnnotations string `split_words:"true"`
-
 	// RewriteVaultAnnotations is the AGENT_INJECT_REWRITE_VAULT_ANNOTATIONS environment variable
 	RewriteVaultAnnotations string `split_words:"true"`
 }
@@ -210,8 +207,6 @@ func (c *Command) init() {
 		"Comma-separated list of Openbao features where idle connections should be disabled.")
 	c.flagSet.StringVar(&c.flagDisableKeepAlives, "disable-keep-alives", "",
 		"Comma-separated list of Openbao features where keep-alives should be disabled.")
-	c.flagSet.BoolVar(&c.flagEnableVaultAnnotations, "enable-vault-annotations", true,
-		"Enable vault.hashicorp.com annotations")
 	c.flagSet.BoolVar(&c.flagRewriteVaultAnnotations, "rewrite-vault-annotations", true,
 		"Rewrite vault.hashicorp.com annotations to openbao.org")
 
@@ -435,13 +430,6 @@ func (c *Command) parseEnvs() error {
 
 	if envs.DisableKeepAlives != "" {
 		c.flagDisableKeepAlives = envs.DisableKeepAlives
-	}
-
-	if envs.EnableVaultAnnotations != "" {
-		c.flagEnableVaultAnnotations, err = parseutil.ParseBool(envs.EnableVaultAnnotations)
-		if err != nil {
-			return err
-		}
 	}
 
 	if envs.RewriteVaultAnnotations != "" {

@@ -81,7 +81,6 @@ type Command struct {
 	flagAuthMaxBackoff             string // Auth min backoff on failure
 	flagDisableIdleConnections     string // Idle connections control
 	flagDisableKeepAlives          string // Keep-alives control
-	flagEnableVaultAnnotations     bool   // Enable vault.hashicorp.com annotations
 	flagRewriteVaultAnnotations    bool   // Rewrite vault.hashicorp.com annotations to openbao.org
 
 	flagSet *flag.FlagSet
@@ -225,7 +224,6 @@ func (c *Command) Run(args []string) int {
 		AuthMaxBackoff:             c.flagAuthMaxBackoff,
 		DisableIdleConnections:     c.flagDisableIdleConnections,
 		DisableKeepAlives:          c.flagDisableKeepAlives,
-		EnableVaultAnnotations:     c.flagEnableVaultAnnotations,
 		RewriteVaultAnnotations:    c.flagRewriteVaultAnnotations,
 	}
 
