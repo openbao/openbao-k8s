@@ -166,7 +166,7 @@ type Agent struct {
 	CopyVolumeMounts string
 
 	// InjectToken controls whether the auto-auth token is injected into the
-	// secrets volume (e.g. /vault/secrets/token)
+	// secrets volume (e.g. /openbao/secrets/token)
 	InjectToken bool
 
 	// EnableQuit controls whether the quit endpoint is enabled on a localhost
