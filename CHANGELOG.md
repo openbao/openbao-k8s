@@ -1,9 +1,16 @@
 ## Unreleased
 
+Features:
+* Add support for `openbao.org/` annotations [GH-14](https://github.com/openbao/openbao-k8s/pull/14)
+* Rewrite `vault.hashicorp.com/` annotations to `openbao.org/` annotations [GH-21](https://github.com/openbao/openbao-k8s/pull/21)
+* Add flag to disable rewriting `vault.hashicorp.com/` annotations [GH-23](https://github.com/openbao/openbao-k8s/pull/23)
+
 Changes:
+* Refactor environment variables and flags [GH-12](https://github.com/openbao/openbao-k8s/pull/12)
 * Dependency updates:
-  * `github.com/hashicorp/vault/sdk` v0.11.1 => v0.12.0
+  * `github.com/hashicorp/vault/sdk` v0.11.1 => `github.com/openbao/openbao/sdk` v1.100.0-development20240408
   * `sigs.k8s.io/controller-runtime` v0.17.2 => v0.17.3
+  * `registry.access.redhat.com/ubi` v8.9-1161.1715068733 => v9.6-1751286687
 
 ## 1.4.1 (April 8, 2024)
 
