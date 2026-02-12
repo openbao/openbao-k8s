@@ -22,11 +22,11 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-secure-stdlib/tlsutil"
+	"github.com/mitchellh/cli"
 	agentInject "github.com/openbao/openbao-k8s/agent-inject"
 	"github.com/openbao/openbao-k8s/helper/cert"
 	"github.com/openbao/openbao-k8s/leader"
 	"github.com/openbao/openbao-k8s/version"
-	"github.com/mitchellh/cli"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	adminv1 "k8s.io/api/admissionregistration/v1"
 	adminv1beta "k8s.io/api/admissionregistration/v1beta1"
@@ -81,6 +81,7 @@ type Command struct {
 	flagAuthMaxBackoff             string // Auth min backoff on failure
 	flagDisableIdleConnections     string // Idle connections control
 	flagDisableKeepAlives          string // Keep-alives control
+	flagRewriteVaultAnnotations    bool   // Rewrite vault.hashicorp.com annotations to openbao.org
 
 	flagSet *flag.FlagSet
 
@@ -223,6 +224,7 @@ func (c *Command) Run(args []string) int {
 		AuthMaxBackoff:             c.flagAuthMaxBackoff,
 		DisableIdleConnections:     c.flagDisableIdleConnections,
 		DisableKeepAlives:          c.flagDisableKeepAlives,
+		RewriteVaultAnnotations:    c.flagRewriteVaultAnnotations,
 	}
 
 	mux := http.NewServeMux()

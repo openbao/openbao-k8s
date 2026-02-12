@@ -79,6 +79,7 @@ type Handler struct {
 	AuthMaxBackoff             string
 	DisableIdleConnections     string
 	DisableKeepAlives          string
+	RewriteVaultAnnotations    bool
 }
 
 // Handle is the http.HandlerFunc implementation that actually handles the
@@ -183,14 +184,18 @@ func (h *Handler) Mutate(req *admissionv1.AdmissionRequest) *admissionv1.Admissi
 			if _, exists := pod.Annotations[newAnnotation]; !exists {
 				pod.Annotations[newAnnotation] = value
 
-				annotationPatch = append(annotationPatch, []jsonpatch.Operation{
-					internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(newAnnotation), value),
-					internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
-				}...)
+				if h.RewriteVaultAnnotations {
+					annotationPatch = append(annotationPatch, []jsonpatch.Operation{
+						internal.AddOp("/metadata/annotations/"+internal.EscapeJSONPointer(newAnnotation), value),
+						internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
+					}...)
+				}
 			} else {
-				annotationPatch = append(annotationPatch, []jsonpatch.Operation{
-					internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
-				}...)
+				if h.RewriteVaultAnnotations {
+					annotationPatch = append(annotationPatch, []jsonpatch.Operation{
+						internal.RemoveOp("/metadata/annotations/" + internal.EscapeJSONPointer(annotation)),
+					}...)
+				}
 			}
 			delete(pod.Annotations, annotation)
 		}
