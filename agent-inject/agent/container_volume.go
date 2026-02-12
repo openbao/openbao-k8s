@@ -15,15 +15,15 @@ const (
 	tokenVolumeNameSidecar = "home-sidecar"
 	tokenVolumePath        = "/home/openbao"
 	configVolumeName       = "openbao-config"
-	configVolumePath       = "/vault/configs"
+	configVolumePath       = "/openbao/configs"
 	secretVolumeName       = "openbao-secrets"
 	tlsSecretVolumeName    = "openbao-tls-secrets"
-	tlsSecretVolumePath    = "/vault/tls"
-	secretVolumePath       = "/vault/secrets"
+	tlsSecretVolumePath    = "/openbao/tls"
+	secretVolumePath       = "/openbao/secrets"
 	extraSecretVolumeName  = "extra-secrets"
-	extraSecretVolumePath  = "/vault/custom"
+	extraSecretVolumePath  = "/openbao/custom"
 	cacheVolumeName        = "openbao-agent-cache"
-	cacheVolumePath        = "/vault/agent-cache"
+	cacheVolumePath        = "/openbao/agent-cache"
 )
 
 func (a *Agent) getUniqueMountPaths() []string {

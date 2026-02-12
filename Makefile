@@ -55,7 +55,7 @@ image: build
 # Run multiple times to deploy new builds of the injector.
 OPENBAO_HELM_POST_INSTALL_ARGS ?=
 ifndef TEST_WITHOUT_OPENBAO_TLS
-	OPENBAO_HELM_POST_INSTALL_ARGS = "--set=injector.extraEnvironmentVars.AGENT_INJECT_BAO_CACERT_BYTES=$$(kubectl exec openbao-0 -- sh -c 'cat /tmp/vault-ca.pem | base64 -w0')"
+	OPENBAO_HELM_POST_INSTALL_ARGS = "--set=injector.extraEnvironmentVars.AGENT_INJECT_BAO_CACERT_BYTES=$$(kubectl exec openbao-0 -- sh -c 'cat /tmp/openbao-ca.pem | base64 -w0')"
 endif
 deploy:
 	helm upgrade --install openbao openbao $(OPENBAO_HELM_DEFAULT_ARGS) \
@@ -85,7 +85,7 @@ exercise:
 		--annotations="openbao.org/tls-server-name=openbao-0" \
 		--overrides='{ "apiVersion": "v1", "spec": { "serviceAccountName": "test-app-sa" } }'
 	kubectl wait --for=condition=Ready --timeout=5m pod nginx
-	kubectl exec nginx -c nginx -- cat /vault/secrets/secret.txt
+	kubectl exec nginx -c nginx -- cat /openbao/secrets/secret.txt
 
 # Teardown any resources created in deploy and exercise targets.
 teardown:
