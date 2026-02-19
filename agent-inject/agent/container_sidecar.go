@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	jsonpatch "github.com/evanphx/json-patch"
-	"github.com/openbao/openbao/sdk/helper/pointerutil"
+	"github.com/openbao/openbao/sdk/v2/helper/pointerutil"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 )

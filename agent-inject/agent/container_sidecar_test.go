@@ -11,7 +11,7 @@ import (
 
 	jsonpatch "github.com/evanphx/json-patch"
 	"github.com/openbao/openbao-k8s/agent-inject/internal"
-	"github.com/openbao/openbao/sdk/helper/pointerutil"
+	"github.com/openbao/openbao/sdk/v2/helper/pointerutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"

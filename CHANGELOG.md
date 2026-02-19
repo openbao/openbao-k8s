@@ -8,9 +8,25 @@ Features:
 Changes:
 * Refactor environment variables and flags [GH-12](https://github.com/openbao/openbao-k8s/pull/12)
 * Dependency updates:
-  * `github.com/hashicorp/vault/sdk` v0.11.1 => `github.com/openbao/openbao/sdk` v1.100.0-development20240408
-  * `sigs.k8s.io/controller-runtime` v0.17.2 => v0.17.3
-  * `registry.access.redhat.com/ubi` v8.9-1161.1715068733 => v9.6-1751286687
+  * RedHat UBI container image `ubi8/ubi-minimal` v8.9-1161 => `ubi9-minimal` v9.6-1751286687
+  * `github.com/cespare/xxhash/v2` v2.2.0 => `github.com/cespare/xxhash/v2` v2.3.0
+  * `github.com/fatih/color` v1.14.1 => `github.com/fatih/color` v1.18.0
+  * `github.com/go-logr/logr` v1.4.1 => `github.com/go-logr/logr` v1.4.3
+  * `github.com/google/go-cmp` v0.6.0 => `github.com/google/go-cmp` v0.7.0
+  * `github.com/hashicorp/go-secure-stdlib/parseutil` v0.1.8 => `github.com/hashicorp/go-secure-stdlib/parseutil` v0.2.0
+  * `github.com/hashicorp/go-sockaddr` v1.0.5 => `github.com/hashicorp/go-sockaddr` v1.0.7
+  * `github.com/hashicorp/vault/sdk/helper/strutil` v0.11.1 => `github.com/hashicorp/go-secure-stdlib/strutil` v0.1.2
+  * `github.com/hashicorp/vault/sdk` v0.11.1 => `github.com/openbao/openbao/sdk/v2` v2.5.1
+  * `github.com/mattn/go-colorable` v0.1.13 => `github.com/mattn/go-colorable` v0.1.14
+  * `github.com/stretchr/testify` v1.9.0 => `github.com/stretchr/testify` v1.11.1
+  * `golang.org/x/crypto` v0.22.0 => `golang.org/x/crypto` v0.47.0
+  * `golang.org/x/net` v0.24.0 => `golang.org/x/net` v0.49.0
+  * `golang.org/x/sys` v0.19.0 => `golang.org/x/sys` v0.40.0
+  * `golang.org/x/term` v0.19.0 => `golang.org/x/term` v0.39.0
+  * `golang.org/x/text` v0.14.0 => `golang.org/x/text` v0.33.0
+  * `golang.org/x/time` v0.3.0 => `golang.org/x/time` v0.14.0
+  * `google.golang.org/protobuf` v1.33.0 => `google.golang.org/protobuf` v1.36.11
+  * `sigs.k8s.io/controller-runtime` v0.17.2 => v0.18.2
 
 ## 1.4.1 (April 8, 2024)
 
