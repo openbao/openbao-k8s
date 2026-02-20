@@ -11,7 +11,7 @@ import (
 
 	jsonpatch "github.com/evanphx/json-patch"
 	"github.com/hashicorp/go-secure-stdlib/parseutil"
-	"github.com/openbao/openbao/sdk/helper/strutil"
+	"github.com/hashicorp/go-secure-stdlib/strutil"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/utils/pointer"
 )
