@@ -9,24 +9,70 @@ Changes:
 * Refactor environment variables and flags [GH-12](https://github.com/openbao/openbao-k8s/pull/12)
 * Dependency updates:
   * RedHat UBI container image `ubi8/ubi-minimal` v8.9-1161 => `ubi9-minimal` v9.6-1751286687
-  * `github.com/cespare/xxhash/v2` v2.2.0 => `github.com/cespare/xxhash/v2` v2.3.0
-  * `github.com/fatih/color` v1.14.1 => `github.com/fatih/color` v1.18.0
-  * `github.com/go-logr/logr` v1.4.1 => `github.com/go-logr/logr` v1.4.3
-  * `github.com/google/go-cmp` v0.6.0 => `github.com/google/go-cmp` v0.7.0
-  * `github.com/hashicorp/go-secure-stdlib/parseutil` v0.1.8 => `github.com/hashicorp/go-secure-stdlib/parseutil` v0.2.0
-  * `github.com/hashicorp/go-sockaddr` v1.0.5 => `github.com/hashicorp/go-sockaddr` v1.0.7
+  * `github.com/Masterminds/semver/v3` v3.1.1 => v3.4.0
+  * `github.com/Masterminds/sprig/v3` v3.2.1 => v3.3.0
+  * `github.com/bgentry/speakeasy` v0.1.0 => v0.2.0
+  * `github.com/cespare/xxhash/v2` v2.2.0 => v2.3.0
+  * `github.com/emicklei/go-restful/v3` v3.11.0 => v3.13.0
+  * `github.com/evanphx/json-patch/v5` v5.8.0 => v5.9.0
+  * `github.com/evanphx/json-patch` v5.9.0+incompatible => v5.9.11+incompatible
+  * `github.com/fatih/color` v1.14.1 => v1.18.0
+  * `github.com/go-logr/logr` v1.4.1 => v1.4.3
+  * `github.com/go-openapi/jsonpointer` v0.19.6 => v0.22.4
+  * `github.com/go-openapi/jsonreference` v0.20.2 => v0.21.4
+  * `github.com/go-openapi/swag` v0.22.3 => v0.25.4
+  * `github.com/google/gnostic-models` v0.6.8 => 0.7.1
+  * `github.com/google/go-cmp` v0.6.0 => v0.7.0
+  * `github.com/google/uuid` v1.3.1 => v1.6.0
+  * `github.com/hashicorp/go-secure-stdlib/parseutil` v0.1.8 => v0.2.0
+  * `github.com/hashicorp/go-sockaddr` v1.0.5 => v1.0.7
   * `github.com/hashicorp/vault/sdk/helper/strutil` v0.11.1 => `github.com/hashicorp/go-secure-stdlib/strutil` v0.1.2
   * `github.com/hashicorp/vault/sdk` v0.11.1 => `github.com/openbao/openbao/sdk/v2` v2.5.1
-  * `github.com/mattn/go-colorable` v0.1.13 => `github.com/mattn/go-colorable` v0.1.14
-  * `github.com/stretchr/testify` v1.9.0 => `github.com/stretchr/testify` v1.11.1
-  * `golang.org/x/crypto` v0.22.0 => `golang.org/x/crypto` v0.47.0
-  * `golang.org/x/net` v0.24.0 => `golang.org/x/net` v0.49.0
-  * `golang.org/x/sys` v0.19.0 => `golang.org/x/sys` v0.40.0
-  * `golang.org/x/term` v0.19.0 => `golang.org/x/term` v0.39.0
-  * `golang.org/x/text` v0.14.0 => `golang.org/x/text` v0.33.0
-  * `golang.org/x/time` v0.3.0 => `golang.org/x/time` v0.14.0
-  * `google.golang.org/protobuf` v1.33.0 => `google.golang.org/protobuf` v1.36.11
-  * `sigs.k8s.io/controller-runtime` v0.17.2 => v0.18.2
+  * `github.com/huandu/xstrings` v1.3.2 => v1.5.0
+  * `github.com/mattn/go-colorable` v0.1.13 => v0.1.14
+  * `github.com/mattn/go-isatty` v0.0.17 => v0.0.20
+  * `github.com/modern-go/reflect2` v1.0.2 => v1.0.3-0.20250322232337-35a7c28c31ee
+  * `github.com/operator-framework/operator-lib` v0.11.1 => v0.19.0
+  * `github.com/posener/complete` v1.2.1 => v1.2.3
+  * `github.com/prometheus/client_golang` v1.19.0 => v1.23.2
+  * `github.com/prometheus/client_model` v0.5.0 => v0.6.2
+  * `github.com/prometheus/common` v0.48.0 => v0.67.5
+  * `github.com/prometheus/procfs` v0.12.0 => v0.19.2
+  * `github.com/shopspring/decimal` v1.2.0 => v1.4.0
+  * `github.com/spf13/cast` v1.3.1 => v1.10.0
+  * `github.com/spf13/pflag` v1.0.5 => v1.0.10
+  * `github.com/stretchr/testify` v1.9.0 => v1.11.1
+  * `golang.org/x/crypto` v0.22.0 => v0.48.0
+  * `golang.org/x/net` v0.24.0 => v0.50.0
+  * `golang.org/x/oauth2` v0.16.0 => v0.35.0
+  * `golang.org/x/sys` v0.19.0 => v0.41.0
+  * `golang.org/x/term` v0.19.0 => v0.40.0
+  * `golang.org/x/text` v0.14.0 => v0.34.0
+  * `golang.org/x/time` v0.3.0 => v0.14.0
+  * `google.golang.org/appengine` v1.6.8 => v1.36.11
+  * `google.golang.org/protobuf` v1.33.0 => v1.36.11
+  * `gopkg.in/yaml.v2` v2.4.0 => `go.yaml.in/yaml/v2` v2.4.3
+  * `k8s.io/api` v0.29.3 => v0.35.1
+  * `k8s.io/apimachinery` v0.29.3 => v0.35.1
+  * `k8s.io/client-go` v0.29.3 => v0.35.1
+  * `k8s.io/klog/v2` v2.110.1 => v2.130.1
+  * `k8s.io/kube-openapi` v0.0.0-20231010175941-2dd684a91f00 => v0.0.0-20260127142750-a19766b6e2d4
+  * `k8s.io/utils` v0.0.0-20230726121419-3b25d923346b => v0.0.0-20260210185600-b8788abfbbc2
+  * `sigs.k8s.io/controller-runtime` v0.17.2 => v0.23.1
+  * `sigs.k8s.io/json` v0.0.0-20221116044647-bc3834ca7abd => v0.0.0-20250730193827-2d320260d730
+  * `sigs.k8s.io/structured-merge-diff/v4` v4.4.1 => `sigs.k8s.io/structured-merge-diff/v6` v6.3.2
+  * `sigs.k8s.io/yaml` v1.4.0 => v1.6.0
+* Added dependencies:
+  * `dario.cat/mergo` v1.0.2
+  * `github.com/x448/float16` v0.8.4
+  * `go.yaml.in/yaml/v3` v3.0.4
+* Removed dependencies:
+  * `github.com/gogo/protobuf` v1.3.2
+  * `github.com/golang/protobuf` v1.5.4
+  * `github.com/google/gofuzz` v1.2.0
+  * `github.com/imdario/mergo` v0.3.12
+  * `github.com/josharian/intern` v1.0.0
+  * `github.com/mailru/easyjson` v0.7.7
 
 ## 1.4.1 (April 8, 2024)
 
