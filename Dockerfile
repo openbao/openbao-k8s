@@ -12,7 +12,7 @@
 # `default` is the production docker image which cannot be built locally.
 # For local dev and testing purposes, please build and use the `dev` docker image.
 
-FROM alpine:3.19.1 AS dev
+FROM alpine:3.23.3 AS dev
 
 RUN addgroup openbao && \
     adduser -S -G openbao openbao
@@ -24,7 +24,7 @@ USER openbao
 ENTRYPOINT ["/openbao-k8s"]
 
 # This target creates a production release image for the project.
-FROM alpine:3.19.1 AS default
+FROM alpine:3.23.3 AS default
 
 # PRODUCT_VERSION is the tag built, e.g. v0.1.0
 # PRODUCT_REVISION is the git hash built
