@@ -62,7 +62,7 @@ ENTRYPOINT ["/bin/openbao-k8s"]
 
 # This target creates a production ubi release image
 # for the project for use on OpenShift.
-FROM registry.access.redhat.com/ubi9-minimal:9.6-1751286687 AS ubi
+FROM registry.access.redhat.com/ubi9-minimal:9.7-1771346502 AS ubi
 
 ARG PRODUCT_NAME
 ARG PRODUCT_VERSION
