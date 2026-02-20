@@ -38,7 +38,7 @@ jobs:
       - run: echo "setting versions"
     outputs:
       # openbao-k8s version
-      K8S_VERSIONS: '["1.33.8", "1.34.4", "1.35.1"]'
+      K8S_VERSIONS: '["1.33.7", "1.34.3", "1.35.1"]'
       OPENBAO_N: "2.5.0"
       OPENBAO_N_1: "2.4.4"
       OPENBAO_N_2: "2.3.2"
