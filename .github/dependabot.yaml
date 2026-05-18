@@ -8,7 +8,7 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      actions:
+      go-deps:
         patterns:
           - "*"
     cooldown:
