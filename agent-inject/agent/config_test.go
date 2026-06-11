@@ -51,10 +51,10 @@ func TestNewConfig(t *testing.T) {
 
 		"openbao.org/agent-inject-command-bar": "pkill -HUP app",
 
-		"vault.hashicorp.com/agent-inject-secret-baz":        "db/creds/baz",
-		"vault.hashicorp.com/agent-inject-template-baz":      `[[ with secret "db/creds/baz" ]][[ range $k, $v := .Data ]][[ $k ]]: [[ $v ]]\n[[ end ]][[ end ]]`,
-		"vault.hashicorp.com/agent-template-left-delim-baz":  "[[",
-		"vault.hashicorp.com/agent-template-right-delim-baz": "]]",
+		"openbao.org/agent-inject-secret-baz":        "db/creds/baz",
+		"openbao.org/agent-inject-template-baz":      `[[ with secret "db/creds/baz" ]][[ range $k, $v := .Data ]][[ $k ]]: [[ $v ]]\n[[ end ]][[ end ]]`,
+		"openbao.org/agent-template-left-delim-baz":  "[[",
+		"openbao.org/agent-template-right-delim-baz": "]]",
 
 		AnnotationAgentCacheEnable: "true",
 	}

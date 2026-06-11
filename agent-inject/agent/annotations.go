@@ -80,21 +80,21 @@ const (
 	// If not provided, the template content key annotation is used.
 	AnnotationAgentInjectTemplateFile = "openbao.org/agent-inject-template-file"
 
-	// AnnotationAgentInjectTemplateLeftDelim is the key annotation that configures Vault
+	// AnnotationAgentInjectTemplateLeftDelim is the key annotation that configures OpenBao
 	// Agent what left delimiter to use for rendering the secrets.  The name
-	// of the template is any unique string after "vault.hashicorp.com/agent-template-left-delim-",
-	// such as "vault.hashicorp.com/agent-template-left-delim-foobar".  This should map
-	// to the same unique value provided in "vault.hashicorp.com/agent-inject-secret-".
-	// If not provided, a default left delimiter is used as defined by https://www.vaultproject.io/docs/agent/template#left_delimiter
-	AnnotationAgentInjectTemplateLeftDelim = "vault.hashicorp.com/agent-template-left-delim"
+	// of the template is any unique string after "openbao.org/agent-template-left-delim-",
+	// such as "openbao.org/agent-template-left-delim-foobar".  This should map
+	// to the same unique value provided in "openbao.org/agent-inject-secret-".
+	// If not provided, a default left delimiter is used as defined by https://openbao.org/docs/agent-and-proxy/agent/template/#left_delimiter
+	AnnotationAgentInjectTemplateLeftDelim = "openbao.org/agent-template-left-delim"
 
-	// AnnotationAgentInjectTemplateRightDelim is the key annotation that configures Vault
+	// AnnotationAgentInjectTemplateRightDelim is the key annotation that configures OpenBao
 	// Agent what right delimiter to use for rendering the secrets.  The name
-	// of the template is any unique string after "vault.hashicorp.com/agent-template-right-delim-",
-	// such as "vault.hashicorp.com/agent-template-right-delim-foobar".  This should map
-	// to the same unique value provided in "vault.hashicorp.com/agent-inject-secret-".
-	// If not provided, a default right delimiter is used as defined by https://www.vaultproject.io/docs/agent/template#right_delimiter
-	AnnotationAgentInjectTemplateRightDelim = "vault.hashicorp.com/agent-template-right-delim"
+	// of the template is any unique string after "openbao.org/agent-template-right-delim-",
+	// such as "openbao.org/agent-template-right-delim-foobar".  This should map
+	// to the same unique value provided in "openbao.org/agent-inject-secret-".
+	// If not provided, a default right delimiter is used as defined by https://openbao.org/docs/agent-and-proxy/agent/template/#right_delimiter
+	AnnotationAgentInjectTemplateRightDelim = "openbao.org/agent-template-right-delim"
 
 	// AnnotationAgentInjectToken is the annotation key for injecting the
 	// auto-auth token into the secrets volume (e.g. /vault/secrets/token)
