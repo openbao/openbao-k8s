@@ -6,6 +6,7 @@ Features:
 * Add flag to disable rewriting `vault.hashicorp.com/` annotations [GH-23](https://github.com/openbao/openbao-k8s/pull/23)
 * Add agent injector telemetry [GH-96](https://github.com/openbao/openbao-k8s/pull/96)
 * Add annotations for customizing template delimiters [GH-96](https://github.com/openbao/openbao-k8s/pull/96)
+* Added "tls_ca_cert_file" to envvar configuration [GH-97](https://github.com/openbao/openbao-k8s/pull/97)
 
 Changes:
 * Refactor environment variables and flags [GH-12](https://github.com/openbao/openbao-k8s/pull/12)
