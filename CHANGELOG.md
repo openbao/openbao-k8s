@@ -8,6 +8,7 @@ Features:
 
 Changes:
 * Refactor environment variables and flags [GH-12](https://github.com/openbao/openbao-k8s/pull/12)
+* Update webhook CA bundle verification log message [GH-93](https://github.com/openbao/openbao-k8s/pull/93)
 * Dependency updates:
   * RedHat UBI container image `ubi8/ubi-minimal` v8.9-1161 => `ubi9-minimal` v9.6-1751286687
   * `github.com/Masterminds/semver/v3` v3.1.1 => v3.4.0
