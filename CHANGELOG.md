@@ -5,6 +5,7 @@ Features:
 * Rewrite `vault.hashicorp.com/` annotations to `openbao.org/` annotations [GH-21](https://github.com/openbao/openbao-k8s/pull/21)
 * Add flag to disable rewriting `vault.hashicorp.com/` annotations [GH-23](https://github.com/openbao/openbao-k8s/pull/23)
 * Add agent injector telemetry [GH-96](https://github.com/openbao/openbao-k8s/pull/96)
+* Add annotations for customizing template delimiters [GH-96](https://github.com/openbao/openbao-k8s/pull/96)
 
 Changes:
 * Refactor environment variables and flags [GH-12](https://github.com/openbao/openbao-k8s/pull/12)
