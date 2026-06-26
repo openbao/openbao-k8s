@@ -19,11 +19,11 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/radovskyb/watcher v1.0.7
 	github.com/stretchr/testify v1.11.1
-	k8s.io/api v0.36.0
-	k8s.io/apimachinery v0.36.0
-	k8s.io/client-go v0.36.0
+	k8s.io/api v0.36.2
+	k8s.io/apimachinery v0.36.2
+	k8s.io/client-go v0.36.2
 	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2
-	sigs.k8s.io/controller-runtime v0.24.0
+	sigs.k8s.io/controller-runtime v0.24.1
 )
 
 require (
@@ -61,8 +61,8 @@ require (
 	github.com/hashicorp/go-sockaddr v1.0.7 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
