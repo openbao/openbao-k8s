@@ -900,6 +900,9 @@ func TestContainerSidecarSecurityContext(t *testing.T) {
 					Drop: []corev1.Capability{DefaultAgentDropCapabilities},
 				},
 				AllowPrivilegeEscalation: pointerutil.BoolPtr(DefaultAgentAllowPrivilegeEscalation),
+				SeccompProfile: &corev1.SeccompProfile{
+					Type: corev1.SeccompProfileTypeRuntimeDefault,
+				},
 			},
 		},
 		{
@@ -927,6 +930,9 @@ func TestContainerSidecarSecurityContext(t *testing.T) {
 					Drop: []corev1.Capability{DefaultAgentDropCapabilities},
 				},
 				AllowPrivilegeEscalation: pointerutil.BoolPtr(DefaultAgentAllowPrivilegeEscalation),
+				SeccompProfile: &corev1.SeccompProfile{
+					Type: corev1.SeccompProfileTypeRuntimeDefault,
+				},
 			},
 		},
 		{
@@ -954,6 +960,9 @@ func TestContainerSidecarSecurityContext(t *testing.T) {
 					Drop: []corev1.Capability{DefaultAgentDropCapabilities},
 				},
 				AllowPrivilegeEscalation: pointerutil.BoolPtr(DefaultAgentAllowPrivilegeEscalation),
+				SeccompProfile: &corev1.SeccompProfile{
+					Type: corev1.SeccompProfileTypeRuntimeDefault,
+				},
 			},
 		},
 		{
@@ -981,6 +990,9 @@ func TestContainerSidecarSecurityContext(t *testing.T) {
 					Drop: []corev1.Capability{DefaultAgentDropCapabilities},
 				},
 				AllowPrivilegeEscalation: pointerutil.BoolPtr(DefaultAgentAllowPrivilegeEscalation),
+				SeccompProfile: &corev1.SeccompProfile{
+					Type: corev1.SeccompProfileTypeRuntimeDefault,
+				},
 			},
 		},
 		{
@@ -1008,6 +1020,9 @@ func TestContainerSidecarSecurityContext(t *testing.T) {
 					Drop: []corev1.Capability{DefaultAgentDropCapabilities},
 				},
 				AllowPrivilegeEscalation: pointerutil.BoolPtr(DefaultAgentAllowPrivilegeEscalation),
+				SeccompProfile: &corev1.SeccompProfile{
+					Type: corev1.SeccompProfileTypeRuntimeDefault,
+				},
 			},
 		},
 		{
@@ -1049,6 +1064,9 @@ func TestContainerSidecarSecurityContext(t *testing.T) {
 					Drop: []corev1.Capability{DefaultAgentDropCapabilities},
 				},
 				AllowPrivilegeEscalation: pointerutil.BoolPtr(DefaultAgentAllowPrivilegeEscalation),
+				SeccompProfile: &corev1.SeccompProfile{
+					Type: corev1.SeccompProfileTypeRuntimeDefault,
+				},
 			},
 		},
 		{
@@ -1093,6 +1111,9 @@ func TestContainerSidecarSecurityContext(t *testing.T) {
 					Drop: []corev1.Capability{DefaultAgentDropCapabilities},
 				},
 				AllowPrivilegeEscalation: pointerutil.BoolPtr(DefaultAgentAllowPrivilegeEscalation),
+				SeccompProfile: &corev1.SeccompProfile{
+					Type: corev1.SeccompProfileTypeRuntimeDefault,
+				},
 			},
 		},
 		{
@@ -1121,6 +1142,9 @@ func TestContainerSidecarSecurityContext(t *testing.T) {
 					Drop: []corev1.Capability{DefaultAgentDropCapabilities},
 				},
 				AllowPrivilegeEscalation: pointerutil.BoolPtr(DefaultAgentAllowPrivilegeEscalation),
+				SeccompProfile: &corev1.SeccompProfile{
+					Type: corev1.SeccompProfileTypeRuntimeDefault,
+				},
 			},
 		},
 	}
@@ -1316,6 +1340,9 @@ func TestAgentJsonPatch(t *testing.T) {
 			RunAsNonRoot:             optional[bool](true),
 			ReadOnlyRootFilesystem:   optional[bool](true),
 			AllowPrivilegeEscalation: optional[bool](false),
+			SeccompProfile: &corev1.SeccompProfile{
+				Type: corev1.SeccompProfileTypeRuntimeDefault,
+			},
 		},
 	}
 
