@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Version to release, e.g., v2.0.0
+        description: Version to release, e.g. v2.0.0
         required: true
         type: string
   
@@ -88,7 +88,7 @@ jobs:
 
       - name: Create archive
         run: |
-          mkdir -p dist && cd dist
+          cd dist
           archive="openbao-k8s_${VERSION#v}_${GOOS}_${GOARCH}"
 
           if [[ -n "${GOARM:-}" ]]; then
