@@ -1,11 +1,14 @@
 REGISTRY_NAME ?= docker.io/openbao
 IMAGE_NAME = openbao-k8s
-VERSION ?= 0.0.0-dev
+VERSION ?= v0.0.0-dev
+VERSION := $(patsubst v%,%,$(VERSION))
 OPENBAO_VERSION ?= 2.3.1
 IMAGE_TAG ?= $(REGISTRY_NAME)/$(IMAGE_NAME):$(VERSION)
 DOCKER_DIR = ./build/docker
 BUILD_DIR = dist
+CGO_ENABLED ?= 0
 GOOS ?= linux
+GOARM ?=
 GOARCH ?= amd64
 BIN_NAME = $(IMAGE_NAME)
 GOFMT_FILES ?= $$(find . -name '*.go' | grep -v vendor)
@@ -43,8 +46,9 @@ version:
 	@echo $(VERSION)
 
 build:
-	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) go build \
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) GOARM=$(GOARM) go build \
 		-ldflags $(LDFLAGS) \
+		-buildvcs \
 		-o $(BUILD_DIR)/$(BIN_NAME) \
 		.
 

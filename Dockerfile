@@ -11,38 +11,12 @@
 #
 # `default` is the production docker image which cannot be built locally.
 # For local dev and testing purposes, please build and use the `dev` docker image.
+FROM scratch AS bin
+ARG TARGETARCH
+COPY --chmod=555 dist/${TARGETARCH}/openbao-k8s /bin/openbao-k8s
 
-FROM alpine:3.24.1 AS dev
-
-RUN addgroup openbao && \
-    adduser -S -G openbao openbao
-
-ADD dist/openbao-k8s /openbao-k8s
-
-USER openbao
-
-ENTRYPOINT ["/openbao-k8s"]
-
-# This target creates a production release image for the project.
-FROM alpine:3.24.1 AS default
-
-# PRODUCT_VERSION is the tag built, e.g. v0.1.0
-# PRODUCT_REVISION is the git hash built
-ARG PRODUCT_VERSION
-ARG PRODUCT_REVISION
-ARG PRODUCT_NAME=openbao-k8s
-ARG TARGETOS TARGETARCH
-
-# Additional metadata labels used by container registries, platforms
-# and certification scanners.
-LABEL name="OpenBao K8s" \
-      maintainer="OpenBao <https://openbao.org>" \
-      vendor="OpenBao" \
-      version=$PRODUCT_VERSION \
-      release=$PRODUCT_VERSION \
-      revision=$PRODUCT_REVISION \
-      summary="The OpenBao-K8s binary includes first-class integrations between OpenBao and Kubernetes." \
-      description="OpenBao-K8s includes first-class integrations between OpenBao and Kuberentes. Integrations include the OpenBao Agent Injector mutating admission webhook."
+# This is {docker.io,quay.io,ghcr.io}/openbao/openbao-k8s.
+FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS default
 
 COPY LICENSE /licenses/mozilla.txt
 
@@ -55,39 +29,25 @@ RUN set -eux && \
     apk update && \
     apk add --no-cache ca-certificates libcap su-exec iputils
 
-COPY dist/$TARGETOS/$TARGETARCH/openbao-k8s /bin/
+# Copy the binary stage.
+COPY --from=bin . /
+
+# 8080/tcp is the webhook endpoint used by the OpenBao agent injector
+EXPOSE 8080
 
 USER openbao
 ENTRYPOINT ["/bin/openbao-k8s"]
 
-# This target creates a production ubi release image
-# for the project for use on OpenShift.
-FROM registry.access.redhat.com/ubi10-minimal:10.2@sha256:61f820b7893b6226e499e928db99c59a0a9135aa17e4e056fdaf1015908cca14 AS ubi
 
-ARG PRODUCT_NAME
-ARG PRODUCT_VERSION
-ARG BIN_NAME
-ARG PRODUCT_NAME=$BIN_NAME
+# This is {docker.io,quay.io,ghcr.io}/openbao/openbao-k8s-ubi.
+FROM registry.access.redhat.com/ubi10-minimal:10.2@sha256:1e429ea364534f7baf494bac5cc54996b9b9d300f1da90e7b1dfa0ce455bfe39 AS ubi
 
-# TARGETOS and TARGETARCH are set automatically when --platform is provided.
-ARG TARGETOS TARGETARCH
-
-# Set ARGs as ENV so that they can be used in ENTRYPOINT/CMD
-ENV PRODUCT_VERSION=$PRODUCT_VERSION
-ENV BIN_NAME=$BIN_NAME
-
-# Additional metadata labels used by container registries, platforms
-# and certification scanners.
-LABEL name="OpenBao K8s" \
-      maintainer="OpenBao <https://openbao.org>" \
-      vendor="OpenBao" \
-      version=$PRODUCT_VERSION \
-      release=$PRODUCT_VERSION \
-      summary="The OpenBao-K8s binary includes first-class integrations between OpenBao and Kubernetes." \
-      description="OpenBao-K8s includes first-class integrations between OpenBao and Kuberentes. Integrations include the OpenBao Agent Injector mutating admission webhook."
-
-# Copy license for Red Hat certification.
 COPY LICENSE /licenses/mozilla.txt
+
+# Overwrite Red Hat-specific labels present on the UBI base image.
+LABEL io.k8s.description="OpenBao K8s includes first-class integrations between OpenBao and Kuberentes. Integrations include the OpenBao Agent Injector mutating admission webhook" \
+      io.k8s.display-name="OpenBao K8s" \
+      io.openshift.expose-services="8080/tcp:https"
 
 # Set up certificates and base tools.
 RUN set -eux && \
@@ -101,13 +61,11 @@ RUN groupadd --gid 1000 openbao && \
     adduser --uid 100 --system -g openbao openbao && \
     usermod -a -G root openbao
 
-# Copy the CI-built binary of openbao-k8s into /bin/
-COPY dist/$TARGETOS/$TARGETARCH/$BIN_NAME /bin/
+# Copy the binary stage.
+COPY --from=bin . /
 
-USER 100
+# 8080/tcp is the webhook endpoint used by the OpenBao agent injector
+EXPOSE 8080
+
+USER openbao
 ENTRYPOINT ["/bin/openbao-k8s"]
-
-# ===================================
-#   Set default target to 'dev'.
-# ===================================
-FROM dev
