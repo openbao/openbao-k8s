@@ -53,6 +53,8 @@ build:
 		.
 
 image: build
+	mkdir -p $(BUILD_DIR)/$(GOARCH)
+	mv $(BUILD_DIR)/$(BIN_NAME) $(BUILD_DIR)/$(GOARCH)/$(BIN_NAME)
 	docker build --build-arg VERSION=$(VERSION) --no-cache -t $(IMAGE_TAG) .
 
 # Deploys Openbao dev server and a locally built Agent Injector.
