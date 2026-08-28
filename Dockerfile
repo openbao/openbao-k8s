@@ -13,7 +13,7 @@
 # For local dev and testing purposes, please build and use the `dev` docker image.
 FROM scratch AS bin
 ARG TARGETARCH
-COPY --chmod=555 dist/${TARGETARCH}/openbao-k8s /bin/openbao-k8s
+COPY --chmod=555 dist/${TARGETARCH}/openbao-k8s /usr/bin/openbao-k8s
 
 # This is {docker.io,quay.io,ghcr.io}/openbao/openbao-k8s.
 FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS default
@@ -36,7 +36,7 @@ COPY --from=bin . /
 EXPOSE 8080
 
 USER openbao
-ENTRYPOINT ["/bin/openbao-k8s"]
+ENTRYPOINT ["/usr/bin/openbao-k8s"]
 
 
 # This is {docker.io,quay.io,ghcr.io}/openbao/openbao-k8s-ubi.
@@ -68,4 +68,4 @@ COPY --from=bin . /
 EXPOSE 8080
 
 USER openbao
-ENTRYPOINT ["/bin/openbao-k8s"]
+ENTRYPOINT ["/usr/bin/openbao-k8s"]
